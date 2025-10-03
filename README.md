@@ -7,7 +7,7 @@ This repository is a lightweight demo backend used for testing flows, validating
 
 - Home page
   
-  ![Home](https://via.placeholder.com/1200x650.png?text=Home+Page+-+Demo)
+  ![Home](docs/images/animals-index.png)
 
 - Animals index
   
