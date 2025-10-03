@@ -1,0 +1,124 @@
+﻿@model List<test.Models.Product>
+@{
+    var username = ViewBag.Username as string;
+    var phonenumber = ViewBag.phonenumber as string;
+    var email = ViewBag.email as string;
+    ViewData["Title"] = "Shelter Page - " + username;
+}
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="shelter-hero">
+        <div class="container">
+            <div class="shelter-hero-content">
+                <div class="shelter-avatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h1 class="shelter-title">Welcome to @username</h1>
+                <p class="shelter-subtitle">Your trusted pet care partner</p>
+                <div class="shelter-badges">
+                    <span class="badge-trusted">
+                        <i class="fas fa-shield-alt me-1"></i>Trusted Partner
+                    </span>
+                    <span class="badge-quality">
+                        <i class="fas fa-star me-1"></i>Premium Quality
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Info Section -->
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <h3 class="contact-title">
+                            <i class="fas fa-address-book me-2"></i>Contact Information
+                        </h3>
+                    </div>
+                    <div class="contact-body">
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope contact-icon"></i>
+                                <div class="contact-details">
+                                    <span class="contact-label">Email</span>
+                                    <span class="contact-value">@email</span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone contact-icon"></i>
+                                <div class="contact-details">
+                                    <span class="contact-label">Phone</span>
+                                    <span class="contact-value">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="products-header">
+                    <h2 class="products-section-title">
+                        <i class="fas fa-shopping-bag me-2"></i>Available Products
+                    </h2>
+                    <div class="products-stats">
+                        <span class="product-count">
+                            <i class="fas fa-box me-1"></i>@Model.Count() Products
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-box-open paw-icon"></i>
+                        <h4>No Products Available</h4>
+                        <p class="mb-0">This shelter hasn't added any products yet. Check back later!</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach(var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="product-card">
+                            <div class="product-header">
+                                <h5 class="product-type">@product.Type</h5>
+                            </div>
+                            
+                            <div class="product-body">
+                                <p class="product-description">@product.Disc</p>
+                                <div class="product-price-section">
+                                    <div class="price-label">Price:</div>
+                                    <div class="price-value">$@product.Price</div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-footer">
+                                <div class="product-actions">
+                                    <button class="btn-order">
+                                        <i class="fas fa-shopping-cart me-2"></i>Order Now
+                                    </button>
+                                    <button class="btn-favorite">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

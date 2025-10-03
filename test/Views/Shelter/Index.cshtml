@@ -1,0 +1,73 @@
+﻿@model List<test.Models.Product>
+@{
+    ViewData["Title"] = "Products";
+}
+
+
+<div class="container-fluid">
+    <!-- Products Grid -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="products-header">
+                    <h2 class="products-section-title">
+                        <i class="fas fa-shopping-bag me-2"></i>My Products
+                    </h2>
+                    <div class="products-stats">
+                        <span class="product-count">
+                            <i class="fas fa-box me-1"></i>@Model.Count() Products
+                        </span>
+                        <a asp-controller="Shelter" asp-action="Create" class="btn-add-product">
+                            <i class="fas fa-plus me-2"></i> Add Product
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            @if (Model.Count == 0)
+            {
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-box-open paw-icon"></i>
+                        <h4>No products available yet</h4>
+                        <p class="mb-0">Be the first to add products for pet owners!</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                foreach (var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="product-card">
+                            <div class="product-header">
+                                <h5 class="product-type">@product.Type</h5>
+                            </div>
+
+                            <div class="product-body">
+                                <p class="product-description">@product.Disc</p>
+                                <div class="product-price-section">
+                                    <div class="price-label">Price:</div>
+                                    <div class="price-value">$@product.Price</div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-footer">
+                                <div class="product-actions">
+                                    <button class="btn-edit">
+                                        <i class="fas fa-edit me-2"></i>Edit
+                                    </button>
+                                    <button class="btn-delete">
+                                        <i class="fas fa-trash me-2"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

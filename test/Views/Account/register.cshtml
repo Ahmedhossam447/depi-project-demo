@@ -1,0 +1,80 @@
+﻿@using test.ModelViews
+@model registerviewmodel;
+@{
+    ViewData["title"] = "Register";
+}
+
+
+<div class="register-container">
+    <div class="floating-paws">
+        <i class="fas fa-paw paw-float"></i>
+        <i class="fas fa-paw paw-float"></i>
+        <i class="fas fa-paw paw-float"></i>
+        <i class="fas fa-paw paw-float"></i>
+    </div>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h1 class="register-title">
+                            <i class="fas fa-paw paw-icon"></i>Join AnimalApp
+                        </h1>
+                        <p class="register-subtitle">Create your account and start helping animals</p>
+                    </div>
+                    
+                    <form asp-action="register" method="post">
+                        <div class="form-group">
+                            <label asp-for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username
+                            </label>
+                            <input asp-for="username" type="text" class="form-control" placeholder="Choose a username" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input asp-for="email" type="email" class="form-control" placeholder="Enter your email" />
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label asp-for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <input asp-for="password" type="password" class="form-control" placeholder="Create password" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="phonenumber" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Phone Number
+                                </label>
+                                <input asp-for="phonenumber" type="text" class="form-control" placeholder="Your phone number" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="role" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Account Type
+                            </label>
+                            <select asp-for="role" class="select-basic">
+                                <option value="User">Individual User</option>
+                                <option value="Shelter">Animal Shelter</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-register">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                        
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Already have an account? Sign In
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
