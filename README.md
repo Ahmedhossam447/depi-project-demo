@@ -7,15 +7,15 @@ This repository is a lightweight demo backend used for testing flows, validating
 
 - Home page
   
-  ![Home](https://via.placeholder.com/1200x650.png?text=Home+Page+-+Demo)
+  ![Home](docs/images/home.png)
 
 - Animals index
   
-  ![Animals Index](https://via.placeholder.com/1200x650.png?text=Animals+Index+-+Demo)
+  ![Animals Index](docs/images/animals-index.png)
 
 - Create animal form
   
-  ![Create Animal](https://via.placeholder.com/1200x650.png?text=Create+Animal+-+Demo)
+  ![Create Animal](docs/images/create-animal.png)
 
 ## About this demo
 - **Purpose**: Rapidly test backend endpoints, EF Core models, simple auth redirects, and media uploads.
