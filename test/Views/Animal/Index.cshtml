@@ -11,108 +11,101 @@
     };
 }
 @{
+
     ViewData["Title"] = title;
+
 }
 
 
-<div class="container-fluid">
-    <!-- Hero Section -->
-    <div class="hero-section">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Animals | HappyPaws Haven</title>
+</head>
+<body>
+    <section class="animals">
         <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <h1 class="display-4 font-weight-bold mb-3">
-                        <span class="paw-icon">🐾</span>
-                        Animal Adoption Center
-                        <span class="paw-icon">🐾</span>
-                    </h1>
-                    <p class="lead mb-4">Find your perfect companion and give them a loving home</p>
-                    <a asp-controller="Animal" asp-action="Create" class="btn add-animal-btn">
-                        <i class="fas fa-plus me-2"></i> Add Animal for Adoption
+            <div class="animals-header">
+                <h1 class="animals-title">Meet Our Lovely Animals</h1>
+                <p class="animals-subtitle">Browse through our furry friends waiting for a forever home 🐾</p>
+                <div class="header-actions">
+                    <a asp-controller="Animal" asp-action="Create" class="btn btn-primary add-animal-btn">
+                        <i class="fas fa-plus"></i>
+                        Add New Animal
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
+            
+            <div class="animals-grid">
+    <!-- Animals Section -->
+    @if (Model != null && Model.animals.Any())
 
-    <!-- Animals Grid -->
-    <div class="container">
-        <div class="row">
-            <div class="list-group-horizontal-xl">
-                <h5 class="filter-label me-3">Filter by Type:</h5>     
-                    <form asp-action="Index">
-                <select asp-for="filter" asp-items="filteroptions" class="form-select-lg"></select>
-                <button type="submit" class="btn filter-btn">
-                    <i class="fas fa-filter me-2"></i> Apply Filter
-                </button>
-                </form>
-                <br />
-                
+    {
+        foreach (var animal in Model.animals)
+        {
 
-
-
-
-            </div>
-            @if (Model != null && Model.animals.Any())
-            {
-                @foreach (var animal in Model.animals)
-                {
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                        <div class="card animal-card">
-                            <div class="animal-header">
-                                <h5 class="animal-name">@animal.Name</h5>
-                            </div>
-                            @if (!string.IsNullOrEmpty(animal.Photo))
-                            {
-                                <div class="animal-photo-container">
-                                    <img src="@animal.Photo" alt="@animal.Name" class="animal-photo" />
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="animal-photo-placeholder">
+                        <!-- Animal Card -->
+                        <div class="animal-card" data-animal-type="@animal.Type">
+                            <div class="animal-image-container">
+                                <img src="@animal.Photo" alt="@animal.Name" class="animal-image">
+                                <div class="animal-type-badge">
                                     <i class="fas fa-paw"></i>
-                                    <span>No Photo</span>
+                                    @animal.Type
                                 </div>
-                            }
+                            </div>
                             <div class="animal-info">
-                                <div class="info-item">
-                                    <div class="info-label">Type</div>
-                                    <div class="info-value">
-                                        <span class="type-badge">@(string.IsNullOrEmpty(animal.Type) ? "Not specified" : animal.Type)</span>
+                                <h3 class="animal-name">@animal.Name</h3>
+                                <div class="animal-details">
+                                    <div class="animal-detail-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>Age: @animal.Age</span>
+                                    </div>
+                                    <div class="animal-detail-item">
+                                        <i class="fas fa-tag"></i>
+                                        <span>@animal.Type</span>
                                     </div>
                                 </div>
-                                <div class="info-item">
-                                    <div class="info-label">Age</div>
-                                    <div class="info-value age-text">@(animal.Age?.ToString() ?? "Unknown") years old</div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white text-center p-3">
-                                <form asp-controller="Request" asp-action="create" method="post">
+                                                                                            <form asp-controller="Request" asp-action="create" method="post">
                                     <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
                                     <input type="hidden" name="Useridreq" value="@animal.Userid" />
-                                    <button type="submit" class="btn adopt-btn">
-                                        <i class="fas fa-heart me-2"></i> Request Adoption
-                                    </button>
+                                <button asp-controller="Request" asp-action="Create" class="btn adopt-btn">
+                                    <i class="fas fa-heart"></i>
+                                    Adopt Me
+                                </button>
                                 </form>
                             </div>
                         </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="col-12">
+
+
+        }
+    }
+         else{
+                <div class="empty-state-container">
                     <div class="empty-state">
-                        <h4><i class="fas fa-paw me-2"></i>No animals available for adoption yet</h4>
-                        <p class="mb-0">Be the first to add an animal for adoption and help them find a loving home!</p>
+                        <div class="empty-state-icon">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <h3 class="empty-state-title">No animals available for adoption yet</h3>
+                        <p class="empty-state-message">Be the first to add an animal for adoption and help them find a loving home!</p>
+                        <div class="empty-state-actions">
+
+                            <a asp-controller="Animal" asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Add an Animal
+                            </a>
+                        </div>
                     </div>
                 </div>
             }
+            </div>
         </div>
-    </div>
-</div>
+    </section>
 
 
 
 
+    <!-- Footer -->
+</body>
+</html>

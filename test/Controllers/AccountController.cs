@@ -10,29 +10,32 @@ using System.Security.Claims;
 using test.Models;
 using Microsoft.AspNetCore.Authentication;
 using test.ModelViews;
+using test.Repository;
+using test.Interfaces;
 
 namespace test.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly DepiContext _context;
+        private readonly IAccounts _accountRepository;
 
-        public AccountController (DepiContext context)
+        public AccountController (IAccounts accountRepository)
         {
-            _context = context;
+            _accountRepository = accountRepository;
         }
         public IActionResult login()
         {
+
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> login([Bind("username,password")]LoginViewModel view)
+        public async Task<IActionResult> login([Bind("email,password")]LoginViewModel view)
         {
             if (!ModelState.IsValid) {
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 return View(view);
             }
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username== view.username && u.Password==view.password);
+            var user = await _accountRepository.SignIn(view);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "IInvalid username or password.");
@@ -45,8 +48,8 @@ namespace test.Controllers
             var identity = new ClaimsIdentity(cliams, "MyCookieAuth");
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync("MyCookieAuth", principal);
-            
-            if(user.Role=="Shelter")
+
+            if (user.Role=="Shelter")
             return RedirectToAction("Index","Shelter");
             return RedirectToAction("Index", "Animal");
 
@@ -61,15 +64,20 @@ namespace test.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> register([Bind("Id,Username,Email,Password,Role,Phonenumber")] User user)
+        public async Task<IActionResult> register([Bind("Id,Username,Email,Password,Role,Phonenumber")] registerviewmodel user)
         {
             if (!ModelState.IsValid)
             {
                 return View(user);
             }
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("login");
+            if (await _accountRepository.adduser(user))
+            {
+                return RedirectToAction("login");
+            }
+            else ModelState.AddModelError(string.Empty, "This email address is already in use.");
+            {
+                return View(user);
+            }
         }
     }
 }

@@ -11,42 +11,28 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using test.Services;
 using test.ModelViews;
+using test.Repository;
+using test.Interfaces;
 
 namespace test.Controllers
 {
     [Authorize]
     public class AnimalController : Controller
     {
-        private readonly DepiContext _context;
+        private readonly IAnimal _animalRepository;
         private readonly PhotoServices _photoServices;
-        public AnimalController(DepiContext context,PhotoServices photoServices)
+        public AnimalController(IAnimal animalRepository,PhotoServices photoServices)
         {
-            _context = context;
+            _animalRepository = animalRepository;
             _photoServices = photoServices;
         }
-        public async Task<IActionResult> Index(String? filter)
+        public  IActionResult Index(String? filter)
         {
-            IQueryable<Animal> animals;
+            var useridclaim = User.FindFirst("ID");
+            int userid = int.Parse(useridclaim.Value);
+            var animalviewmodel = _animalRepository.AnimalDisplay(filter,userid);
 
-            if (filter == null || filter == "any")
-            {
-                var useridclaim = User.FindFirst("ID");
-                int userid = int.Parse(useridclaim.Value);
-                 animals = _context.Animals.FromSql($"select name,type,age,animalid,photo,userid from Animals as a where userid != {userid} and NOT EXISTS(select animalid from requests where userid = {userid} and animalID= a.animalID)");
-
-            }
-            else
-            {
-                var useridclaim = User.FindFirst("ID");
-                int userid = int.Parse(useridclaim.Value);
-                 animals =  from anm in _context.Animals where anm.Userid! != userid && anm.Type == filter && (_context.Requests.FirstOrDefault(r => r.Userid == userid && r.AnimalId == anm.AnimalId) == null) select anm;
-            }
-            var animviewmodel = new ModelViews.Animalviewmodel
-            {
-                animals = animals,
-                filter = filter ?? "any"
-            };
-            return View(animviewmodel);
+            return View(animalviewmodel);
         }
 
         public IActionResult Create()
@@ -71,8 +57,7 @@ namespace test.Controllers
                     Userid = userid
                 };
 
-                await _context.Animals.AddAsync(animal);
-                await _context.SaveChangesAsync();
+                _animalRepository.AddAnimal(animal);
                 return RedirectToAction("Index");
             }
             return View(animalVM);

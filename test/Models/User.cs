@@ -21,7 +21,7 @@ namespace test.Models
         [Column("password")]
         public string? Password { get; set; }
         [Column("role")]
-        public string Role { get; set; }= "user";
+        public string Role { get; set; }= "User";
         [Column("phonenumber")]
         public string? Phonenumber { get; set; }
         public virtual ICollection<Animal> Animals { get; set; } = new List<Animal>();

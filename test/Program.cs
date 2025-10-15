@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Helpers;
+using test.Interfaces;
+using test.Repository;
+
 
 namespace test
 {
@@ -16,6 +19,9 @@ namespace test
             builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("connection")));
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddScoped<test.Services.PhotoServices>();
+            builder.Services.AddScoped<IAnimal, AnimalRepository>();
+            builder.Services.AddScoped<IAccounts, AccountRepository>();
+            builder.Services.AddScoped<IRequests, RequestRepository>();
             builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
@@ -27,7 +33,6 @@ namespace test
 
             // Use AddControllersWithViews for MVC applications that use Views.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();
 
 
             var app = builder.Build();
@@ -51,12 +56,12 @@ namespace test
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             // This is where you define your application's routes or "endpoints".
             // It should come at the end.
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
 
             app.Run();
         }

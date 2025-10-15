@@ -1,43 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using test.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using test.Data;
+using test.Interfaces;
 using test.Models;
-using Microsoft.AspNetCore.Authentication;
 namespace test.Controllers
 {
+
+    [Authorize]
     public class RequestController : Controller
     {
-        private readonly DepiContext _context;
-        public RequestController(DepiContext context)
+        private readonly IRequests _RequestRepository;
+        public RequestController(IRequests RequestsRepository)
         {
-            _context = context;
-        }   
+            _RequestRepository = RequestsRepository;
+        }
         public async Task<IActionResult> Index()
         {
-            var requests = await _context.Requests.ToListAsync();
+            var requests =await _RequestRepository.LoadRequests();
             var useridclaim = User.FindFirst("ID");
-            var userid= int.Parse(useridclaim.Value);
-            var useridsrequestedto = requests.Select(r => r.Useridreq).Distinct().ToList();
-            var usersrequestedto = await _context.Users
-                .Where(u => useridsrequestedto.Contains(u.Id))
-                .ToListAsync();
-            var userrequestedids = requests.Select(r => r.Userid).Distinct().ToList();
-            var usersrequested = await _context.Users
-                .Where(u => userrequestedids.Contains(u.Id))
-                .ToListAsync();
-            var animalsidsrequested = requests.Select(r => r.AnimalId).Distinct().ToList();
-            var animalsrequested = await _context.Animals
-                .Where(a => animalsidsrequested.Contains(a.AnimalId))
-                .ToListAsync();
+            var userid = int.Parse(useridclaim.Value);
+            var usersrequested = _RequestRepository.RequestGot(userid, requests);
+            var animals = _RequestRepository.AnimalsNeeded(userid, requests);
+            var users= _RequestRepository.RequestSent(userid, requests);
             ViewBag.usersrequested = usersrequested;
-            ViewBag.animals = animalsrequested;
-            ViewBag.users = usersrequestedto;
+            ViewBag.animals = animals;
+            ViewBag.users = users;
             ViewBag.userid = userid;
 
             return View(requests);
@@ -49,8 +44,7 @@ namespace test.Controllers
             {
                 var useridclaim = User.FindFirst("ID");
                 request.Userid = int.Parse(useridclaim.Value);
-                await   _context.Requests.AddAsync(request);
-                await _context.SaveChangesAsync();
+                await _RequestRepository.addRequest(request);
                 return RedirectToAction("Index","Animal");
             }
             return RedirectToAction("Index", "Animal");
@@ -58,30 +52,19 @@ namespace test.Controllers
         [HttpPost]
         public async Task<IActionResult> approve(int id)
         {
-            var request = await _context.Requests.FindAsync(id);
-            if (request == null)
-            {
+            if(await _RequestRepository.approverequest(id))
             return RedirectToAction("Index");
-            }
-            request.Status = "approved";
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            else
+                return NotFound();
 
         }
         [HttpPost]
         public async Task<IActionResult> reject(int id)
         {
-            var request = await _context.Requests.FindAsync(id);
-            if (request == null)
-            {
+            if (await _RequestRepository.rejectRequest(id))
+                return RedirectToAction("Index");
+            else
                 return NotFound();
-            }
-           _context.Requests.Where(m => m.Reqid == id).ExecuteDelete();
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
-
-
-
         }
     }
 }

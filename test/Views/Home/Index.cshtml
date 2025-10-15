@@ -1,119 +1,68 @@
-﻿@{
-    ViewData["Title"] = "Home";
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyPaws Haven</title>
+</head>
+<body>
 
-
-<!-- Hero Section -->
-<div class="hero-section">
-    <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">
-                <i class="fas fa-paw paw-animation"></i>
-                Welcome to AnimalApp
-                <i class="fas fa-paw paw-animation"></i>
-            </h1>
-            <p class="hero-subtitle">
-                Connecting loving families with amazing animals in need of a home
+            <h1>Find your forever companion</h1>
+            <a <a asp-controller="account" asp-action="login" class="btn" id="start-btn">Start Now</a>
+        </div>
+    </section>
+    <!-- About Adoption Section -->
+    <section class="about">
+        <div class="container">
+            <h2>Why Adopt?</h2>
+            <p>
+                Adoption is the humane alternative to buying. Every animal deserves a loving home,
+                and when you adopt, you're saving a life and gaining a loyal friend.
             </p>
-            <div class="cta-buttons">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <a asp-controller="Animal" asp-action="Index" class="btn btn-primary-hero btn-hero">
-                        <i class="fas fa-list me-2"></i>View Animals
-                    </a>
-                    <a asp-controller="Animal" asp-action="Create" class="btn btn-outline-hero btn-hero">
-                        <i class="fas fa-plus me-2"></i>Add Animal
-                    </a>
-                }
-                else
-                {
-                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary-hero btn-hero">
-                        <i class="fas fa-user-plus me-2"></i>Get Started
-                    </a>
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-hero btn-hero">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login
-                    </a>
-                }
-            </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- Features Section -->
-<div class="features-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="display-4 font-weight-bold text-primary">Why Choose AnimalApp?</h2>
-                <p class="lead text-muted">We make pet adoption simple, safe, and rewarding</p>
+    <!-- How Adoption Works Section -->
+    <section class="how-adoption-works">
+        <div class="adoption-container">
+            <div class="adoption-image">
+                <img src="~/images/dog1.jpg" alt="Adoption Process">
+            </div>
+            <div class="adoption-content">
+                <h2>How adoption works</h2>
+                <ul class="steps">
+                    <li>
+                        <span class="circle"></span>
+                        Find a pet you wish to take home
+                    </li>
+                    <li>
+                        <span class="circle"></span>
+                        Go through our adoption requirements and checklist
+                    </li>
+                    <li>
+                        <span class="circle"></span>
+                        Schedule a visit with the shelter
+                    </li>
+                    <li>
+                        <span class="circle"></span>
+                        Meet the pet and complete procedure
+                    </li>
+                </ul>
+                <a href="FAQs.html" class="btn faq-btn">Pet adoption FAQs</a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3 class="feature-title">Loving Homes</h3>
-                    <p class="feature-description">
-                        Connect with caring families who are ready to provide a forever home for your beloved pets.
-                    </p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Safe & Secure</h3>
-                    <p class="feature-description">
-                        Our platform ensures safe interactions and verified adoptions for the well-being of all animals.
-                    </p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="feature-title">Community Driven</h3>
-                    <p class="feature-description">
-                        Join a community of animal lovers working together to find the perfect match for every pet.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
 
-<!-- Stats Section -->
-<div class="stats-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Animals Adopted</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <span class="stat-number">200+</span>
-                    <span class="stat-label">Happy Families</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Partner Shelters</span>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <span class="stat-number">99%</span>
-                    <span class="stat-label">Success Rate</span>
-                </div>
-            </div>
+    <!-- Contact Section -->
+    <section class="contact">
+        <div class="container">
+            <h2>Get In Touch</h2>
+            <p>Have questions about adoption? Reach out to us!</p>
+            <a href="contactus.html" class="btn">Contact Us</a>
         </div>
-    </div>
-</div>
+    </section>
+</body>
+</html>

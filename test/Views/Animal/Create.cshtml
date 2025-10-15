@@ -1,79 +1,39 @@
 ﻿@model test.ModelViews.CreateAnimalViewModel
 @{
-    ViewData["title"] = "create animal";
+    ViewData["Title"] = "Add New Animal - HappyPaws Haven";
 }
 
-
-<div class="create-container">
-    <div class="floating-paws">
-        <i class="fas fa-paw paw-float"></i>
-        <i class="fas fa-paw paw-float"></i>
-        <i class="fas fa-paw paw-float"></i>
-        <i class="fas fa-paw paw-float"></i>
-        <i class="fas fa-paw paw-float"></i>
-    </div>
-    
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="create-card">
-                    <div class="create-header">
-                        <h1 class="create-title">
-                            <i class="fas fa-paw paw-icon"></i>Add New Animal
-                        </h1>
-                        <p class="create-subtitle">Help an animal find their forever home</p>
-                    </div>
-                    
-                    <form asp-action="Create" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="Name" class="form-label">
-                                <i class="fas fa-tag me-2"></i>Animal Name
-                            </label>
-                            <div class="input-group">
-                                <i class="fas fa-paw input-icon"></i>
-                                <input asp-for="Name" type="text" class="form-control with-icon" placeholder="Enter the animal's name" />
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="Type" class="form-label">
-                                <i class="fas fa-paw me-2"></i>Animal Type
-                            </label>
-                            <div class="input-group">
-                                <i class="fas fa-dog input-icon"></i>
-                                <input asp-for="Type" type="text" class="form-control with-icon" placeholder="e.g., Dog, Cat, Bird, etc." />
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="Age" class="form-label">
-                                <i class="fas fa-calendar-alt me-2"></i>Age (in years)
-                            </label>
-                            <div class="input-group">
-                                <i class="fas fa-birthday-cake input-icon"></i>
-                                <input asp-for="Age" type="number" class="form-control with-icon" placeholder="Enter age in years" min="0" max="30" />
-                            </div>
-                            <div class="form-group">
-                                <label for="Age" class="form-label">
-                                    <i class="fas fa-calendar-alt me-2"></i>photo
-                                </label>
-                                <div class="input-group">
-                                    <i class="fas fa-birthday-cake input-icon"></i>
-                                    <input asp-for="Photo" type="file" class="form-control with-icon" placeholder="Add photo"/>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-create">
-                            <i class="fas fa-plus me-2"></i>Add Animal for Adoption
-                        </button>
-                        
-                        <a asp-controller="Animal" asp-action="Index" class="btn btn-cancel">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Animal List
-                        </a>
-                    </form>
-                </div>
-            </div>
+<!-- Add Animal Form Section -->
+<section class="add-animal-section">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Add a New Animal</h1>
+            <p class="form-description">Fill in the details below to add a new animal to our shelter 🐾❤️</p>
         </div>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="animal-form">
+            <div class="form-group">
+                <label asp-for="Name" class="form-label">Animal Name</label>
+                <input type="text" asp-for="Name" class="form-input" placeholder="Enter animal's name" required>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Age" class="form-label">Animal Age</label>
+                <input type="number" asp-for="Age" class="form-input" placeholder="Enter animal's age" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="form-label">Animal type</label>
+                <input type="text" asp-for="Type" class="form-input" placeholder="Enter animal's type" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Photo" class="form-label">Animal Picture</label>
+                <input type="file" asp-for="Photo" class="form-file-input" required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-plus"></i>
+                Add Animal
+            </button>
+        </form>
     </div>
-</div>
+</section>
