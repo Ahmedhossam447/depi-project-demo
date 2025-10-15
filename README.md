@@ -2,9 +2,6 @@
 
 This repository is a lightweight demo backend used for testing flows, validating data models, and experimenting with infrastructure. The real production project is yet to come; this codebase serves as a proving ground to iterate quickly before we formalize architecture and UX.
 
-## Screenshots
-> Replace these placeholders with real screenshots by placing image files under `docs/images/` and updating the links below.
-
 - Home page
   
   ![Home](docs/images/home.png)
