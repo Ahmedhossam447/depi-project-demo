@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace test.Models;
@@ -9,19 +10,18 @@ public partial class Request
     [Column("reqid")]
     public int Reqid { get; set; }
 
-    public int Userid { get; set; }
+    public string Userid { get; set; }
     [ForeignKey("Userid")]
-    [InverseProperty("RequestsSent")] // Corresponds to the collection in the User model
-    public virtual User? User { get; set; }
 
-    public int Useridreq { get; set; }
+    public virtual IdentityUser? User { get; set; }
+
+    public string Useridreq { get; set; }
     [ForeignKey("Useridreq")]
-    [InverseProperty("RequestsReceived")] // Corresponds to the other collection
-    public virtual User? User2 { get; set; }
+    public virtual IdentityUser? User2 { get; set; }
 
     public int AnimalId { get; set; }
     [ForeignKey("AnimalId")]
     public virtual Animal? Animal { get; set; }
 
-    public string? Status { get; set; }= "Pending";
+    public string? Status { get; set; } = "Pending";
 }

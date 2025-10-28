@@ -22,28 +22,45 @@
             <div class="signup-box">
                 <h1>Create Account</h1>
                 <p class="subtitle">Join the HappyPaws Haven today </p>
-                <form asp-action="register" method="post">
+                <form asp-action="register"  method="post">
+                 
                     <div class="input-group">
                         <label asp-for="username">Full Name</label>
                         <input type="text" asp-for="username" placeholder="Enter your full name" required>
+                        <span asp-validation-for="username" class="text-danger"></span>
                     </div>
-
                     <div class="input-group">
                         <label asp-for="email">Email</label>
                         <input type="email" asp-for="email" placeholder="Enter your email" required>
+                        <span asp-validation-for="email" class="text-danger"></span>
                     </div>
 
                     <div class="input-group">
                         <label asp-for="phonenumber">Phone number</label>
                         <input type="tel" asp-for="phonenumber" placeholder="Enter your phone number" required>
+                        <span asp-validation-for="phonenumber" class="text-danger"></span>
                     </div>
 
                     <div class="input-group">
                         <label asp-for="password">Password</label>
                         <input type="password" asp-for="password" placeholder="Create a password" required>
+                        <span asp-validation-for="password" class="text-danger"></span>
                     </div>
-
+                        <div class="radiobuttons-group">
+                            <label asp-for="role" class="form-check-label">Role</label>
+                            <div class="radio-input">
+                                <input type="radio" asp-for="role" value="User" required />
+                                <p>User</p>
+                            </div>
+                            
+                            <div class="radio-input">
+                                <input type="radio" asp-for="role" value="Shelter" required />
+                                <p>Shelter</p>
+                            </div>
+                            <span asp-validation-for="role" class="text-danger"></span>
+                        </div>
                     <button type="submit" class="btn">Sign Up</button>
+                    <div asp-validation-summary="All" class="text-danger"> </div>
                 </form>
                 <p class="login-link">Already have an account? <a asp-action="login">Log In</a></p>
             </div>

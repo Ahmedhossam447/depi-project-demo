@@ -6,84 +6,57 @@
     ViewData["Title"] = "Shelter Page - " + username;
 }
 
-<div class="container-fluid">
-    <!-- Hero Section -->
-    <div class="shelter-hero">
-        <div class="container">
-            <div class="shelter-hero-content">
-                <div class="shelter-avatar">
-                    <i class="fas fa-building"></i>
-                </div>
-                <h1 class="shelter-title">Welcome to @username</h1>
-                <p class="shelter-subtitle">Your trusted pet care partner</p>
-                <div class="shelter-badges">
-                    <span class="badge-trusted">
-                        <i class="fas fa-shield-alt me-1"></i>Trusted Partner
-                    </span>
-                    <span class="badge-quality">
-                        <i class="fas fa-star me-1"></i>Premium Quality
-                    </span>
-                </div>
+<section class="shelter-hero">
+    <div class="shelter-header">
+        <div class="shelter-avatar"><i class="fas fa-building"></i></div>
+        <div class="shelter-title-wrap">
+            <div class="shelter-name">@username</div>
+            <div class="shelter-sub">Your trusted pet care partner</div>
+            <div class="chip-row">
+                <span class="chip"><i class="fas fa-shield-alt"></i> Trusted</span>
+                <span class="chip"><i class="fas fa-star"></i> Quality</span>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Contact Info Section -->
+<div class="shelter-body">
+    <aside>
+        <div class="contact-row">
+            <div class="contact-card">
+                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                <div class="contact-meta">
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">@email</div>
+                </div>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                <div class="contact-meta">
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+<section class="theme-section shelter-content">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="contact-card">
-                    <div class="contact-header">
-                        <h3 class="contact-title">
-                            <i class="fas fa-address-book me-2"></i>Contact Information
-                        </h3>
-                    </div>
-                    <div class="contact-body">
-                        <div class="contact-info">
-                            <div class="contact-item">
-                                <i class="fas fa-envelope contact-icon"></i>
-                                <div class="contact-details">
-                                    <span class="contact-label">Email</span>
-                                    <span class="contact-value">@email</span>
-                                </div>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-phone contact-icon"></i>
-                                <div class="contact-details">
-                                    <span class="contact-label">Phone</span>
-                                    <span class="contact-value">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="section-bar">
+            <div>
+                <div class="section-title"><i class="fas fa-shopping-bag"></i> Available Products</div>
+                
             </div>
+            <div class="count-pill"><i class="fas fa-box"></i>@Model.Count() Products</div>
         </div>
-
-        <!-- Products Section -->
-        <div class="row">
-            <div class="col-12">
-                <div class="products-header">
-                    <h2 class="products-section-title">
-                        <i class="fas fa-shopping-bag me-2"></i>Available Products
-                    </h2>
-                    <div class="products-stats">
-                        <span class="product-count">
-                            <i class="fas fa-box me-1"></i>@Model.Count() Products
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
+        <div class="theme-grid products-grid">
             @if (Model == null || !Model.Any())
             {
-                <div class="col-12">
-                    <div class="empty-state">
-                        <i class="fas fa-box-open paw-icon"></i>
-                        <h4>No Products Available</h4>
-                        <p class="mb-0">This shelter hasn't added any products yet. Check back later!</p>
+                <div class="theme-empty-wrap">
+                    <div class="theme-empty">
+                        <div class="icon"><i class="fas fa-box-open"></i></div>
+                        <div class="title">No Products Available</div>
+                        <div class="msg">This shelter hasn't added any products yet. Check back later!</div>
                     </div>
                 </div>
             }
@@ -91,34 +64,18 @@
             {
                 @foreach(var product in Model)
                 {
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                        <div class="product-card">
-                            <div class="product-header">
-                                <h5 class="product-type">@product.Type</h5>
-                            </div>
-                            
-                            <div class="product-body">
-                                <p class="product-description">@product.Disc</p>
-                                <div class="product-price-section">
-                                    <div class="price-label">Price:</div>
-                                    <div class="price-value">$@product.Price</div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-footer">
-                                <div class="product-actions">
-                                    <button class="btn-order">
-                                        <i class="fas fa-shopping-cart me-2"></i>Order Now
-                                    </button>
-                                    <button class="btn-favorite">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="theme-card">
+                        <div class="product-hero">
+                            <div class="title">@product.Type</div>
+                        </div>
+                        <div class="product-desc truncate-2">@product.Disc</div>
+                        <div class="card-actions" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="price-pill"><i class="fas fa-dollar-sign"></i>$@product.Price</span>
+                            <a class="theme-cta"><i class="fas fa-box"></i>Buy</a>
                         </div>
                     </div>
                 }
             }
         </div>
     </div>
-</div>
+</section>

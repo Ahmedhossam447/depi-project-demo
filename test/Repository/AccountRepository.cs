@@ -12,38 +12,38 @@ using Microsoft.AspNetCore.Authentication;
 using test.ModelViews;
 using test.Repository;
 using test.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace test.Repository
 {
     public class AccountRepository : IAccounts
     {
         private readonly DepiContext _context;
-        public AccountRepository(DepiContext context) {
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly SignInManager<IdentityUser> signInManager;
+        public AccountRepository(DepiContext context,UserManager<IdentityUser> userManager,SignInManager<IdentityUser> signInManager) {
         
         _context = context;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
         }
         public async Task<bool> adduser(registerviewmodel user)
         {
-            var checking = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.email);
-                if (checking != null)
-            {
-                return false;
-            }
-            await _context.AddAsync(user);
-            return savechanges();
+  
+                return savechanges();
         }
 
-        public async Task<User> GetUserbyid(int id)
+        public async Task<IdentityUser> GetUserbyid(string id)
         {
-          return await _context.Users.FirstOrDefaultAsync(u => u.Id==id);
+            return await userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public List<User> GetUsers()
+        public List<IdentityUser> GetUsers()
         {
             throw new NotImplementedException();
         }
 
-        public bool removeuser(int id)
+        public bool removeuser(string id)
         {
             throw new NotImplementedException();
         }
@@ -57,9 +57,9 @@ namespace test.Repository
             return saved > 0 ? true : false;
         }
 
-        public async Task<User> SignIn(LoginViewModel user)
+        public async Task<IdentityUser> SignIn(LoginViewModel user)
         {
-            return await _context.Users.FirstOrDefaultAsync(u=>u.Email==user.email&&u.Password==user.password);
+            return await userManager.Users.FirstOrDefaultAsync(u=>u.Email==user.email&&u.Email==user.password);
             
         }
     }

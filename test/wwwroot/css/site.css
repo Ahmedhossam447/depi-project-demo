@@ -376,6 +376,7 @@ header {
     max-width: 500px;
     width: 100%;
     border: 1px solid rgba(219, 152, 183, 0.1);
+    margin:4%;
 }
 
 .form-header {
@@ -1075,6 +1076,212 @@ header {
 }
 
 /* ===========================================
+   THEME REUSE FOR SHELTER & REQUEST PAGES
+   =========================================== */
+/* Theme primitives */
+:root{
+    --brand-rose:#db98b7;
+    --brand-rose-2:#c39797;
+    --brand-bg:#f5d9e5;
+    --text-strong:#2c2c2c;
+    --text-muted:#666;
+    --surface:#fff;
+    --shadow:0 10px 30px rgba(219,152,183,0.15);
+}
+
+/* Section wrapper */
+.theme-section{
+    background:#fff;
+    padding:60px 20px;
+    justify-items:center;
+}
+
+.theme-section + .theme-section{ margin-top:40px; }
+
+/* Section header */
+.theme-header {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+.theme-title{
+    font-size:2rem;
+    font-weight:800;
+    color:var(--text-strong);
+}
+.theme-title i{ margin-right:10px; color:var(--brand-rose); }
+.theme-subtitle{ color:var(--text-muted); margin-top:8px; }
+
+/* Grid */
+.theme-grid{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:15px;
+    max-width:1100px;
+    margin:0 auto;
+}
+@media(max-width:768px){ .theme-grid{ grid-template-columns:1fr; } }
+
+/* Card */
+.theme-card{
+    background:var(--surface);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    border:2px solid rgba(219,152,183,0.2);
+    padding:18px;
+    transition:transform .2s ease, box-shadow .2s ease;
+    width: 73%;
+}
+.theme-card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.12); }
+.theme-card-title{ font-size:1.1rem; font-weight:700; color:var(--text-strong); margin-bottom:8px; text-align:center; }
+.theme-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
+.theme-item{ display:flex; align-items:center; gap:8px; color:var(--text-muted); font-size:.95rem; }
+.theme-item i{ color:var(--brand-rose); width:16px; }
+
+/* CTA */
+.theme-cta{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:linear-gradient(45deg, var(--brand-rose), var(--brand-rose-2));
+    color:#fff;
+    padding:12px 18px;
+    border-radius:22px;
+    text-decoration:none;
+    box-shadow:0 4px 15px rgba(219,152,183,0.3);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+.theme-cta:hover{ color:#fff; text-decoration:none; transform:translateY(-2px); box-shadow:0 8px 25px rgba(219,152,183,0.4); }
+
+/* Empty state */
+.theme-empty-wrap{ grid-column:1 / -1; display:flex; justify-content:center; align-items:center; min-height:260px; }
+.theme-empty{ text-align:center; padding:40px 30px; background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08); max-width:520px; width:100%; }
+.theme-empty .icon{ font-size:2rem; color:var(--brand-rose); margin-bottom:10px; }
+.theme-empty .title{ font-size:1.3rem; font-weight:700; color:var(--text-strong); margin-bottom:8px; }
+.theme-empty .msg{ color:var(--text-muted); }
+
+/* Inline action forms */
+.theme-inline-actions form{ display:inline-block; }
+.theme-inline-actions form + form{ margin-left:10px; }
+.theme-inline-actions .theme-cta{ padding-left:16px; padding-right:16px; }
+
+/* Themed subheader and contact block */
+.theme-subheader{
+    font-size:1.25rem;
+    font-weight:700;
+    color:var(--text-strong);
+    text-align:left;
+    margin:10px 0 8px;
+}
+.theme-divider{
+    height:2px;
+    width:80px;
+    background:linear-gradient(45deg, var(--brand-rose), var(--brand-rose-2));
+    border-radius:2px;
+    margin:0 0 16px 0;
+}
+.contact-block{ max-width:720px; margin:0 auto; padding:0 10px; }
+.contact-list{ margin-top:6px; }
+.contact-list .theme-item{ font-size:1rem; }
+.contact-list .theme-item i{ width:20px; }
+
+/* ===========================================
+   SHELTER PAGE REDESIGN COMPONENTS
+   =========================================== */
+.shelter-hero{
+    background: var(--brand-bg);
+    padding: 90px 20px 10px; /* extra top space for fixed header */
+    border-bottom: 1px solid rgba(219,152,183,0.25);
+}
+.shelter-header{ max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: center; }
+.shelter-avatar{ width: 80px; height: 80px; border-radius: 50%; background: #fff; box-shadow: var(--shadow); display:flex; align-items:center; justify-content:center; }
+.shelter-avatar i{ color: var(--brand-rose); font-size: 1.8rem; }
+.shelter-title-wrap{ display:flex; flex-direction:column; gap:4px; }
+.shelter-name{ font-size: 2rem; font-weight: 800; color: var(--text-strong); }
+.shelter-sub{ color: var(--text-muted); }
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background:#fff; border:1px solid rgba(219,152,183,0.35);
+    color: var(--text-strong);
+    padding:6px 10px; border-radius: 999px; font-size:.9rem;
+}
+.chip i{ color: var(--brand-rose); }
+
+.shelter-body{ max-width:1100px; margin: 20px auto; padding: 0 20px; display:grid; grid-template-columns:1fr; gap: 24px; }
+@media(max-width:992px){ .shelter-body{ grid-template-columns: 1fr; } }
+
+.panel{
+    background:#fff; border:1px solid rgba(219,152,183,0.25); border-radius:16px; box-shadow: 0 6px 16px rgba(219,152,183,0.15); padding:18px;
+}
+.panel-title{ font-weight:700; color:var(--text-strong); margin-bottom:10px; }
+
+.price-pill{ display:inline-flex; align-items:center; gap:6px; background: #2c2c2c; color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; }
+.card-actions{ margin-top:10px; }
+
+/* Products grid: two columns on desktop */
+.products-grid{ grid-template-columns: repeat(2,1fr);
+                gap:unset;
+                justify-items:center;
+                margin-top:5%;
+}
+@media(max-width:768px){ .products-grid{ grid-template-columns: 1fr; } }
+
+/* Product head row with price pill to the right */
+.product-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+
+/* Truncate long descriptions to two lines */
+.truncate-2{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+
+/* ===========================================
+   CONTACT CARDS (email / phone)
+   =========================================== */
+.contact-row{ max-width:1100px; margin: 0 auto; padding: 16px 20px; display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+@media(max-width:768px){ .contact-row{ grid-template-columns:1fr; } }
+.contact-card{
+    background:#fff; border:1px solid rgba(219,152,183,0.25); border-radius:16px; box-shadow:0 8px 24px rgba(219,152,183,0.18); padding:18px 20px; display:flex; align-items:center; gap:14px;
+}
+.contact-icon{
+    width:46px; height:46px; border-radius:12px; background:linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.2rem;
+}
+.contact-meta{ display:flex; flex-direction:column; }
+.contact-label{ font-size:.8rem; font-weight:800; letter-spacing:.08em; color:var(--text-muted); text-transform:uppercase; }
+.contact-value{ font-size:1rem; color:var(--text-strong); }
+
+/* ===========================================
+   SECTION BAR (title + count pill)
+   =========================================== */
+.section-bar{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.section-title{ font-size:2rem; font-weight:900; color:var(--text-strong); display:flex; align-items:center; gap:10px; text-shadow:0 2px 0 rgba(0,0,0,0.08); }
+.section-title i{ color:var(--brand-rose); }
+.section-underline{ height:8px; background:#fff; border-radius:999px; box-shadow: inset 0 0 0 2px rgba(219,152,183,0.25); margin-top:10px; }
+.count-pill{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:999px; color:#fff; background:linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2)); font-weight:700; box-shadow:0 6px 20px rgba(219,152,183,0.35); }
+
+/* ===========================================
+   PRODUCT TILE HEADER
+   =========================================== */
+.product-hero{
+    background: linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2));
+    color:#fff; border-radius:16px; padding:16px 18px; margin-bottom:12px;
+}
+.product-hero .title{ font-size:1.25rem; font-weight:800; }
+.product-desc{ color:var(--text-muted); background: #faf6f8; border:1px solid rgba(219,152,183,0.2); border-radius:12px; padding:12px;overflow-wrap:anywhere; }
+
+/* ===========================================
+   LAYOUT FIX: place products in right column
+   =========================================== */
+.shelter-body > aside{ grid-column:1; }
+.shelter-content{ grid-column:1; }
+.shelter-content .container{ max-width:none; padding:0; }
+.shelter-content .theme-grid{ width:100%; }
+
+/* ===========================================
    FOOTER
    =========================================== */
 footer {
@@ -1148,4 +1355,25 @@ footer {
     .contact-box {
         margin-top: 120px;
     }
+}
+.radiobuttons-group{
+    display:flex;
+    flex-direction:column;
+    width:fit-content
+}
+.radio-input {
+    display: grid;
+    grid-template-columns: 0.2fr 0.5fr;
+    /* text-align: center; */
+    align-items: baseline;
+    padding-top: 6%;
+}
+.radio-input p{
+padding:10%;
+}
+.Shelter-item{
+    width :110%;
+}
+.shelter-grid{
+    gap:43px;
 }

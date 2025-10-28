@@ -1,12 +1,14 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using test.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace test.Data;
 
-public partial class DepiContext : DbContext
+public partial class DepiContext : IdentityDbContext<IdentityUser>
 {
     public DepiContext()
     {
@@ -19,12 +21,15 @@ public partial class DepiContext : DbContext
 
     public virtual DbSet<Animal> Animals { get; set; }
     public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
+    public virtual DbSet<Transactions> Transactions { get; set; }
+    public virtual DbSet<PaymentMethods> PaymentMethods { get; set; }
+    public virtual DbSet<Orders> Orders { get; set; }
+
 
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<Request> Requests { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<VaccinationNeeded> VaccinationNeededs { get; set; }
 
@@ -63,6 +68,7 @@ public partial class DepiContext : DbContext
         modelBuilder.Entity<VaccinationNeeded>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__vaccinat__3213E83F846723D8");
-            entity.HasOne(d => d.Medical).WithMany(p => p.VaccinationNeededs).HasConstraintName("vac_rec_fk");
+            entity.HasOne(d => d.MedicalRecord).WithMany(p => p.VaccinationNeededs).HasConstraintName("vac_rec_fk");
         });
-    } }
+    }
+}

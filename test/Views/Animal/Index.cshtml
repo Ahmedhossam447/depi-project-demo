@@ -1,7 +1,14 @@
 ﻿@model test.ModelViews.Animalviewmodel
+@inject UserManager<IdentityUser> usermanager
 @{
+
+
+
     var title = "Animal Adoption Center";
-    var userId = int.Parse(User.FindFirst("ID").Value);
+
+
+
+    var userId = ViewBag.Userid as string;
     var filteroptions = new List<SelectListItem>
     {
         new SelectListItem { Value = "", Text = "All Types" },

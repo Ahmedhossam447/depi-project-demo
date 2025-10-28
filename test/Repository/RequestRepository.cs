@@ -1,6 +1,8 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ServiceStack.Web;
+using System.Globalization;
 using test.Data;
 using test.Interfaces;
 using test.Models;
@@ -9,14 +11,16 @@ namespace test.Repository
 {
     public class RequestRepository : IRequests
     {
+        private readonly UserManager<IdentityUser> _usermanager;
         private readonly DepiContext _context;
 
-        public RequestRepository(DepiContext context)
+        public RequestRepository(DepiContext context,UserManager<IdentityUser> _usermanager)
         {
+            this._usermanager = _usermanager;
             _context = context;
         }
 
-        public List<Animal> AnimalsNeeded(int userid, List<Models.Request> requests)
+        public List<Animal> AnimalsNeeded(string userid, List<Models.Request> requests)
         {
             var animalsidsrequested = requests.Select(r => r.AnimalId).Distinct().ToList();
            var animalsrequested =  _context.Animals
@@ -26,19 +30,19 @@ namespace test.Repository
             return animalsrequested;
         }
 
-        public List<User> RequestGot(int userid, List<Models.Request> requests)
+        public List<IdentityUser> RequestGot(string userid, List<Models.Request> requests)
         {
             var userrequestedids = requests.Select(r => r.Userid).Distinct().ToList();
-            var usersrequested =_context.Users
+            var usersrequested =_usermanager.Users
                 .Where(u => userrequestedids.Contains(u.Id))
                 .ToList();
             return usersrequested;
         }
 
-        public List<User> RequestSent(int userid, List<Models.Request> requests)
+        public List<IdentityUser> RequestSent(string userid, List<Models.Request> requests)
         {
             var useridsrequestedto = requests.Select(r => r.Useridreq).Distinct().ToList();
-            var usersrequestedto =  _context.Users
+            var usersrequestedto = _usermanager.Users
                 .Where(u => useridsrequestedto.Contains(u.Id))
                 .ToList();
             return usersrequestedto;

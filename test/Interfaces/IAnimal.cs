@@ -5,7 +5,7 @@ namespace test.Interfaces
 {
     public interface IAnimal
     {
-        public  Animalviewmodel AnimalDisplay(string? filter, int id);
+        public  Animalviewmodel AnimalDisplay(string? filter, string id);
         public Task<bool> AddAnimal(Animal animal);
         public bool savechanges();
     }

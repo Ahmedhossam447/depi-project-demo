@@ -1,33 +1,27 @@
-﻿@model List<test.Models.User>
+﻿@model List<IdentityUser>
 @{
     ViewData["Title"] = "Shelter List";
 }
 
-<div class="container-fluid">
-    <!-- Hero Section -->
-    <div class="users-hero">
-        <div class="container">
-            <div class="users-hero-content">
-                <h1 class="users-title">
-                    <i class="fas fa-users me-3"></i>Shelter Directory
-                </h1>
-                <p class="users-subtitle">
-                    Connect with our network of trusted shelters and rescue organizations
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Users Section -->
+<section class="theme-section">
     <div class="container">
-        <div class="row">
+        <div class="theme-header">
+            <h1 class="theme-title">
+                <i class="fas fa-users"></i> Shelter Directory
+            </h1>
+            <p class="theme-subtitle">Connect with trusted shelters and rescue organizations</p>
+        </div>
+
+        <div class="theme-grid">
             @if (Model == null || !Model.Any())
             {
-                <div class="col-12">
-                    <div class="empty-state">
-                        <i class="fas fa-users paw-icon"></i>
-                        <h4>No Shelters Found</h4>
-                        <p class="mb-0">No shelter organizations are currently registered in our system.</p>
+                <div class="theme-empty-wrap">
+                    <div class="theme-empty">
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="title">No Shelters Found</div>
+                        <div class="msg">No shelter organizations are currently registered in our system.</div>
                     </div>
                 </div>
             }
@@ -35,47 +29,32 @@
             {
                 @foreach (var user in Model)
                 {
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                        <div class="user-card">
-                            <div class="user-header">
-                                <div class="user-avatar">
-                                    <i class="fas fa-building"></i>
-                                </div>
-                                <h5 class="user-name">@user.Username</h5>
-                                <span class="user-role">@user.Role</span>
+                    <div class="theme-card">
+                        <h3 class="theme-card-title">@user.UserName</h3>
+                        <div class="theme-list">
+                            <div class="theme-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>@user.Email</span>
                             </div>
-                            
-                            <div class="user-body">
-                                <div class="user-info-item">
-                                    <div class="info-label">
-                                        <i class="fas fa-envelope me-2"></i>Email
-                                    </div>
-                                    <div class="info-value">@user.Email</div>
-                                </div>
-                                
-                                <div class="user-info-item">
-                                    <div class="info-label">
-                                        <i class="fas fa-phone me-2"></i>Phone
-                                    </div>
-                                    <div class="info-value">@(string.IsNullOrEmpty(user.Phonenumber) ? "Not provided" : user.Phonenumber)</div>
-                                </div>
+                            <div class="theme-item">
+                                <i class="fas fa-phone"></i>
+                                <span>@(string.IsNullOrEmpty(user.PhoneNumber)? "Not provided" : user.PhoneNumber)</span>
                             </div>
-                            <form asp-controller="Shelter" asp-action="ShelterPage" method="post">
-                                <input type="hidden" name="Id" value="@user.Id" />
-                                <input type="hidden" name="Username" value="@user.Username" />
-                                <input type="hidden" name="Email" value="@user.Email" />
-                                <input type="hidden" name="Phonenumber" value="@user.Phonenumber" />
-                            <div class="user-footer">
-                                <button type="submit" class="btn-contact">
-                                    <i class="fas fa-comment me-2"></i>View shelter
-                                </button>
-                            </div>
-                            </form>
                         </div>
+                        <form asp-controller="Shelter" asp-action="ShelterPage">
+                            <input type="hidden" name="Id" value="@user.Id" />
+                            <input type="hidden" name="Username" value="@user" />
+                            <input type="hidden" name="Email" value="@user.Email" />
+                            <input type="hidden" name="Phonenumber" value="@user.PhoneNumber" />
+                            <button type="submit" class="theme-cta">
+                                <i class="fas fa-building"></i>
+                                View Shelter
+                            </button>
+                        </form>
                     </div>
                 }
             }
         </div>
     </div>
-</div>
+</section>
 

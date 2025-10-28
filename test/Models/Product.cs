@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace test.Models;
@@ -12,14 +13,17 @@ public partial class Product
     [Column("productid")]
     public int Productid { get; set; }
 
-    public int? Userid { get; set; }
+    public string? Userid { get; set; }
     [ForeignKey("Userid")]
-    public User? User { get; set; }
+    public IdentityUser? User { get; set; }
 
     [Column("type")]
     [StringLength(50)]
     [Unicode(false)]
     public string? Type { get; set; }
+
+    [Column("quantity")]
+    public int? Quantity { get; set; }
 
     [Column("price")]
     public int? Price { get; set; }
@@ -33,5 +37,8 @@ public partial class Product
     [StringLength(20)]
     [Unicode(false)]
     public string? Photo { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+
 
 }

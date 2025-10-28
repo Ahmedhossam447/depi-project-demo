@@ -22,15 +22,19 @@
         <h1>Welcome Back</h1>
         <p class="subtitle">Login to continue</p>
         <form asp-action="login" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
           <div class="input-group">
             <label asp-for="email">Email</label>
-                        <input type="email" asp-for="email" placeholder="Enter your email" required>
+                        <input type="text" asp-for="email" placeholder="Enter your email" required>
+                        <span asp-validation-for="email" class="text-danger"></span>
           </div>
           <div class="input-group">
             <label asp-for="password">Password</label>
                         <input type="password" asp-for="password" placeholder="Enter your password" required>
+                        <span asp-validation-for="password" class="text-danger"></span>
           </div>
           <button type="submit" class="btn">Login</button>
+
         </form>
         <p class="signup-link">Don’t have an account? <a asp-action="register">Sign up</a></p>
       </div>

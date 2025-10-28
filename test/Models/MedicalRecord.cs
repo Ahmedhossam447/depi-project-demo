@@ -15,6 +15,8 @@ public partial class MedicalRecord
 
     [Column("animalid")]
     public int? Animalid { get; set; }
+    [ForeignKey("Animalid")]
+    public virtual Animal? Animal { get; set; }
 
     [Column("injurys")]
     [StringLength(255)]
@@ -25,11 +27,5 @@ public partial class MedicalRecord
     [StringLength(20)]
     [Unicode(false)]
     public string? Status { get; set; }
-
-    [ForeignKey("Animalid")]
-    [InverseProperty("MedicalRecords")]
-    public virtual Animal? Animal { get; set; }
-
-    [InverseProperty("Medical")]
     public virtual ICollection<VaccinationNeeded> VaccinationNeededs { get; set; } = new List<VaccinationNeeded>();
 }

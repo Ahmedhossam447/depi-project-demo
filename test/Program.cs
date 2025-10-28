@@ -1,27 +1,36 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Helpers;
 using test.Interfaces;
 using test.Repository;
+using test.Services;
 
 
 namespace test
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // --- 1. Add services to the container ---
 
             builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("connection")));
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
+            option.SignIn.RequireConfirmedEmail = true)
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DepiContext>();
+                
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddScoped<test.Services.PhotoServices>();
             builder.Services.AddScoped<IAnimal, AnimalRepository>();
             builder.Services.AddScoped<IAccounts, AccountRepository>();
             builder.Services.AddScoped<IRequests, RequestRepository>();
+            builder.Services.AddScoped<IEmailSender,EmailSenderServcies>();
+            builder.Services.AddScoped<IShelter, ShelterRepository>();
             builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
@@ -36,6 +45,11 @@ namespace test
 
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                // Pass the IServiceProvider to your seeder
+                await RoleServices.SeedRolesAsync(scope.ServiceProvider);
+            }
 
             // --- 2. Configure the HTTP request pipeline (Order is very important here) ---
 
@@ -64,6 +78,7 @@ namespace test
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+
         }
     }
 }

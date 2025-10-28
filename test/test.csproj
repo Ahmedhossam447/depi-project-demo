@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\ValuesController.cs" />
+    <Compile Remove="Helpers\SeedDatabaseHelper.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 
@@ -29,6 +30,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="SendGrid" Version="9.29.3" />
     <PackageReference Include="ServiceStack.Interfaces" Version="8.8.0" />
   </ItemGroup>
 

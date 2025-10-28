@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using test.Data;
-using test.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using test.Data;
+using test.Interfaces;
+using test.Models;
 
 namespace test.Controllers
 {
@@ -16,14 +18,19 @@ namespace test.Controllers
     public class ShelterController : Controller
     {
         private readonly DepiContext _context;
-        public ShelterController(DepiContext context)
+        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly IShelter _ShelterRepository;
+        public ShelterController(DepiContext context,UserManager<IdentityUser> userManager,IShelter shelter )
         {
+            _usermanager = userManager;
             _context = context;
+            _ShelterRepository = shelter;
         }
+        [Authorize (Roles ="Shelter")]
         public async Task<IActionResult> Index()
         {
-            int userid = int.Parse(User.FindFirst("ID")!.Value);
-            var products = await _context.Products.Where(s => s.Userid == userid).ToListAsync();
+            var userid = _usermanager.GetUserId(User);
+            var products =await _ShelterRepository.GetAllProducts(userid);
             return View(products);
         }
         public IActionResult Create()
@@ -35,31 +42,26 @@ namespace test.Controllers
         {
             if (ModelState.IsValid)
             {
-                var useridclaim = User.FindFirst("ID");
-                if (useridclaim != null)
-                {
-                    int userid = int.Parse(useridclaim.Value);
+             
+                    var userid = _usermanager.GetUserId(User);
                     product.Userid = userid;
-                }
-                await _context.Products.AddAsync(product);
-                await _context.SaveChangesAsync();
+               await _ShelterRepository.AddProduct(product);
                 return RedirectToAction("Index");
             }
             return View(product);
         }
         public async Task<IActionResult> userview()
         {
-            var shlters = await _context.Users.Where(s => s.Role == "shelter").ToListAsync();
+            var shlters = await _ShelterRepository.GetAllShelters();
             return View(shlters);
         }
-        [HttpPost]
-   public async Task<IActionResult> Shelterpage([Bind("Id,Username,Email,Phonenumber")] User shelter)
+   public async Task<IActionResult> Shelterpage(IdentityUser shelter)
         {
 
-            var products=await _context.Products.Where(s => s.Userid == shelter.Id).ToListAsync();
+            var products = await _ShelterRepository.GetAllProducts(shelter.Id);
             ViewBag.email = shelter.Email;
-            ViewBag.phonenumber = shelter.Phonenumber;
-            ViewBag.username = shelter.Username;
+            ViewBag.phonenumber = shelter.PhoneNumber;
+            ViewBag.username = shelter.UserName;
             return View(products);
         }
 

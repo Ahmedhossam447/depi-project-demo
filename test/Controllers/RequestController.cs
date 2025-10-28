@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +18,18 @@ namespace test.Controllers
     [Authorize]
     public class RequestController : Controller
     {
+        private readonly UserManager<IdentityUser> _usermanager;
         private readonly IRequests _RequestRepository;
-        public RequestController(IRequests RequestsRepository)
+        public RequestController(IRequests RequestsRepository,UserManager<IdentityUser> userManager)
         {
+            _usermanager = userManager;
             _RequestRepository = RequestsRepository;
         }
         public async Task<IActionResult> Index()
         {
             var requests =await _RequestRepository.LoadRequests();
             var useridclaim = User.FindFirst("ID");
-            var userid = int.Parse(useridclaim.Value);
+            var userid = _usermanager.GetUserId(User);
             var usersrequested = _RequestRepository.RequestGot(userid, requests);
             var animals = _RequestRepository.AnimalsNeeded(userid, requests);
             var users= _RequestRepository.RequestSent(userid, requests);
@@ -42,8 +45,7 @@ namespace test.Controllers
         {
             if (ModelState.IsValid)
             {
-                var useridclaim = User.FindFirst("ID");
-                request.Userid = int.Parse(useridclaim.Value);
+                request.Userid =_usermanager.GetUserId(User);
                 await _RequestRepository.addRequest(request);
                 return RedirectToAction("Index","Animal");
             }

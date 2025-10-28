@@ -13,24 +13,28 @@ using test.Services;
 using test.ModelViews;
 using test.Repository;
 using test.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace test.Controllers
 {
-    [Authorize]
+    [Authorize (Roles ="User")]
     public class AnimalController : Controller
     {
         private readonly IAnimal _animalRepository;
         private readonly PhotoServices _photoServices;
-        public AnimalController(IAnimal animalRepository,PhotoServices photoServices)
+        private readonly UserManager<IdentityUser> _userManager;
+        public AnimalController(IAnimal animalRepository,PhotoServices photoServices,UserManager<IdentityUser> userManager)
         {
             _animalRepository = animalRepository;
             _photoServices = photoServices;
+            _userManager = userManager;
         }
         public  IActionResult Index(String? filter)
         {
             var useridclaim = User.FindFirst("ID");
-            int userid = int.Parse(useridclaim.Value);
+            var userid = _userManager.GetUserId(User);
             var animalviewmodel = _animalRepository.AnimalDisplay(filter,userid);
+            ViewBag.Userid = userid;
 
             return View(animalviewmodel);
         }
@@ -46,8 +50,7 @@ namespace test.Controllers
             if (ModelState.IsValid)
             {
                 var photoresult = await _photoServices.AddPhotoAsync(animalVM.Photo);
-                var useridclaim = User.FindFirst("ID");
-                int userid = int.Parse(useridclaim.Value);
+                var userid= _userManager.GetUserId(User);
                 var animal = new Animal
                 {
                     Name = animalVM.Name,

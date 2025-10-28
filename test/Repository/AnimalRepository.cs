@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Interfaces;
 using test.Models;
@@ -8,9 +9,11 @@ namespace test.Repository
 {
     public class AnimalRepository:IAnimal
     {
+        private readonly UserManager<IdentityUser> _usermanager;
         private readonly DepiContext _context;
 
-        public AnimalRepository(DepiContext context) { 
+        public AnimalRepository(DepiContext context,UserManager<IdentityUser> usermanager) { 
+            _usermanager = usermanager;
         
         _context= context;
         }
@@ -21,7 +24,7 @@ namespace test.Repository
             return savechanges();
         }
 
-        public Animalviewmodel AnimalDisplay(string? filter, int userid)
+        public Animalviewmodel AnimalDisplay(string? filter, string userid)
         {
             IQueryable<Animal> animals;
 

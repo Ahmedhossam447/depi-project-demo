@@ -1,122 +1,151 @@
 ﻿@model List<test.Models.Request>
+@inject UserManager<IdentityUser> userManager
 @{
     var pending = from Request in Model.ToList() where Request.Status == "Pending"&&Request.Useridreq!=ViewBag.userid&&Request.Userid==ViewBag.userid select Request;
     var approved = from Request in Model.ToList() where Request.Status == "approved" && Request.Useridreq != ViewBag.userid && Request.Userid == ViewBag.userid select Request;
     var reqgot = from Request in Model.ToList() where Request.Useridreq==ViewBag.userid&&Request.Status=="Pending" select Request;
-    var users = ViewBag.users as List<test.Models.User>;
+    var users = ViewBag.users as List<IdentityUser>;
     var animals = ViewBag.animals as List<test.Models.Animal>;
-    var usersrequested = ViewBag.usersrequested as List<test.Models.User>;
+    var usersrequested = ViewBag.usersrequested as List<IdentityUser>;
     ViewData["Title"] = "requests";
 
 }
 
 
-<h1 class="text-center request-section-title"><i class="fas fa-inbox me-2"></i>Requests</h1>
-<div class="container">
-    <div class="row">
-        @if (reqgot.Count() <= 0)
-        {
-            <div class="empty-state">
-                <div><i class="fas fa-envelope-open-text"></i></div>
-                <div>You have no requests</div>
-            </div>
-        }
-        else
-        {
-            @foreach(var req in reqgot)
+<section class="theme-section">
+    <div class="container">
+        <div class="theme-header">
+            <h1 class="theme-title"><i class="fas fa-inbox"></i> Requests</h1>
+            <p class="theme-subtitle">Incoming requests for your animals</p>
+        </div>
+
+        <div class="theme-grid">
+            @if (reqgot.Count() <= 0)
             {
-                    var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
-                var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
-                var userreq = usersrequested.FirstOrDefault(u => u.Id == req.Userid&&req.Useridreq==user.Id&&req.AnimalId==animal.AnimalId);
-                
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm request-card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2">
-                                Animal Name: @animal.Name
-                            </h5>
-                            <div class="request-meta"><strong>Age:</strong> @animal.Age</div>
-                            <div class="request-meta"><strong>User requested:</strong> @userreq.Username</div>
-
-                            <div class="d-flex gap-2 request-actions mt-2">
-
-                                <form asp-action="approve" method="post">
-                                    <input type="hidden" name="id" value="@req.Reqid" />
-                                    <button type="submit" class="btn btn-success"><i class="fas fa-check me-1"></i>Approve</button>
-                                </form>
-
-                                <form asp-action="reject" method="post">
-                                    <input type="hidden" name="id" value="@req.Reqid" />
-                                    <button type="submit" class="btn btn-danger"><i class="fas fa-times me-1"></i>Reject</button>
-                                </form>
-
-                            </div>
-                        </div>
+                <div class="theme-empty-wrap">
+                    <div class="theme-empty">
+                        <div class="icon"><i class="fas fa-envelope-open-text"></i></div>
+                        <div class="title">You have no requests</div>
+                        <div class="msg">Requests from adopters will appear here.</div>
                     </div>
                 </div>
             }
-        }
-    </div>
-</div>
-<h1 class="text-center request-section-title section-spacer"><i class="fas fa-hourglass-half me-2"></i>Pending Requests</h1>
-<div class="container">
-    <div class="row">
-        @if (pending.Count() <= 0)
-        {
-            <div class="empty-state">
-                <div><i class="fas fa-clock"></i></div>
-                <div>No pending requests</div>
-            </div>
-        }
-        else
-        {
-            @foreach(var req in pending)
+            else
             {
-                var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
-                var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm request-card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2">
-                                Animal Name: @animal.Name
-                            </h5>
-                            <div class="request-meta"><strong>Age:</strong> @animal.Age</div>
-                            <div class="request-meta"><strong>User owned:</strong> @user.Username</div>
+                @foreach(var req in reqgot)
+                {
+                    var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
+                    var user = userManager.Users.FirstOrDefault(u => u.Id == req.Useridreq);
+                    var userreq = usersrequested.FirstOrDefault(u => u.Id == req.Userid&&req.Useridreq==user.Id&&req.AnimalId==animal.AnimalId);
+                    <div class="theme-card">
+                        <h3 class="theme-card-title">@animal.Name</h3>
+                        <div class="theme-list">
+                            <div class="theme-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Age: @animal.Age</span>
                             </div>
+                            <div class="theme-item">
+                                <i class="fas fa-user"></i>
+                                <span>Requested by: @userreq.UserName</span>
                             </div>
-                </div>
-    }
-    }
-    </div>
-</div>
-<h1 class="text-center request-section-title section-spacer"><i class="fas fa-badge-check me-2"></i>Approved Requests</h1>
-<div class="container">
-    <div class="row">
-        @if (approved.Count() <= 0)
-        {
-            <div class="empty-state">
-                <div><i class="fas fa-check-circle"></i></div>
-                <div>No approved requests</div>
-            </div>
-        }
-        else
-        {
-            @foreach(var req in approved)
-            {
-        var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
-        var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm request-card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2">
-                                Animal Name: @animal.Name
-                            </h5>
-                            <div class="request-meta"><strong>Age:</strong> @animal.Age</div>
-                            <div class="request-meta"><strong>Contact User email:</strong> @user.Email</div>
+                        </div>
+                        <div class="theme-inline-actions">
+                            <form asp-action="approve" method="post">
+                                <input type="hidden" name="id" value="@req.Reqid" />
+                                <button type="submit" class="theme-cta"><i class="fas fa-check"></i> Approve</button>
+                            </form>
+                            <form asp-action="reject" method="post">
+                                <input type="hidden" name="id" value="@req.Reqid" />
+                                <button type="submit" class="theme-cta"><i class="fas fa-times"></i> Reject</button>
+                            </form>
                         </div>
                     </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<section class="theme-section">
+    <div class="container">
+        <div class="theme-header">
+            <h1 class="theme-title"><i class="fas fa-hourglass-half"></i> Pending Requests</h1>
+            <p class="theme-subtitle">Requests you have submitted that are awaiting review</p>
+        </div>
+        <div class="theme-grid">
+            @if (pending.Count() <= 0)
+            {
+                <div class="theme-empty-wrap">
+                    <div class="theme-empty">
+                        <div class="icon"><i class="fas fa-clock"></i></div>
+                        <div class="title">No pending requests</div>
+                        <div class="msg">Your pending requests will appear here.</div>
+                    </div>
                 </div>
-    }
-}
+            }
+            else
+            {
+                @foreach(var req in pending)
+                {
+                    var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
+                    var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
+                    <div class="theme-card">
+                        <h3 class="theme-card-title">@animal.Name</h3>
+                        <div class="theme-list">
+                            <div class="theme-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Age: @animal.Age</span>
+                            </div>
+                            <div class="theme-item">
+                                <i class="fas fa-user"></i>
+                                <span>Owner: @user.UserName</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
 
-
+<section class="theme-section">
+    <div class="container">
+        <div class="theme-header">
+            <h1 class="theme-title"><i class="fas fa-badge-check"></i> Approved Requests</h1>
+            <p class="theme-subtitle">Requests that have been approved</p>
+        </div>
+        <div class="theme-grid">
+            @if (approved.Count() <= 0)
+            {
+                <div class="theme-empty-wrap">
+                    <div class="theme-empty">
+                        <div class="icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="title">No approved requests</div>
+                        <div class="msg">Approved requests will appear here.</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach(var req in approved)
+                {
+                    var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
+                    var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
+                    <div class="theme-card">
+                        <h3 class="theme-card-title">@animal.Name</h3>
+                        <div class="theme-list">
+                            <div class="theme-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Age: @animal.Age</span>
+                            </div>
+                            <div class="theme-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Contact: @user.Email</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
