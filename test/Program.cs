@@ -31,6 +31,9 @@ namespace test
             builder.Services.AddScoped<IRequests, RequestRepository>();
             builder.Services.AddScoped<IEmailSender,EmailSenderServcies>();
             builder.Services.AddScoped<IShelter, ShelterRepository>();
+            builder.Services.Configure<SendGridOptions>(
+    builder.Configuration.GetSection("SendGrid")
+);
             builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {

@@ -4,14 +4,20 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
 using System.Net.Mail;
+using test.Helpers;
 
 namespace test.Services
 {
     public class EmailSenderServcies : IEmailSender
     {
+        private readonly SendGridOptions _options;
+        public EmailSenderServcies(SendGridOptions options)
+        {
+            _options = options;
+        }
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-            var apiKey = "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";
+            var apiKey = _options.ApiKey;
             var client = new SendGridClient(apiKey);
 
             // This email MUST be the one you just verified with SendGrid
