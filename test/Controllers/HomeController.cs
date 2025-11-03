@@ -26,6 +26,13 @@ namespace test.Controllers
             return View();
         }
 
-
+        public IActionResult FAQs()
+        {
+            return View();
+        }
+        public IActionResult contactus()
+        {
+            return View();
+        }
     }
 }

@@ -10,7 +10,7 @@
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             // 2. Define the role names you want to create
-            string[] roleNames = { "Shelter", "User" };
+            string[] roleNames = { "Shelter", "User","Admin" };
 
             // 3. Loop through the role names
             foreach (var roleName in roleNames)

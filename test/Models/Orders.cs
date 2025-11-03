@@ -11,6 +11,8 @@ namespace test.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
         public int ProductId { get; set; }
+        [ForeignKey("ProductId")]
+        public Product? Product { get; set; }
         public int Quantity { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public int OrderStatus { get; set; }

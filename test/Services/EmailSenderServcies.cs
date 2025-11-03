@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -10,14 +11,14 @@ namespace test.Services
 {
     public class EmailSenderServcies : IEmailSender
     {
-        private readonly SendGridOptions _options;
-        public EmailSenderServcies(SendGridOptions options)
+        private readonly IOptions<SendGridOptions> _options;
+        public EmailSenderServcies(IOptions<SendGridOptions> options)
         {
             _options = options;
         }
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-            var apiKey = _options.ApiKey;
+            var apiKey = _options.Value.ApiKey;
             var client = new SendGridClient(apiKey);
 
             // This email MUST be the one you just verified with SendGrid
