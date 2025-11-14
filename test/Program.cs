@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Helpers;
@@ -41,7 +42,13 @@ namespace test
         // 2. Set the login path
         options.LoginPath = "/Account/Login";
     });
-
+            var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+            builder.Services.AddAuthentication().AddGoogle(Services =>
+            {
+                Services.ClientId = googleAuthNSection["ClientId"] ;
+                Services.ClientSecret = googleAuthNSection["ClientSecret"];
+                Services.CallbackPath = "/signin-google";
+            });
 
             // Use AddControllersWithViews for MVC applications that use Views.
             builder.Services.AddControllersWithViews();

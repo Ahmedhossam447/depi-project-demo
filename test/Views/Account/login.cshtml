@@ -33,9 +33,15 @@
                         <input type="password" asp-for="password" placeholder="Enter your password" required>
                         <span asp-validation-for="password" class="text-danger"></span>
           </div>
-          <button type="submit" class="btn">Login</button>
+                    <button type="submit" class="login-box-btn btn">Login</button>
 
         </form>
+        <div>
+            <h4>ـــــــــــــــــــــــــــــــorـــــــــــــــــــــــــــــــ</h4>
+            <form method="post" asp-action="ExternalLogin" asp-route-ReturnUrl="@Model.returnUrl">
+                        <button type="submit" class="btn btn-google" name="Provider" value="@Model.ExternalLogins.FirstOrDefault().Name"><i class="fa-brands fa-google"></i> Login with Google</button>
+            </form>
+        </div>
         <p class="signup-link">Don’t have an account? <a asp-action="register">Sign up</a></p>
       </div>
     </div>

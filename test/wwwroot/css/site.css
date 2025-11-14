@@ -135,6 +135,13 @@ header {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     text-decoration: none;
 }
+.btn-google {
+    background: #032067;
+    color: white;
+    display: inline;
+    width: 62%;
+    transition:none;
+}
 
 /* ===========================================
    HOW ADOPTION WORKS SECTION
@@ -332,7 +339,7 @@ header {
         border-radius: 8px;
     }
 
-    .login-box .btn,
+    .login-box-btn,
     .signup-box .btn {
         width: 100%;
         background: #db98b7;

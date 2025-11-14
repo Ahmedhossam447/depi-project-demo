@@ -22,7 +22,7 @@ namespace test.Services
             var client = new SendGridClient(apiKey);
 
             // This email MUST be the one you just verified with SendGrid
-            var from = new EmailAddress("ahmedhossamahmed22@gmail.com", "ahmed hossam");
+            var from = new EmailAddress("ahmedhossamahmed22@gmail.com", "HappyPaws Haven");
 
             var to = new EmailAddress(toEmail);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
