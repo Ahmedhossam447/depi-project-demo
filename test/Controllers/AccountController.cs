@@ -34,11 +34,10 @@ namespace test.Controllers
             this.signInManager = signInManager;
             this.emailSender = emailSender;
         }
-        public async Task<IActionResult> login(string returnUrl)
+        public async Task<IActionResult> login()
         {
             LoginViewModel loginViewModel = new LoginViewModel
             {
-                returnUrl = returnUrl,
                 ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
 
@@ -184,11 +183,24 @@ namespace test.Controllers
                             Email = email
                         };
                         await userManager.CreateAsync(user);
+                        await userManager.AddToRoleAsync(user, "User");
                     }
-                    await userManager.AddLoginAsync(user, informations.Result);
-                    await signInManager.SignInAsync(user, isPersistent: false);
+                    if (!user.EmailConfirmed)
+                    {
+                        var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { Userid = user.Id, token = confirmationToken }, Request.Scheme);
+                        await emailSender.SendEmailAsync(user.Email, "email confirmation", confirmationLink);
+                        ModelState.AddModelError(string.Empty, "Please confirm your email");
+                        return View("login", model);
+                    }
+                    else
+                    {
+                        await userManager.AddLoginAsync(user, informations.Result);
+                        await signInManager.SignInAsync(user, isPersistent: false);
 
-                    return LocalRedirect(returnUrl);
+                        return LocalRedirect(returnUrl);
+                    }
+
                 }
                 ModelState.AddModelError(string.Empty, "failed getting the email");
                 return View("login", model);
