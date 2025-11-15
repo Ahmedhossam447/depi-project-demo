@@ -1,9 +1,6 @@
 ﻿@using test.ModelViews
 @model LoginViewModel
 
-@{
-    ViewData["Title"] = "Login";
-}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +33,7 @@
                     <button type="submit" class="login-box-btn btn">Login</button>
 
         </form>
+                <a asp-action="ForgetPassword">Forget password?</a>
         <div>
             <h4>ـــــــــــــــــــــــــــــــorـــــــــــــــــــــــــــــــ</h4>
             <form method="post" asp-action="ExternalLogin" asp-route-ReturnUrl="@Model.returnUrl">

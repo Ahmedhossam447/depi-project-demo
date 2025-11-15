@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,13 +51,13 @@ namespace test.Controllers
             {
                 return View(user);
             }
-            var user1 = await userManager.FindByNameAsync(user.email);
+            var user1 = await userManager.FindByEmailAsync(user.email);
             if (user1 != null && !user1.EmailConfirmed && await userManager.CheckPasswordAsync(user1, user.password))
             {
                 ModelState.AddModelError(string.Empty, "email not confirmed yet");
                 return View(user);
             }
-            var result = await signInManager.PasswordSignInAsync(user.email, user.password, true, false);
+            var result = await signInManager.PasswordSignInAsync(user1.UserName, user.password, true, false);
             if (result.Succeeded && User.IsInRole("User"))
             {
                 return RedirectToAction("index", "Animal");
@@ -207,5 +208,74 @@ namespace test.Controllers
 
             }
         }
-    }
+
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPasswordConfirmation(ForgetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user =await userManager.FindByEmailAsync(model.email);
+                if (user == null|| !await userManager.IsEmailConfirmedAsync(user)) {
+                    return View();
+                }
+                else
+                {
+                    var token =await userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetpasswordlink = Url.Action("ResetPassword","Account",new { token =token, email=model.email},Request.Scheme);
+                    await emailSender.SendEmailAsync(model.email,"reset password", resetpasswordlink);
+                    return View();
+                }
+            }
+            return View("ForgetPassword",model);
+        }
+        [HttpGet]
+        public IActionResult ResetPassword(string token,string email)
+        {
+            if(token == null || email == null)
+            {
+                return View("login");
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(model.email);
+                if (user == null)
+                {
+                    return RedirectToAction("ResetPasswordConfirmation", "Account");
+                }
+                else
+                {
+                    var result = await userManager.ResetPasswordAsync(user, model.token, model.password);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ResetPasswordConfirmation", "Account");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View(model);
+                    }
+                }
+            }
+            return View(model);
+        }
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+        }
 }
