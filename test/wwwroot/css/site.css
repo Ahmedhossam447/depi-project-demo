@@ -1158,6 +1158,7 @@ header {
     text-decoration:none;
     box-shadow:0 4px 15px rgba(219,152,183,0.3);
     transition:transform .2s ease, box-shadow .2s ease;
+    margin-top:4%;
 }
 .theme-cta:hover{ color:#fff; text-decoration:none; transform:translateY(-2px); box-shadow:0 8px 25px rgba(219,152,183,0.4); }
 
@@ -1224,8 +1225,22 @@ header {
 }
 .panel-title{ font-weight:700; color:var(--text-strong); margin-bottom:10px; }
 
-.price-pill{ display:inline-flex; align-items:center; gap:6px; background: #2c2c2c; color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; }
-.card-actions{ margin-top:10px; }
+.price-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #db98b7;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .9rem;
+    width: 20%;
+}
+.card-actions{ margin-top:10px;
+               flex-direction:column;
+               align-items:flex-start;
+}
 
 /* Products grid: two columns on desktop */
 .products-grid{ grid-template-columns: repeat(2,1fr);
@@ -1383,4 +1398,107 @@ padding:10%;
 }
 .shelter-grid{
     gap:43px;
+}
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    background: linear-gradient(135deg, #f5d9e5, #f8c6e3);
+    padding: 100px 20px 60px;
+    position: relative;
+}
+
+.payment-box {
+    position: relative; /* To layer the video behind */
+    background: rgba(255, 255, 255, 0.8); /* Transparent background */
+    padding: 35px 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    z-index: 2; /* Makes sure content stays above video */
+}
+
+/* Video styling */
+.payment-container video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%; /* Or you can set it to a smaller width like 70% */
+    height: 110%; /* Minimized height */
+    object-fit: cover; /* Ensures video covers the container */
+    transform: translate(-50%, -50%); /* Centers the video */
+    z-index: 1; /* Places the video behind content */
+}
+
+/* Title and Subtitle */
+.payment-box h1 {
+    color: #2c2c2c;
+    margin-bottom: 10px;
+    font-size: 1.9rem;
+}
+
+.payment-box .subtitle {
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.summary {
+    background: rgba(255, 255, 255, 0.8); /* Translucent background for the summary */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-align: left;
+    font-size: 1rem;
+    color: #333;
+    border: 1px solid #f5c9e1;
+}
+
+/* Adjustments to form field styling */
+.input-group {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+    .input-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #0c0c0c;
+        font-size: 0.95rem;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline: none;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+        .input-group input:focus {
+            border-color: #f8a9ce;
+            background: #fff;
+            box-shadow: 0 0 5px rgba(248, 169, 206, 0.4);
+        }
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+.radio-button-methods{
+    display:grid;
+    grid-template-columns: 0.1fr 1fr;
+}
+.radio-button-methods p{
+    margin-bottom:0;
+    font-family:monospace;
 }

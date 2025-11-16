@@ -51,5 +51,10 @@ namespace test.Repository
             return saved > 0 ? true : false;
 
         }
+        public async Task<Product> GetProductbyId(int id)
+        {
+            var products = await _context.Products.FirstOrDefaultAsync(p=>p.Productid==id);
+            return products;
+        }
     }
 }

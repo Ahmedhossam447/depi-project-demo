@@ -55,10 +55,13 @@ namespace test.Controllers
             var shlters = await _ShelterRepository.GetAllShelters();
             return View(shlters);
         }
-   public async Task<IActionResult> Shelterpage(IdentityUser shelter)
+        [HttpGet]
+  public async Task<IActionResult> Shelterpage(IdentityUser shelter)
         {
 
             var products = await _ShelterRepository.GetAllProducts(shelter.Id);
+            var userid = _usermanager.GetUserId(User);
+            ViewBag.userid = userid;
             ViewBag.email = shelter.Email;
             ViewBag.phonenumber = shelter.PhoneNumber;
             ViewBag.username = shelter.UserName;

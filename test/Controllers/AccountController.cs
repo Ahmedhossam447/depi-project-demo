@@ -35,18 +35,20 @@ namespace test.Controllers
             this.signInManager = signInManager;
             this.emailSender = emailSender;
         }
-        public async Task<IActionResult> login()
+        public async Task<IActionResult> login(string ?ReturnUrl)
         {
             LoginViewModel loginViewModel = new LoginViewModel
             {
+                returnUrl = ReturnUrl,
                 ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
             };
 
             return View(loginViewModel);
         }
         [HttpPost]
-        public async Task<IActionResult> login(LoginViewModel user)
+        public async Task<IActionResult> login(LoginViewModel user,string ?ReturnUrl)
         {
+            ReturnUrl = ReturnUrl ?? Url.Content("~/");
             if (!ModelState.IsValid)
             {
                 return View(user);
@@ -60,11 +62,11 @@ namespace test.Controllers
             var result = await signInManager.PasswordSignInAsync(user1.UserName, user.password, true, false);
             if (result.Succeeded && User.IsInRole("User"))
             {
-                return RedirectToAction("index", "Animal");
+                return LocalRedirect(ReturnUrl);
             }
             else if (result.Succeeded && User.IsInRole("Shelter"))
             {
-                return RedirectToAction("index", "Shelter");
+                return LocalRedirect(ReturnUrl);
             }
             else
             {

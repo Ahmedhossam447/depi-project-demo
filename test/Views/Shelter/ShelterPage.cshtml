@@ -3,6 +3,7 @@
     var username = ViewBag.Username as string;
     var phonenumber = ViewBag.phonenumber as string;
     var email = ViewBag.email as string;
+    var userId = ViewBag.userid as string;
     ViewData["Title"] = "Shelter Page - " + username;
 }
 
@@ -69,9 +70,17 @@
                             <div class="title">@product.Type</div>
                         </div>
                         <div class="product-desc truncate-2">@product.Disc</div>
-                        <div class="card-actions" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-actions" style="display:flex; justify-content:space-between;">
                             <span class="price-pill"><i class="fas fa-dollar-sign"></i>$@product.Price</span>
-                            <a class="theme-cta"><i class="fas fa-box"></i>Buy</a>
+                            <form method="get" asp-action="Create" asp-controller="Order">
+                                <input type="hidden" name="userid" value="@userId" />
+                                    <input type="hidden" name="productid" value="@product.Productid" />
+                                    <input type="hidden" name="productname" value="@product.Type" />
+                                    <input type="hidden" name="price" value="@product.Price" />
+                                    <label class="filter-label">quantity</label>
+                                    <input type="number" name="quantity" class="form-input" min=1 value=1 />
+                                    <button type="submit" class="theme-cta"><i class="fas fa-box"></i>Buy</button>
+                            </form>
                         </div>
                     </div>
                 }

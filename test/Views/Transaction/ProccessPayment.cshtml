@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "payment confirmation";
+    var message=ViewBag.Message as string;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>payment confirmation</title>
+</head>
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="container">
+        <div class="modal-header">
+            <h2>@message</h2>
+            <h3> <a asp-action="userview" asp-controller="Shelter" style="text-decoration:none;color:#db98b7">Return to the shelters page</a></h3>
+        </div>
+    </div>
+</body>
+</html>

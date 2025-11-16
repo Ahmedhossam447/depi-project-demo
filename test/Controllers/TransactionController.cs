@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using test.Data;
 using test.Interfaces;
 using test.Models;
 
@@ -8,32 +9,39 @@ namespace test.Controllers
     public class TransactionController : Controller
     { private readonly ITransaction _transactionRepository;
         private readonly IOrder _orderRepository;
-        public TransactionController(ITransaction transaction, IOrder orderRepository)
+        private readonly DepiContext _context;
+        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext)
         {
             _transactionRepository = transaction;
             _orderRepository = orderRepository;
+            _context = depiContext;
         }
-        public async Task<IActionResult> ProccessPayment(int orderid,PaymentMethods payment)
+        public async Task<IActionResult> ProccessPayment(int orderid,int paymentid)
         {
            var order=await _orderRepository.GetOrderFortransaction(orderid);
+            var payment= _context.PaymentMethods.FirstOrDefault(p => p.PaymentMethodId == paymentid);
             _transactionRepository.beginTransaction();
             try
             {
                 if (order == null)
                 {
-                    return NotFound("Order not found.");
+                    ViewBag.message = "Order not found.";
+                    return View();
                 }
                 if (order.OrderStatus == 1)
                 {
-                    return BadRequest("Order is already paid.");
+                    ViewBag.message = "Order is already paid.";
+                    return View();
                 }
                 if (order.Product == null)
                 {
-                    return NotFound("Product associated with the order not found.");
+                    ViewBag.Message = "Product not found for the order.";
+                    return View();
                 }
                 if (order.Product.Quantity < order.Quantity)
                 {
-                    return BadRequest("Insufficient stock for the product.");
+                    ViewBag.Message = "Insufficient stock for the product.";
+                    return View();
                 }
                 // Simulate payment processing logic here
                 var paymentresult = _transactionRepository.AddTransaction(new Transactions
@@ -45,24 +53,29 @@ namespace test.Controllers
                     Status = "Paid"
 
                 });
+
                 if (paymentresult)
                 {
                     order.OrderStatus = 1;
                     order.Product.Quantity -= order.Quantity;
                     await _transactionRepository.savechangesAsync();
                     _transactionRepository.commitTransaction();
-                    return Ok("Payment processed successfully.");
+                    ViewBag.Message = "Payment processed successfully.";
+                    return View(); 
                 }
+
                 else
                 {
                     _transactionRepository.rollbackTransaction();
-                    return StatusCode(500, "Failed to record the transaction.");
+                    ViewBag.Message = "Payment processing failed.";
+                    return View();
                 }
             }
             catch (DbUpdateConcurrencyException ex)
             {
                 _transactionRepository.rollbackTransaction();
-                return BadRequest("sorry the item just went out of stock");
+                ViewBag.Message = "The item went out of stock while processing the payment";
+                return View();
             }
             catch (Exception ex)
             {

@@ -31,7 +31,6 @@ namespace test.Controllers
         }
         public  IActionResult Index(String? filter)
         {
-            var useridclaim = User.FindFirst("ID");
             var userid = _userManager.GetUserId(User);
             var animalviewmodel = _animalRepository.AnimalDisplay(filter,userid);
             ViewBag.Userid = userid;

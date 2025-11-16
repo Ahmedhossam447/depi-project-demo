@@ -41,7 +41,7 @@
                                 <span>@(string.IsNullOrEmpty(user.PhoneNumber)? "Not provided" : user.PhoneNumber)</span>
                             </div>
                         </div>
-                        <form asp-controller="Shelter" asp-action="ShelterPage">
+                        <form method="get" asp-controller="Shelter" asp-action="ShelterPage">
                             <input type="hidden" name="Id" value="@user.Id" />
                             <input type="hidden" name="Username" value="@user" />
                             <input type="hidden" name="Email" value="@user.Email" />

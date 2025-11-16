@@ -18,7 +18,7 @@
       <div class="login-box">
         <h1>Welcome Back</h1>
         <p class="subtitle">Login to continue</p>
-        <form asp-action="login" method="post">
+                <form asp-action="login" method="post" asp-route-ReturnUrl="@Model.returnUrl">
                     <div asp-validation-summary="All" class="text-danger"></div>
           <div class="input-group">
             <label asp-for="email">Email</label>

@@ -32,6 +32,8 @@ namespace test
             builder.Services.AddScoped<IRequests, RequestRepository>();
             builder.Services.AddScoped<IEmailSender,EmailSenderServcies>();
             builder.Services.AddScoped<IShelter, ShelterRepository>();
+            builder.Services.AddScoped<IOrder, OrderRepository>();
+            builder.Services.AddScoped<ITransaction, TransactionRepository>();
             builder.Services.Configure<SendGridOptions>(
     builder.Configuration.GetSection("SendGrid")
 );

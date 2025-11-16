@@ -7,6 +7,7 @@ namespace test.Interfaces
     public interface IShelter
     {
         public  Task<List<Product>> GetAllProducts(string id);
+        public Task<Product> GetProductbyId(int id);
         public Task<bool> AddProduct(Product product);
         public Task<bool> RemoveProduct(Product product);
         public Task<List<IdentityUser>> GetAllShelters();
