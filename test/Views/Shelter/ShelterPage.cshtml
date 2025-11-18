@@ -72,13 +72,14 @@
                         <div class="product-desc truncate-2">@product.Disc</div>
                         <div class="card-actions" style="display:flex; justify-content:space-between;">
                             <span class="price-pill"><i class="fas fa-dollar-sign"></i>$@product.Price</span>
-                            <form method="get" asp-action="Create" asp-controller="Order">
+                            <form method="post" asp-action="create" asp-controller="Order" id="add-product">
+                                    @Html.AntiForgeryToken()
                                 <input type="hidden" name="userid" value="@userId" />
                                     <input type="hidden" name="productid" value="@product.Productid" />
                                     <input type="hidden" name="productname" value="@product.Type" />
-                                    <input type="hidden" name="price" value="@product.Price" />
+                                    <input type="hidden" name="productPrice" value="@product.Price" />
                                     <label class="filter-label">quantity</label>
-                                    <input type="number" name="quantity" class="form-input" min=1 value=1 />
+                                    <input type="number" name="Quantity" class="form-input" min=1 value=1 />
                                     <button type="submit" class="theme-cta"><i class="fas fa-box"></i>Buy</button>
                             </form>
                         </div>

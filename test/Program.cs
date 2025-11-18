@@ -24,7 +24,16 @@ namespace test
             option.SignIn.RequireConfirmedEmail = true)
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DepiContext>();
-                
+            builder.Services.AddSession(options =>
+            {
+                // You can set a timeout for the session
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            builder.Services.AddHttpContextAccessor();
+
+
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddScoped<test.Services.PhotoServices>();
             builder.Services.AddScoped<IAnimal, AnimalRepository>();
@@ -81,6 +90,7 @@ namespace test
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
 
 
             // This is where you define your application's routes or "endpoints".

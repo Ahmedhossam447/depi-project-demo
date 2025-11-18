@@ -1,25 +1,81 @@
-﻿@{
-    ViewData["Title"] = "payment confirmation";
-    var message=ViewBag.Message as string;
+﻿@using test.ModelViews
+@model ProccessPaymentViewModel
+@{
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>payment confirmation</title>
+    <title>Payment | HappyPaws Haven</title>
 </head>
 <body>
-    <br />
-    <br />
-    <br />
-    <br />
-    <div class="container">
-        <div class="modal-header">
-            <h2>@message</h2>
-            <h3> <a asp-action="userview" asp-controller="Shelter" style="text-decoration:none;color:#db98b7">Return to the shelters page</a></h3>
+    <div class="page-wrapper">
+       <!-- Main Content -->
+        <div class="payment-container">
+
+            <div class="payment-box">
+                <h1>Complete Your Purchase</h1>
+                <p class="subtitle">Secure your payment safely 🐾</p>
+
+                <div class="summary">
+                    @{
+    var itemlist = new List<(string, int)>();
+                    @foreach (var item in Model.orderDetails) {
+                        
+                        var currentitem = itemlist.FirstOrDefault(i => i.Item1 == item.Product.Type);
+                        if (currentitem == default) {
+                            itemlist.Add((item.Product.Type, item.Quantity));
+                        }
+                        else
+                        {
+                           var currentitem2 = (currentitem.Item1, currentitem.Item2 + item.Quantity);
+                                itemlist.Remove(currentitem);
+                                itemlist.Add(currentitem2);
+                            } }
+                        foreach(var entry in itemlist)
+                        {
+                            <p><strong>Item:</strong>@entry.Item1 </p>
+                            <p><strong>Quantity:</strong> @entry.Item2</p>
+                        }
+                        }
+                    <p><strong>Total Amount:</strong> $@Model.totalprice</p>
+                </div>
+
+                <form asp-action="ProccessPayment" method="post" id="payment-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="orderid" value="@Model.orderid" />
+                    <div class="input-group">
+                    <div class="radiobuttons-group" style="color:black;">
+                        <label asp-for="selectedPaymentMethodid">payment method</label>
+                        @if (Model.paymentMethods.Count == 0)
+                            {
+                                <p>No payment methods available.</p>
+                                <div>
+                                <p class="signup-link">add payment method <a asp-action="create" asp-controller="PaymentMethod" style="text-decoration:none;color:#db98b7">add method</a></p>
+                            </div>
+                          }else{
+                        @foreach (var method in Model.paymentMethods)
+                            {   
+
+                                                <div class="radio-button-methods">
+                            <input type="radio" asp-for="selectedPaymentMethodid" value="@method.PaymentMethodId" required />
+                                        <p>  @if(@method.MethodType=="Visa"){<i class="fa-brands fa-cc-visa" ></i>} else{<i class="fa-brands fa-cc-mastercard"></i>}  ****-****-****-@method.last4Digits </p>
+                            </div>
+                            }
+                            }
+                            <a asp-action="create" asp-controller="PaymentMethod" style="text-decoration:none;color:#db98b7">Add Payment Method</a>
+                        </div>
+                        <span asp-validation-for="paymentMethods" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn">Pay Now</button>
+                </form>
+            </div>
         </div>
+
+
     </div>
 </body>
 </html>
+

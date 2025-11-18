@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Interfaces;
 using test.Models;
+using test.ModelViews;
+using test.Repository;
 
 namespace test.Controllers
 {
@@ -10,38 +13,74 @@ namespace test.Controllers
     { private readonly ITransaction _transactionRepository;
         private readonly IOrder _orderRepository;
         private readonly DepiContext _context;
-        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext)
+        private readonly UserManager<IdentityUser> _usermanager;
+
+        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext,UserManager<IdentityUser> userManager)
         {
             _transactionRepository = transaction;
             _orderRepository = orderRepository;
             _context = depiContext;
+            _usermanager = userManager;
         }
-        public async Task<IActionResult> ProccessPayment(int orderid,int paymentid)
+
+        [HttpGet]
+public IActionResult ProccessPayment()
         {
-           var order=await _orderRepository.GetOrderFortransaction(orderid);
-            var payment= _context.PaymentMethods.FirstOrDefault(p => p.PaymentMethodId == paymentid);
+            var userid =_usermanager.GetUserId(User);
+            var paymentmethods = _context.PaymentMethods.Where(p => p.UserId == userid).ToList();
+            var order = _context.Orders.FirstOrDefault(o=>o.UserId==userid && o.OrderStatus==0);
+            var orderdetails = new List<OrderDetails>();
+            orderdetails = _context.OrderDetails
+                .Where(od => od.OrderId == order.OrderId)
+                .Include(od => od.Product)
+                .ToList();
+            var model = new ProccessPaymentViewModel
+            {
+                paymentMethods = paymentmethods,
+                orderid= order.OrderId,
+                totalprice= order.TotalPrice,
+                orderDetails = orderdetails
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ProccessPayment(ProccessPaymentViewModel model)
+        {
+           var order=await _orderRepository.GetOrderFortransaction(model.orderid);
+            var payment= _context.PaymentMethods.FirstOrDefault(p => p.PaymentMethodId == model.selectedPaymentMethodid);
+            var orderdetails = new List<OrderDetails>();
+            orderdetails = _context.OrderDetails
+                .Where(od => od.OrderId == order.OrderId)
+                .Include(od => od.Product)
+                .ToList();
             _transactionRepository.beginTransaction();
             try
             {
                 if (order == null)
                 {
-                    ViewBag.message = "Order not found.";
-                    return View();
+                    var Message = "Order not found.";
+                    return Json(new { status = "failed", message = Message });
                 }
                 if (order.OrderStatus == 1)
                 {
-                    ViewBag.message = "Order is already paid.";
-                    return View();
+                    var Message = "Order is already paid.";
+                    return Json(new { status = "failed", message = Message });
                 }
-                if (order.Product == null)
+                foreach (var item in orderdetails)
                 {
-                    ViewBag.Message = "Product not found for the order.";
-                    return View();
-                }
-                if (order.Product.Quantity < order.Quantity)
-                {
-                    ViewBag.Message = "Insufficient stock for the product.";
-                    return View();
+                    
+                    if (item.Product == null)
+                    {
+                        _transactionRepository.rollbackTransaction();
+                        var Message = $"Product with ID {item.productId} not found.";
+                        return Json(new { status = "failed", message = Message });
+                    }
+                    if (item.Product.Quantity < item.Quantity)
+                    {
+                        _transactionRepository.rollbackTransaction();
+                        var Message = $"Insufficient stock for product {item.Product.Type}. Available stock: {item.Product.Quantity}, Requested quantity: {item.Quantity}.";
+                        return Json(new { status = "failed", message = Message });
+                    }
                 }
                 // Simulate payment processing logic here
                 var paymentresult = _transactionRepository.AddTransaction(new Transactions
@@ -57,30 +96,34 @@ namespace test.Controllers
                 if (paymentresult)
                 {
                     order.OrderStatus = 1;
-                    order.Product.Quantity -= order.Quantity;
+                    foreach(var item in orderdetails)
+                    {
+                        item.Product.Quantity -= item.Quantity;
+                    }
+
                     await _transactionRepository.savechangesAsync();
                     _transactionRepository.commitTransaction();
-                    ViewBag.Message = "Payment processed successfully.";
-                    return View(); 
+                    var Message = "Payment processed successfully.";
+                    return Json(new { status = "succeeded", message = Message });
                 }
 
                 else
                 {
                     _transactionRepository.rollbackTransaction();
-                    ViewBag.Message = "Payment processing failed.";
-                    return View();
+                    var Message = "Payment processing failed.";
+                    return Json(new {status="failed",message=Message});
                 }
             }
             catch (DbUpdateConcurrencyException ex)
             {
                 _transactionRepository.rollbackTransaction();
-                ViewBag.Message = "The item went out of stock while processing the payment";
-                return View();
+                var Message = "The item went out of stock while processing the payment";
+                return Json(new { status = "failed", message = Message });
             }
             catch (Exception ex)
             {
                 _transactionRepository.rollbackTransaction();
-                return StatusCode(500, "An error occurred while processing the payment: " + ex.Message);
+                return Json(new { status = "failed", message = ex.Message });
             }
             
 

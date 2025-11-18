@@ -9,7 +9,6 @@ namespace test.ModelViews
         public string? UserId { get; set; }
         public string? productName { get; set; }
         public int productPrice { get; set; }
-        public List<PaymentMethods>? paymentMethods { get; set; }
-        public int selectedPaymentMethodid { get; set; }
+
     }
 }

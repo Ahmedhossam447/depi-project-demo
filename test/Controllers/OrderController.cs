@@ -25,23 +25,9 @@ namespace test.Controllers
             _usermanager = userManager;
             _context = depiContext;
         }
-        [HttpGet]
-        public IActionResult create(string userid ,int productid ,int quantity ,string productname ,int price)
-        {
-            var paymentmethods = _context.PaymentMethods.Where(p=>p.UserId == userid).ToList();
-            CreateOrderViewModel model = new CreateOrderViewModel
-            {
-                ProductId = productid,
-                Quantity = quantity,
-                UserId = userid,
-                productName = productname,
-                productPrice = price,
-                paymentMethods = paymentmethods
-            };
-            return View(model);
-        }
         [HttpPost]
-        public async Task<IActionResult> create(CreateOrderViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> create([FromForm] CreateOrderViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -49,28 +35,59 @@ namespace test.Controllers
                 var product = await _shelterRepository.GetProductbyId(model.ProductId);
                 if (user == null || product == null)
                 {
-                    return NotFound();
+                    return Json(new { Message = "error" });
                 }
-                var order = new Orders
+                var orderExists = await _context.Orders
+                    .FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderStatus == 0);
+                if (orderExists == null)
                 {
-                    UserId = user.Id,
-                    ProductId = product.Productid,
+                     orderExists = new Orders
+                    {
+                        UserId = user.Id,
+                        OrderDate = DateTime.Now,
+                        OrderStatus = 0
+                    };
+                    await _context.Orders.AddAsync(orderExists);
+                    await _context.SaveChangesAsync();
+                }
+                var orderdetails = new OrderDetails
+                {
+                    OrderId = orderExists.OrderId,
+                    productId = product.Productid,
                     Quantity = model.Quantity,
-                    TotalPrice = (model.Quantity * (int)product.Price),
-                    OrderDate = DateTime.Now,
-                    OrderStatus = 0
+                    TotalPrice = model.Quantity * (int)product.Price
                 };
-                var result = _orderRepository.AddOrder(order);
-                if (result)
-                {
-                    return RedirectToAction("ProccessPayment", "Transaction", new {orderid=order.OrderId,paymentid=model.selectedPaymentMethodid});
-                }
+                _context.OrderDetails.Add(orderdetails);
+                await _context.SaveChangesAsync();
+                var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o=>o.Quantity);
+                HttpContext.Session.SetInt32("CartCount", cartcount);
+                return Json(new { Message = "success", CartCount=cartcount });
             }
-            else
+            return Json(new { Message = "error" });
+
+            
+        }
+        public async Task<IActionResult> orderdetails()
+        {
+            var userid = _usermanager.GetUserId(User);
+            if (string.IsNullOrEmpty(userid))
             {
-                return View(model);
+                return Unauthorized();
             }
-            return NotFound();
+            var orders = _context.Orders
+                .Where(o => o.UserId == userid && o.OrderStatus == 0)
+                .FirstOrDefault();
+            if (orders == null)
+            {
+                return PartialView("_CartDetailsPartial", new List<OrderDetails>());
+            }
+            var orderdetails = _context.OrderDetails
+                .Where(od => od.OrderId == orders.OrderId)
+                .Include(od => od.Product)
+                .ToList();
+            orders.TotalPrice = orderdetails.Sum(od => od.TotalPrice);
+            await _context.SaveChangesAsync();
+            return PartialView("_CartDetailsPartial", orderdetails);
         }
     }
 }

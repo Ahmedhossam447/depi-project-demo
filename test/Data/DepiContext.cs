@@ -30,6 +30,8 @@ public partial class DepiContext : IdentityDbContext<IdentityUser>
 
     public virtual DbSet<Request> Requests { get; set; }
 
+    public virtual DbSet<OrderDetails> OrderDetails { get; set; }
+
 
     public virtual DbSet<VaccinationNeeded> VaccinationNeededs { get; set; }
 

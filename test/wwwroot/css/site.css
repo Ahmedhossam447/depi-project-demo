@@ -1502,3 +1502,369 @@ padding:10%;
     margin-bottom:0;
     font-family:monospace;
 }
+
+/* ===========================================
+   FLOATING CART BUTTON
+   =========================================== */
+.floating-cart-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2));
+    border: none;
+    box-shadow: 0 8px 24px rgba(219, 152, 183, 0.4);
+    cursor: pointer;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.floating-cart-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(219, 152, 183, 0.5);
+}
+
+.floating-cart-button:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ff4444;
+    color: #fff;
+    border-radius: 50%;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 2px solid #fff;
+    animation: pulse 2s infinite;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.cart-badge:empty,
+.cart-badge[data-count="0"] {
+    display: none;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ===========================================
+   CART MODAL STYLES
+   =========================================== */
+/* The dark overlay that covers the page. Hidden by default. */
+#cart-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#cart-overlay.show {
+    opacity: 1;
+}
+
+/* The modal window itself. Hidden by default. */
+#cart-modal-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 90%;
+    max-width: 600px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 85vh;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+#cart-modal-container.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Header styles */
+#cart-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2));
+    color: #fff;
+}
+
+#cart-modal-header h5 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+#cart-close-button {
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border: 0;
+    cursor: pointer;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#cart-close-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Body (where the partial view goes) */
+#cart-modal-body {
+    padding: 1.5rem;
+    max-height: calc(85vh - 180px);
+    overflow-y: auto;
+    background: #fafafa;
+}
+
+#cart-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#cart-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#cart-modal-body::-webkit-scrollbar-thumb {
+    background: var(--brand-rose);
+    border-radius: 10px;
+}
+
+#cart-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-rose-2);
+}
+
+/* Footer styles */
+#cart-modal-footer {
+    padding: 1.5rem;
+    border-top: 2px solid #f0f0f0;
+    text-align: right;
+    background: #fff;
+}
+
+/* Simple button styles (since we're not using Bootstrap) */
+.button {
+    display: inline-block;
+    font-weight: 600;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border: 2px solid #ced4da;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: #212529;
+}
+
+.button-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--brand-rose), var(--brand-rose-2));
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(219, 152, 183, 0.3);
+}
+
+.button-primary:hover {
+    background: linear-gradient(135deg, var(--brand-rose-2), var(--brand-rose));
+    box-shadow: 0 6px 20px rgba(219, 152, 183, 0.4);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .floating-cart-button {
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.25rem;
+    }
+
+    #cart-modal-container {
+        width: 95%;
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+
+    #cart-modal-header {
+        padding: 1rem;
+    }
+
+    #cart-modal-header h5 {
+        font-size: 1.25rem;
+    }
+
+    #cart-modal-body {
+        padding: 1rem;
+        max-height: calc(90vh - 160px);
+    }
+
+    #cart-modal-footer {
+        padding: 1rem;
+    }
+}
+
+/* ===========================================
+   TOAST NOTIFICATION STYLES
+   =========================================== */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    display: none;
+    animation: slideInRight 0.3s ease-out;
+    border-left: 4px solid;
+}
+
+.toast-notification.show {
+    display: block;
+}
+
+.toast-notification.success {
+    border-left-color: #28a745;
+}
+
+.toast-notification.error {
+    border-left-color: #dc3545;
+}
+
+.toast-notification.info {
+    border-left-color: #007bff;
+}
+
+.toast-content {
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.toast-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #000;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.toast-notification.hiding {
+    animation: slideOutRight 0.3s ease-out forwards;
+}
+
+@media (max-width: 768px) {
+    .toast-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+}

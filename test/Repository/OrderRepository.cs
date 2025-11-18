@@ -43,7 +43,7 @@ namespace test.Repository
         }
         public async Task<Orders> GetOrderFortransaction(int orderid)
         {
-            var order = await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o => o.OrderId == orderid);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderid);
             return order;
         }
     }

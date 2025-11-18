@@ -60,10 +60,37 @@
         </nav>
     </header>
     
+    <!-- Floating Cart Button -->
+    @if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
+    {
+
+        <button id="open-cart-button" class="floating-cart-button" aria-label="Open shopping cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count" class="cart-badge">@await Component.InvokeAsync("CartWidget")</span>
+        </button>
+    }
+
     <div class="main-content">
         <main role="main">
             @RenderBody()
         </main>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-overlay"></div>
+    <div id="cart-modal-container">
+        <div id="cart-modal-header">
+            <h5>Your Shopping Cart</h5>
+            <button id="cart-close-button">&times;</button>
+        </div>
+        
+        <div id="cart-modal-body">
+            <p>Loading cart...</p>
+        </div>
+        
+        <div id="cart-modal-footer">
+            <a asp-action="ProccessPayment" asp-controller="Transaction" class="button button-primary">Go to Checkout</a>
+        </div>
     </div>
 
     <!-- Footer -->

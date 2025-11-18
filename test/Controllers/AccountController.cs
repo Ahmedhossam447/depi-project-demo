@@ -49,6 +49,7 @@ namespace test.Controllers
         public async Task<IActionResult> login(LoginViewModel user,string ?ReturnUrl)
         {
             ReturnUrl = ReturnUrl ?? Url.Content("~/");
+            user.ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (!ModelState.IsValid)
             {
                 return View(user);
