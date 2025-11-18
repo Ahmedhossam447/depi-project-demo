@@ -104,6 +104,7 @@ public IActionResult ProccessPayment()
                     await _transactionRepository.savechangesAsync();
                     _transactionRepository.commitTransaction();
                     var Message = "Payment processed successfully.";
+                    HttpContext.Session.SetInt32("CartCount", 0);
                     return Json(new { status = "succeeded", message = Message });
                 }
 

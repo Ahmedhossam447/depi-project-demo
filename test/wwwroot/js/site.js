@@ -241,6 +241,12 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === "succeeded" || data.status === "success") {
+                    // Reset cart count to 0
+                    const cartCountEl = document.getElementById("cart-count");
+                    if (cartCountEl) {
+                        cartCountEl.innerText = "0";
+                        cartCountEl.setAttribute("data-count", "0");
+                    }
                     showToast(data.message || "Payment processed successfully!", "success");
                     // Redirect to UserView after a short delay
                     setTimeout(() => {
