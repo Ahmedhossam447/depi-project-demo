@@ -23,6 +23,10 @@ else
                     <td>@item.Quantity</td>
                     <td class_exists="text-right">$@(item.TotalPrice/item.Quantity)</td>
                     <td class_exists="text-right">$@item.TotalPrice</td>
+                    <td><form method="post" asp-action="remove" asp-controller="Order" id="remove-product">
+                        <input type="hidden" name="orderDetailsId" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form></td>
                 </tr>
             }
         </tbody>

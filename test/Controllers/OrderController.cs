@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ServiceStack;
 using test.Data;
 using test.Interfaces;
 using test.Models;
@@ -88,6 +89,23 @@ namespace test.Controllers
             orders.TotalPrice = orderdetails.Sum(od => od.TotalPrice);
             await _context.SaveChangesAsync();
             return PartialView("_CartDetailsPartial", orderdetails);
+        }
+        [HttpPost]
+        public async Task<IActionResult> remove(int orderDetailsId)
+        {
+            var orderdetails = await _context.OrderDetails.FindAsync(orderDetailsId);
+            if (orderdetails == null)
+            {
+                return Json(new { Message = "error" });
+            }
+            _context.OrderDetails.Remove(orderdetails);
+            await _context.SaveChangesAsync();
+            var userid = _usermanager.GetUserId(User);
+            var order = _context.Orders
+                .FirstOrDefault(o => o.UserId == userid && o.OrderStatus == 0);
+            var cartcount = _context.OrderDetails.Where(o => o.OrderId == order.OrderId).Sum(o => o.Quantity);
+            HttpContext.Session.SetInt32("CartCount", cartcount);
+            return Json(new { Message = "success", CartCount = cartcount });
         }
     }
 }
