@@ -48,6 +48,12 @@ public IActionResult ProccessPayment()
         {
            var order=await _orderRepository.GetOrderFortransaction(model.orderid);
             var payment= _context.PaymentMethods.FirstOrDefault(p => p.PaymentMethodId == model.selectedPaymentMethodid);
+            
+            if (payment == null)
+            {
+                return Json(new { status = "failed", message = "Please select a valid payment method." });
+            }
+
             var orderdetails = new List<OrderDetails>();
             orderdetails = _context.OrderDetails
                 .Where(od => od.OrderId == order.OrderId)

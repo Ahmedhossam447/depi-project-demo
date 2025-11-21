@@ -328,3 +328,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// Payment Button Validation
+document.addEventListener('DOMContentLoaded', function () {
+    const paymentRadios = document.querySelectorAll('input[name="selectedPaymentMethodid"]');
+    const submitBtn = document.getElementById('submit-payment-btn');
+
+    function updateSubmitButton() {
+        let isChecked = false;
+        paymentRadios.forEach(radio => {
+            if (radio.checked) {
+                isChecked = true;
+            }
+        });
+
+        if (submitBtn) {
+            submitBtn.disabled = !isChecked;
+        }
+    }
+
+    if (paymentRadios.length > 0) {
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', updateSubmitButton);
+        });
+
+        // Run on load in case of browser auto-fill or back navigation
+        updateSubmitButton();
+    }
+});
