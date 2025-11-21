@@ -20,10 +20,12 @@ namespace test.Controllers
     {
         private readonly UserManager<IdentityUser> _usermanager;
         private readonly IRequests _RequestRepository;
-        public RequestController(IRequests RequestsRepository,UserManager<IdentityUser> userManager)
+        private readonly IAnimal _animalRepository;
+        public RequestController(IRequests RequestsRepository,UserManager<IdentityUser> userManager, IAnimal animalRepository)
         {
             _usermanager = userManager;
             _RequestRepository = RequestsRepository;
+            _animalRepository = animalRepository;
         }
         public async Task<IActionResult> Index()
         {
@@ -74,6 +76,21 @@ namespace test.Controllers
             if (request != null)
             {
                 await _RequestRepository.DeleteRequest(request);
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteAdoption(int id)
+        {
+            var request = await _RequestRepository.GetRequestById(id);
+            if (request != null)
+            {
+                var animal = await _animalRepository.GetByIdAsync(request.AnimalId);
+                if (animal != null)
+                {
+                    await _animalRepository.DeleteAnimal(animal);
+                }
             }
             return RedirectToAction("Index");
         }
