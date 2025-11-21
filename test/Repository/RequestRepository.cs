@@ -6,6 +6,7 @@ using System.Globalization;
 using test.Data;
 using test.Interfaces;
 using test.Models;
+using Request = test.Models.Request;
 
 namespace test.Repository
 {
@@ -80,6 +81,16 @@ namespace test.Repository
             return savechanges();
   
 
+        }
+        public async Task<Request> GetRequestById(int id)
+        {
+            return await _context.Requests.FindAsync(id);
+        }
+
+        public async Task<bool> DeleteRequest(Request request)
+        {
+            _context.Requests.Remove(request);
+            return savechanges();
         }
         public bool savechanges()
         {

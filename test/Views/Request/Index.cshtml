@@ -1,9 +1,13 @@
-﻿@model List<test.Models.Request>
+﻿
+
+
+@model List<test.Models.Request>
 @inject UserManager<IdentityUser> userManager
 @{
     var pending = from Request in Model.ToList() where Request.Status == "Pending"&&Request.Useridreq!=ViewBag.userid&&Request.Userid==ViewBag.userid select Request;
     var approved = from Request in Model.ToList() where Request.Status == "approved" && Request.Useridreq != ViewBag.userid && Request.Userid == ViewBag.userid select Request;
     var reqgot = from Request in Model.ToList() where Request.Useridreq==ViewBag.userid&&Request.Status=="Pending" select Request;
+    var approvedIncoming = from Request in Model.ToList() where Request.Status == "approved" && Request.Useridreq == ViewBag.userid select Request;
     var users = ViewBag.users as List<IdentityUser>;
     var animals = ViewBag.animals as List<test.Models.Animal>;
     var usersrequested = ViewBag.usersrequested as List<IdentityUser>;
@@ -11,141 +15,285 @@
 
 }
 
-
-<section class="theme-section">
-    <div class="container">
-        <div class="theme-header">
-            <h1 class="theme-title"><i class="fas fa-inbox"></i> Requests</h1>
-            <p class="theme-subtitle">Incoming requests for your animals</p>
+<div class="container py-5 mt-5 pt-5">
+    <!-- Section: Incoming Requests -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark"><i class="fas fa-inbox text-pink me-2"></i>Incoming Requests</h2>
+            <p class="text-muted">Requests from others to adopt your animals</p>
         </div>
 
-        <div class="theme-grid">
-            @if (reqgot.Count() <= 0)
-            {
-                <div class="theme-empty-wrap">
-                    <div class="theme-empty">
-                        <div class="icon"><i class="fas fa-envelope-open-text"></i></div>
-                        <div class="title">You have no requests</div>
-                        <div class="msg">Requests from adopters will appear here.</div>
-                    </div>
+        @if (reqgot.Count() <= 0)
+        {
+            <div class="text-center py-5 bg-light rounded-3">
+                <div class="mb-3">
+                    <i class="fas fa-envelope-open-text fa-3x text-muted opacity-50"></i>
                 </div>
-            }
-            else
-            {
+                <h5 class="text-muted">You have no incoming requests</h5>
+                <p class="small text-muted mb-0">Requests from adopters will appear here.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
                 @foreach(var req in reqgot)
                 {
                     var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
                     var user = userManager.Users.FirstOrDefault(u => u.Id == req.Useridreq);
                     var userreq = usersrequested.FirstOrDefault(u => u.Id == req.Userid&&req.Useridreq==user.Id&&req.AnimalId==animal.AnimalId);
-                    <div class="theme-card">
-                        <h3 class="theme-card-title">@animal.Name</h3>
-                        <div class="theme-list">
-                            <div class="theme-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Age: @animal.Age</span>
+                    
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title fw-bold mb-0">@animal.Name</h5>
+                                    <span class="badge bg-pink-subtle text-pink rounded-pill">Action Needed</span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-calendar-alt me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Age: @animal.Age</span>
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-user me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Requested by: <strong>@userreq.UserName</strong></span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <form asp-action="approve" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="id" value="@req.Reqid" />
+                                        <button type="submit" class="btn btn-pink w-100 rounded-pill btn-sm fw-bold">
+                                            <i class="fas fa-check me-1"></i> Approve
+                                        </button>
+                                    </form>
+                                    <form asp-action="reject" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="id" value="@req.Reqid" />
+                                        <button type="submit" class="btn btn-outline-pink w-100 rounded-pill btn-sm fw-bold">
+                                            <i class="fas fa-times me-1"></i> Reject
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="theme-item">
-                                <i class="fas fa-user"></i>
-                                <span>Requested by: @userreq.UserName</span>
-                            </div>
-                        </div>
-                        <div class="theme-inline-actions">
-                            <form asp-action="approve" method="post">
-                                <input type="hidden" name="id" value="@req.Reqid" />
-                                <button type="submit" class="theme-cta"><i class="fas fa-check"></i> Approve</button>
-                            </form>
-                            <form asp-action="reject" method="post">
-                                <input type="hidden" name="id" value="@req.Reqid" />
-                                <button type="submit" class="theme-cta"><i class="fas fa-times"></i> Reject</button>
-                            </form>
                         </div>
                     </div>
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
-</section>
 
-<section class="theme-section">
-    <div class="container">
-        <div class="theme-header">
-            <h1 class="theme-title"><i class="fas fa-hourglass-half"></i> Pending Requests</h1>
-            <p class="theme-subtitle">Requests you have submitted that are awaiting review</p>
+    <hr class="my-5 opacity-25">
+
+    <!-- Section: Accepted Requests (My Animals) -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark"><i class="fas fa-handshake text-pink me-2"></i>Accepted Requests (My Animals)</h2>
+            <p class="text-muted">Requests you have approved. Finalize the adoption here.</p>
         </div>
-        <div class="theme-grid">
-            @if (pending.Count() <= 0)
-            {
-                <div class="theme-empty-wrap">
-                    <div class="theme-empty">
-                        <div class="icon"><i class="fas fa-clock"></i></div>
-                        <div class="title">No pending requests</div>
-                        <div class="msg">Your pending requests will appear here.</div>
-                    </div>
+
+        @if (approvedIncoming.Count() <= 0)
+        {
+            <div class="text-center py-5 bg-light rounded-3">
+                <div class="mb-3">
+                    <i class="fas fa-clipboard-list fa-3x text-muted opacity-50"></i>
                 </div>
-            }
-            else
-            {
+                <h5 class="text-muted">No accepted requests</h5>
+                <p class="small text-muted mb-0">Requests you approve will appear here.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach(var req in approvedIncoming)
+                {
+                    var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
+                    var userreq = usersrequested.FirstOrDefault(u => u.Id == req.Userid);
+                    
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm border-start border-5 border-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title fw-bold mb-0">@animal.Name</h5>
+                                    <span class="badge bg-success text-white rounded-pill">Ready for Pickup</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-calendar-alt me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Age: @animal.Age</span>
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-user me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Adopter: <strong>@userreq.UserName</strong></span>
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-envelope me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Email: <a href="mailto:@userreq.Email" class="text-decoration-none text-pink">@userreq.Email</a></span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(userreq.PhoneNumber))
+                                    {
+                                        <div class="d-flex align-items-center text-muted">
+                                            <i class="fas fa-phone me-2 text-pink" style="width: 20px;"></i>
+                                            <span>Phone: <a href="tel:@userreq.PhoneNumber" class="text-decoration-none text-pink">@userreq.PhoneNumber</a></span>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <div class="alert alert-success py-2 px-3 mb-3 small">
+                                    <i class="fas fa-check-circle me-1"></i> Adoption approved! Coordinate pickup with the adopter.
+                                </div>
+
+                                <div>
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="id" value="@req.Reqid" />
+                                        <button type="submit" class="btn btn-outline-success w-100 rounded-pill btn-sm fw-bold" title="Finalize adoption and remove from list">
+                                            <i class="fas fa-check-double me-1"></i> Finalize Adoption
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <hr class="my-5 opacity-25">
+
+    <!-- Section: Pending Requests -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark"><i class="fas fa-hourglass-half text-pink me-2"></i>Pending Requests</h2>
+            <p class="text-muted">Requests you have sent that are awaiting approval</p>
+        </div>
+
+        @if (pending.Count() <= 0)
+        {
+            <div class="text-center py-5 bg-light rounded-3">
+                <div class="mb-3">
+                    <i class="fas fa-clock fa-3x text-muted opacity-50"></i>
+                </div>
+                <h5 class="text-muted">No pending requests</h5>
+                <p class="small text-muted mb-0">Your pending requests will appear here.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
                 @foreach(var req in pending)
                 {
                     var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
                     var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
-                    <div class="theme-card">
-                        <h3 class="theme-card-title">@animal.Name</h3>
-                        <div class="theme-list">
-                            <div class="theme-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Age: @animal.Age</span>
-                            </div>
-                            <div class="theme-item">
-                                <i class="fas fa-user"></i>
-                                <span>Owner: @user.UserName</span>
+                    
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title fw-bold mb-0">@animal.Name</h5>
+                                    <span class="badge bg-secondary text-white rounded-pill">Pending</span>
+                                </div>
+
+                                <div class="mb-0">
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-calendar-alt me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Age: @animal.Age</span>
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-user me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Owner: @user.UserName</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="id" value="@req.Reqid" />
+                                        <button type="submit" class="btn btn-outline-danger w-100 rounded-pill btn-sm fw-bold">
+                                            <i class="fas fa-trash-alt me-1"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
-</section>
 
-<section class="theme-section">
-    <div class="container">
-        <div class="theme-header">
-            <h1 class="theme-title"><i class="fas fa-badge-check"></i> Approved Requests</h1>
-            <p class="theme-subtitle">Requests that have been approved</p>
+    <hr class="my-5 opacity-25">
+
+    <!-- Section: Approved Requests -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark"><i class="fas fa-check-circle text-pink me-2"></i>Approved Requests</h2>
+            <p class="text-muted">Congratulations! These requests have been approved</p>
         </div>
-        <div class="theme-grid">
-            @if (approved.Count() <= 0)
-            {
-                <div class="theme-empty-wrap">
-                    <div class="theme-empty">
-                        <div class="icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="title">No approved requests</div>
-                        <div class="msg">Approved requests will appear here.</div>
-                    </div>
+
+        @if (approved.Count() <= 0)
+        {
+            <div class="text-center py-5 bg-light rounded-3">
+                <div class="mb-3">
+                    <i class="fas fa-clipboard-check fa-3x text-muted opacity-50"></i>
                 </div>
-            }
-            else
-            {
+                <h5 class="text-muted">No approved requests</h5>
+                <p class="small text-muted mb-0">Approved requests will appear here.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
                 @foreach(var req in approved)
                 {
                     var animal = animals.FirstOrDefault(a => a.AnimalId == req.AnimalId);
                     var user = users.FirstOrDefault(u => u.Id == req.Useridreq);
-                    <div class="theme-card">
-                        <h3 class="theme-card-title">@animal.Name</h3>
-                        <div class="theme-list">
-                            <div class="theme-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Age: @animal.Age</span>
-                            </div>
-                            <div class="theme-item">
-                                <i class="fas fa-envelope"></i>
-                                <span>Contact: @user.Email</span>
+                    
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm border-start border-5 border-pink">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title fw-bold mb-0">@animal.Name</h5>
+                                    <span class="badge bg-pink text-white rounded-pill">Approved</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-calendar-alt me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Age: @animal.Age</span>
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-envelope me-2 text-pink" style="width: 20px;"></i>
+                                        <span>Email: <a href="mailto:@user.Email" class="text-decoration-none text-pink">@user.Email</a></span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(user.PhoneNumber))
+                                    {
+                                        <div class="d-flex align-items-center text-muted">
+                                            <i class="fas fa-phone me-2 text-pink" style="width: 20px;"></i>
+                                            <span>Phone: <a href="tel:@user.PhoneNumber" class="text-decoration-none text-pink">@user.PhoneNumber</a></span>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <div class="alert alert-pink py-2 px-3 mb-3 small">
+                                    <i class="fas fa-info-circle me-1"></i> Please contact the owner to arrange pickup.
+                                </div>
+
+                                <div>
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="id" value="@req.Reqid" />
+                                        <button type="submit" class="btn btn-outline-success w-100 rounded-pill btn-sm fw-bold" title="Mark adoption as complete">
+                                            <i class="fas fa-check-circle me-1"></i> Adoption Complete
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
-</section>
+</div>
+
+

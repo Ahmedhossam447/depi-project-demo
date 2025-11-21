@@ -13,6 +13,8 @@ namespace test.Interfaces
         public Task<bool> addRequest(Request request);
         public Task<bool> approverequest(int id);
         public Task<bool> rejectRequest(int id);
+        public Task<Request> GetRequestById(int id);
+        public Task<bool> DeleteRequest(Request request);
 
 
         public bool savechanges();

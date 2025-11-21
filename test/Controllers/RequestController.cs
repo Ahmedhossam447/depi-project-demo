@@ -41,11 +41,10 @@ namespace test.Controllers
             return View(requests);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("AnimalId,Useridreq")]Request request)
+        public async Task<IActionResult> Create(Request request)
         {
             if (ModelState.IsValid)
             {
-                request.Userid =_usermanager.GetUserId(User);
                 await _RequestRepository.addRequest(request);
                 return RedirectToAction("Index","Animal");
             }
@@ -67,6 +66,16 @@ namespace test.Controllers
                 return RedirectToAction("Index");
             else
                 return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var request = await _RequestRepository.GetRequestById(id);
+            if (request != null)
+            {
+                await _RequestRepository.DeleteRequest(request);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

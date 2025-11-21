@@ -6,5 +6,6 @@ namespace test.ModelViews
     {
         public IQueryable<Animal> animals { get; set; }
         public string filter { get; set; } = "";
+        public bool IsMine { get; set; }
     }
 }

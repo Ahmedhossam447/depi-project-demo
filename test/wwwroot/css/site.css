@@ -2265,3 +2265,212 @@ footer {
     background-color: #db98b7 !important;
     color: #fff !important;
 }
+
+/* ===========================================
+   ANIMAL TAB STYLES
+   =========================================== */
+.animal-tab {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #fff;
+    color: #db98b7;
+    border: 2px solid #db98b7;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.animal-tab:hover {
+    background-color: #f5d9e5;
+    color: #db98b7;
+    text-decoration: none;
+}
+
+.animal-tab-active {
+    background: linear-gradient(45deg, #db98b7, #c39797);
+    color: #fff;
+    border-color: #db98b7;
+}
+
+.animal-tab-active:hover {
+    background: linear-gradient(45deg, #c39797, #db98b7);
+    color: #fff;
+}
+
+.rounded-pill-start {
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    border-right: none;
+}
+
+.rounded-pill-end {
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+/* ===========================================
+   REQUEST INDEX STYLES (Pink Theme)
+   =========================================== */
+.text-pink {
+    color: #db98b7 !important;
+}
+
+.bg-pink {
+    background-color: #db98b7 !important;
+}
+
+.bg-pink-subtle {
+    background-color: #f5d9e5 !important;
+    color: #c39797 !important;
+}
+
+.border-pink {
+    border-color: #db98b7 !important;
+}
+
+.btn-pink {
+    background: linear-gradient(45deg, #db98b7, #c39797);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-pink:hover {
+    background: linear-gradient(45deg, #c39797, #db98b7);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(219, 152, 183, 0.3);
+}
+
+.btn-outline-pink {
+    color: #c39797;
+    border: 2px solid #db98b7;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-pink:hover {
+    background-color: #db98b7;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.alert-pink {
+    background-color: #f5d9e5;
+    color: #c39797;
+    border: 1px solid #db98b7;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* ===========================================
+   ANIMAL EDIT PAGE STYLES
+   =========================================== */
+.add-animal-section {
+    padding: 4rem 0;
+    background-color: #fff0f5;
+    /* Light pink background */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(219, 152, 183, 0.15);
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid rgba(219, 152, 183, 0.2);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.form-title {
+    color: #333;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-description {
+    color: #666;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #db98b7;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(219, 152, 183, 0.1);
+}
+
+.form-file-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px dashed #db98b7;
+    border-radius: 12px;
+    background: #fff0f5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-file-input:hover {
+    background: #ffe6f0;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(45deg, #db98b7, #c39797);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(219, 152, 183, 0.4);
+}

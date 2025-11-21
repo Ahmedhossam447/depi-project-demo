@@ -24,25 +24,43 @@ namespace test.Repository
             return savechanges();
         }
 
-        public Animalviewmodel AnimalDisplay(string? filter, string userid)
+        public Animalviewmodel AnimalDisplay(string? filter, string userid,bool mine)
         {
             IQueryable<Animal> animals;
-
-            if (filter == null || filter == "any")
+            Animalviewmodel animviewmodel;
+            if (mine)
             {
-
-                animals = _context.Animals.FromSql($"select name,type,age,animalid,photo,userid from Animals as a where userid != {userid} and NOT EXISTS(select animalid from requests where userid = {userid} and animalID= a.animalID)");
-
+                animals = from anm in _context.Animals where anm.Userid == userid select anm;
+                animviewmodel = new Animalviewmodel
+                {
+                    animals = animals,
+                    filter = filter ?? "any",
+                    IsMine = true
+                };
+                return animviewmodel;
             }
             else
             {
-                animals = from anm in _context.Animals where anm.Userid! != userid && anm.Type == filter && (_context.Requests.FirstOrDefault(r => r.Userid == userid && r.AnimalId == anm.AnimalId) == null) select anm;
+
+                if (filter == null || filter == "any")
+                {
+
+                    animals = _context.Animals.FromSql($"select name,type,age,animalid,photo,userid from Animals as a where userid != {userid} and NOT EXISTS(select animalid from requests where userid = {userid} and animalID= a.animalID)");
+
+                }
+                else
+                {
+                    animals = from anm in _context.Animals where anm.Userid! != userid && anm.Type == filter && (_context.Requests.FirstOrDefault(r => r.Userid == userid && r.AnimalId == anm.AnimalId) == null) select anm;
+
+                }
+                animviewmodel = new Animalviewmodel
+                {
+                    animals = animals,
+                    filter = filter ?? "any",
+                    IsMine = false
+                };
             }
-             var animviewmodel = new ModelViews.Animalviewmodel
-            {
-                animals = animals,
-                filter = filter ?? "any"
-            };
+
             return animviewmodel;
         }
 
@@ -51,7 +69,16 @@ namespace test.Repository
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
+        public async Task<Animal> GetByIdAsync(int id)
+        {
+            var animal = await _context.Animals.FirstOrDefaultAsync(a => a.AnimalId == id);
+            return  animal;
+        }
+        public async Task<bool> DeleteAnimal(Animal animal)
+        {
+            _context.Animals.Remove(animal);
+            return savechanges();
+        }
 
-       
     }
 }
