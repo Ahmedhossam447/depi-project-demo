@@ -77,8 +77,21 @@
                             <div class="card-actions" style="display:flex; justify-content:space-between; align-items:center;">
                                 <span class="price-pill"><i class="fas fa-dollar-sign"></i>@product.Price</span>
                                 <div class="d-flex gap-2">
-                                    <a class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-edit"></i> Edit</a>
-                                    <a class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-trash"></i> Delete</a>
+                                    <a asp-action="Edit" asp-route-id="@product.Productid" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-edit"></i> Edit</a>
+                                    
+                                    <span id="@("deletespan" + product.Productid)">
+                                        <button onclick="deleteconfirm('@product.Productid', true)" class="btn btn-sm btn-outline-danger rounded-pill">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </span>
+                                    
+                                    <span id="@("deleteConfirmSpan" + product.Productid)" style="display:none;">
+                                        <div class="d-flex gap-1 align-items-center">
+                                            <span class="text-danger small me-1">Sure?</span>
+                                            <a asp-action="Delete" asp-route-id="@product.Productid" class="btn btn-danger btn-sm rounded-pill py-0 px-2">Yes</a>
+                                            <button onclick="deleteconfirm('@product.Productid', false)" class="btn btn-secondary btn-sm rounded-pill py-0 px-2">No</button>
+                                        </div>
+                                    </span>
                                 </div>
                             </div>
                         </div>
