@@ -96,6 +96,21 @@
                                             Adopt Me
                                         </button>
                                     </form>
+                                    
+                                    <div class="mt-2">
+                                        @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())
+                                        {
+                                            <a asp-controller="MedicalRecord" asp-action="Details" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-info w-100">
+                                                <i class="fas fa-notes-medical"></i> View Medical Record
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-secondary py-1 px-2 text-center small mb-0">
+                                                <i class="fas fa-info-circle"></i> Record isn't available
+                                            </div>
+                                        }
+                                    </div>
                                 }
                                 else
                                 {
@@ -103,6 +118,18 @@
                                         <a asp-action="Edit" asp-route-id="@animal.AnimalId" class="btn btn-outline-primary flex-grow-1">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
+                                        @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())
+                                        {
+                                            <a asp-controller="MedicalRecord" asp-action="Details" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-info flex-grow-1">
+                                                <i class="fas fa-notes-medical"></i> Record
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="MedicalRecord" asp-action="Create" asp-route-animalid="@animal.AnimalId" class="btn btn-outline-warning flex-grow-1">
+                                                <i class="fas fa-plus-circle"></i> Add Record
+                                            </a>
+                                        }
                                         
                                         <!-- Delete Button Section -->
                                         <div class="flex-grow-1">

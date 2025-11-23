@@ -1,0 +1,77 @@
+@model List<test.Models.Animal>
+@{
+    ViewData["Title"] = "Manage Animals";
+}
+
+<section class="theme-section" style="background: #f8f9fa; min-height: 80vh;">
+    <div class="container">
+        <div class="theme-header text-center mb-5">
+            <h1 class="theme-title display-4 fw-bold text-dark mb-3">
+                <i class="fas fa-paw text-pink me-3"></i>Manage Animals
+            </h1>
+            <p class="theme-subtitle lead text-muted">View and manage all animals in the system</p>
+        </div>
+
+        <div class="theme-card p-4 border-0 shadow-sm bg-white rounded-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 fw-bold m-0"><i class="fas fa-list me-2 text-pink"></i>All Animals</h2>
+                <span class="badge bg-pink rounded-pill px-3 py-2">@Model.Count() Animals</span>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="icon mb-3 text-muted" style="font-size: 3rem;">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <p class="text-muted">No animals found.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 py-3 ps-4 rounded-start">Image</th>
+                                <th class="border-0 py-3">Name</th>
+                                <th class="border-0 py-3">Type</th>
+                                <th class="border-0 py-3">Age</th>
+                                <th class="border-0 py-3">Owner ID</th>
+                                <th class="border-0 py-3 pe-4 rounded-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var animal in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <img src="@animal.Photo" alt="@animal.Name" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    </td>
+                                    <td class="fw-bold text-dark">@animal.Name</td>
+                                    <td><span class="badge bg-light text-dark border">@animal.Type</span></td>
+                                    <td class="text-muted">@animal.Age</td>
+                                    <td class="text-muted small">@animal.Userid</td>
+                                    <td class="pe-4">
+                                        <div class="d-flex gap-2">
+                                            <a asp-action="EditAnimal" asp-route-id="@animal.AnimalId" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fas fa-edit"></i></a>
+                                            
+                                            <span id="@("deleteConfirmSpan" + animal.AnimalId)" style="display:none">
+                                                <span class="small me-1">Sure?</span>
+                                                <a asp-action="DeleteAnimal" asp-route-id="@animal.AnimalId" class="btn btn-sm btn-danger rounded-pill">Yes</a>
+                                                <a href="#" onclick="deleteconfirm('@animal.AnimalId', false); return false;" class="btn btn-sm btn-primary rounded-pill">No</a>
+                                            </span>
+                                            <span id="@("deletespan" + animal.AnimalId)">
+                                                <a href="#" onclick="deleteconfirm('@animal.AnimalId', true); return false;" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fas fa-trash"></i></a>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</section>

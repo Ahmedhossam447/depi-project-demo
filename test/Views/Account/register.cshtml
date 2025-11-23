@@ -4,67 +4,68 @@
     ViewData["title"] = "Register";
 }
 
+<section class="auth-section">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Create Account</h1>
+            <p class="form-description">Join HappyPaws Haven today 🐾</p>
+        </div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - HappyPaws Haven</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="page-wrapper">
-        <!-- Navbar -->
+        <form asp-action="register" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <!-- Main Content -->
-        <div class="signup-container">
-            <div class="signup-box">
-                <h1>Create Account</h1>
-                <p class="subtitle">Join the HappyPaws Haven today </p>
-                <form asp-action="register"  method="post">
-                 
-                    <div class="input-group">
-                        <label asp-for="username">Full Name</label>
-                        <input type="text" asp-for="username" placeholder="Enter your full name" required>
-                        <span asp-validation-for="username" class="text-danger"></span>
-                    </div>
-                    <div class="input-group">
-                        <label asp-for="email">Email</label>
-                        <input type="email" asp-for="email" placeholder="Enter your email" required>
-                        <span asp-validation-for="email" class="text-danger"></span>
-                    </div>
-
-                    <div class="input-group">
-                        <label asp-for="phonenumber">Phone number</label>
-                        <input type="tel" asp-for="phonenumber" placeholder="Enter your phone number" required>
-                        <span asp-validation-for="phonenumber" class="text-danger"></span>
-                    </div>
-
-                    <div class="input-group">
-                        <label asp-for="password">Password</label>
-                        <input type="password" asp-for="password" placeholder="Create a password" required>
-                        <span asp-validation-for="password" class="text-danger"></span>
-                    </div>
-                        <div class="radiobuttons-group">
-                            <label asp-for="role" class="form-check-label">Role</label>
-                            <div class="radio-input">
-                                <input type="radio" asp-for="role" value="User" required />
-                                <p>User</p>
-                            </div>
-                            
-                            <div class="radio-input">
-                                <input type="radio" asp-for="role" value="Shelter" required />
-                                <p>Shelter</p>
-                            </div>
-                            <span asp-validation-for="role" class="text-danger"></span>
-                        </div>
-                    <button type="submit" class="btn">Sign Up</button>
-                    <div asp-validation-summary="All" class="text-danger"> </div>
-                </form>
-                <p class="login-link">Already have an account? <a asp-action="login">Log In</a></p>
+            <div class="form-group">
+                <label asp-for="username" class="form-label">Full Name</label>
+                <input type="text" asp-for="username" class="form-input" placeholder="Enter your full name" required>
+                <span asp-validation-for="username" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="email" class="form-label">Email Address</label>
+                <input type="email" asp-for="email" class="form-input" placeholder="Enter your email" required>
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="phonenumber" class="form-label">Phone Number</label>
+                <input type="tel" asp-for="phonenumber" class="form-input" placeholder="Enter your phone number" required>
+                <span asp-validation-for="phonenumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="password" class="form-label">Password</label>
+                <input type="password" asp-for="password" class="form-input" placeholder="Create a password" required>
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">I am a...</label>
+                <div class="role-selector">
+                    <div class="role-card">
+                        <input type="radio" asp-for="role" value="User" required checked />
+                        <div class="role-card-content">
+                            <i class="fas fa-user role-icon"></i>
+                            <div>Pet Adopter</div>
+                        </div>
+                    </div>
+                    <div class="role-card">
+                        <input type="radio" asp-for="role" value="Shelter" required />
+                        <div class="role-card-content">
+                            <i class="fas fa-home role-icon"></i>
+                            <div>Shelter</div>
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="role" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </form>
+
+        <div class="auth-link">
+            <p>Already have an account? <a asp-action="login">Log In</a></p>
         </div>
     </div>
-</body>
-</html>
+</section>

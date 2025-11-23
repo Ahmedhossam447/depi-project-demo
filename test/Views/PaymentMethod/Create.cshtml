@@ -1,0 +1,75 @@
+@model test.ModelViews.CreatePaymentMethodViewModel
+@{
+    ViewData["Title"] = "Add Payment Method";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h3 class="mb-4 fw-bold text-center text-primary">Add New Card</h3>
+                    
+                    <form asp-action="Create" method="post" id="payment-method-form">
+                        @Html.AntiForgeryToken()
+                        
+                        <!-- Card Number -->
+                        <div class="mb-4 position-relative">
+                            <label asp-for="CardNumber" class="form-label fw-bold text-muted small text-uppercase">Card Number</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-white border-end-0 text-muted" id="card-icon">
+                                    <i class="far fa-credit-card"></i>
+                                </span>
+                                <input asp-for="CardNumber" class="form-control border-start-0 ps-0" placeholder="0000 0000 0000 0000" maxlength="19" id="card-number-input" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="CardNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Expiry Month -->
+                            <div class="col-6">
+                                <label asp-for="ExpiryMonth" class="form-label fw-bold text-muted small text-uppercase">Expiry Month</label>
+                                <select asp-for="ExpiryMonth" class="form-select form-select-lg">
+                                    <option value="" disabled selected>MM</option>
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        <option value="@i">@i.ToString("00")</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ExpiryMonth" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Expiry Year -->
+                            <div class="col-6">
+                                <label asp-for="ExpiryYear" class="form-label fw-bold text-muted small text-uppercase">Expiry Year</label>
+                                <select asp-for="ExpiryYear" class="form-select form-select-lg">
+                                    <option value="" disabled selected>YYYY</option>
+                                    @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ExpiryYear" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                                Save Card
+                            </button>
+                            <a asp-controller="Transaction" asp-action="ProccessPayment" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4 text-muted small">
+                <i class="fas fa-lock me-1"></i> Your card information is stored securely.
+            </div>
+        </div>
+    </div>
+</div>
+
+

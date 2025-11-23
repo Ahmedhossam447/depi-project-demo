@@ -39,24 +39,28 @@ namespace test
             builder.Services.AddScoped<IAnimal, AnimalRepository>();
             builder.Services.AddScoped<IAccounts, AccountRepository>();
             builder.Services.AddScoped<IRequests, RequestRepository>();
-            builder.Services.AddScoped<IEmailSender,EmailSenderServcies>();
+            builder.Services.AddScoped<IEmailSender, EmailSenderServcies>();
             builder.Services.AddScoped<IShelter, ShelterRepository>();
             builder.Services.AddScoped<IOrder, OrderRepository>();
             builder.Services.AddScoped<ITransaction, TransactionRepository>();
-            builder.Services.Configure<SendGridOptions>(
-    builder.Configuration.GetSection("SendGrid")
-);
+            builder.Services.AddScoped<IContact, ContactRepository>();
+            builder.Services.AddScoped<IMedicalRecord, MedicalRecordRepository>();
+            builder.Services.AddScoped<IVaccinationNeeded, VaccinationNeededRepository>();
+
+            builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
+
             builder.Services.AddAuthentication("MyCookieAuth")
-    .AddCookie("MyCookieAuth", options =>
-    {
-        options.Cookie.Name = "MyCookieAuth";
-        // 2. Set the login path
-        options.LoginPath = "/Account/Login";
-    });
+                .AddCookie("MyCookieAuth", options =>
+                {
+                    options.Cookie.Name = "MyCookieAuth";
+                    // 2. Set the login path
+                    options.LoginPath = "/Account/Login";
+                });
+
             var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
             builder.Services.AddAuthentication().AddGoogle(Services =>
             {
-                Services.ClientId = googleAuthNSection["ClientId"] ;
+                Services.ClientId = googleAuthNSection["ClientId"];
                 Services.ClientSecret = googleAuthNSection["ClientSecret"];
                 Services.CallbackPath = "/signin-google";
             });
@@ -70,6 +74,7 @@ namespace test
             {
                 // Pass the IServiceProvider to your seeder
                 await RoleServices.SeedRolesAsync(scope.ServiceProvider);
+                await RoleServices.SeedAdminUserAsync(scope.ServiceProvider);
             }
 
             // --- 2. Configure the HTTP request pipeline (Order is very important here) ---

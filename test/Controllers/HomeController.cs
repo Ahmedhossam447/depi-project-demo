@@ -14,10 +14,12 @@ namespace test.Controllers
     public class HomeController : Controller
     {
         private readonly DepiContext _context;
+        private readonly test.Interfaces.IContact _contactRepository;
 
-        public HomeController()
+        public HomeController(test.Interfaces.IContact contactRepository)
         {
             _context = new DepiContext();
+            _contactRepository = contactRepository;
         }
 
         public IActionResult Index()
@@ -33,6 +35,18 @@ namespace test.Controllers
         public IActionResult contactus()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(ContactMessage message1)
+        {
+            if (ModelState.IsValid)
+            {
+                await _contactRepository.AddMessageAsync(message1);
+                TempData["SuccessMessage"] = "Your message has been sent successfully!";
+                return RedirectToAction("contactus");
+            }
+            return View("contactus", message1);
         }
     }
 }

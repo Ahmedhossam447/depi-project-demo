@@ -1,0 +1,58 @@
+@model test.ModelViews.EditPaymentMethodViewModel
+@{
+    ViewData["Title"] = "Edit Payment Method";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h3 class="mb-4 fw-bold text-center text-primary">Edit Card Expiry</h3>
+                    
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="PaymentMethodId" />
+                        
+                        <div class="row g-3 mb-4">
+                            <!-- Expiry Month -->
+                            <div class="col-6">
+                                <label asp-for="ExpiryMonth" class="form-label fw-bold text-muted small text-uppercase">Expiry Month</label>
+                                <select asp-for="ExpiryMonth" class="form-select form-select-lg">
+                                    <option value="" disabled>MM</option>
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        <option value="@i">@i.ToString("00")</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ExpiryMonth" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Expiry Year -->
+                            <div class="col-6">
+                                <label asp-for="ExpiryYear" class="form-label fw-bold text-muted small text-uppercase">Expiry Year</label>
+                                <select asp-for="ExpiryYear" class="form-select form-select-lg">
+                                    <option value="" disabled>YYYY</option>
+                                    @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ExpiryYear" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                                Save Changes
+                            </button>
+                            <a asp-controller="Transaction" asp-action="ProccessPayment" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

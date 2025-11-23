@@ -7,8 +7,12 @@ namespace test.Interfaces
     {
         public  Animalviewmodel AnimalDisplay(string? filter, string id,bool mine);
         public Task<Animal> GetByIdAsync(int id);
+        public Task<List<Animal>> GetAllUserAnimalsAsync(string id);
+        public Task<List<Animal>> GetAllAnimalsAsync();
+        public Task<bool> UpdateAnimal(Animal animal);
         public Task<bool> DeleteAnimal(Animal animal);
         public Task<bool> AddAnimal(Animal animal);
+        public Task<Animal?> FindDuplicateAsync(string name, string type, byte? age, string userId);
         public bool savechanges();
     }
 }

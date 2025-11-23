@@ -5,13 +5,32 @@
 function deleteconfirm(UserId, IsdDeletecClicked) {
     var spanid = "deleteConfirmSpan" + UserId;
     var deletespan = "deletespan" + UserId;
+    var spanEl = document.getElementById(spanid);
+    var deleteEl = document.getElementById(deletespan);
+
+    if (!spanEl || !deleteEl) {
+        console.error("Element not found for UserId: " + UserId + ". Looking for: " + spanid + ", " + deletespan);
+        return;
+    }
+
     if (IsdDeletecClicked) {
-        document.getElementById(spanid).style.display = "block";
-        document.getElementById(deletespan).style.display = "none";
+        spanEl.style.display = "block";
+        deleteEl.style.display = "none";
     }
     else {
-        document.getElementById(spanid).style.display = "none";
-        document.getElementById(deletespan).style.display = "block";
+        spanEl.style.display = "none";
+        deleteEl.style.display = "block";
+    }
+}
+
+function submitDeletePayment(paymentMethodId) {
+    var form = document.getElementById('delete-payment-form');
+    var input = document.getElementById('delete-payment-id');
+    if (form && input) {
+        input.value = paymentMethodId;
+        form.submit();
+    } else {
+        console.error("Delete form or input not found");
     }
 }
 
@@ -354,5 +373,142 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Run on load in case of browser auto-fill or back navigation
         updateSubmitButton();
+    }
+});
+
+// Card Input Formatting and Detection
+document.addEventListener('DOMContentLoaded', function () {
+    const cardInput = document.getElementById('card-number-input');
+
+    if (cardInput) {
+        const cardIcon = document.getElementById('card-icon').querySelector('i');
+
+        // Format card number with spaces
+        cardInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            let formattedValue = '';
+
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+
+            e.target.value = formattedValue;
+
+            // Detect Card Type
+            if (value.startsWith('4')) {
+                cardIcon.className = 'fab fa-cc-visa text-primary fa-lg'; // Visa Blue
+                cardIcon.style.color = '#1A1F71';
+            } else if (value.startsWith('5')) {
+                cardIcon.className = 'fab fa-cc-mastercard text-warning fa-lg'; // Mastercard Orange
+                cardIcon.style.color = '';
+            } else {
+                cardIcon.className = 'far fa-credit-card text-muted'; // Default
+                cardIcon.style.color = '';
+            }
+        });
+    }
+});
+
+// Medical Record Form Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const statusSelect = document.getElementById('statusSelect');
+    const injuryGroup = document.getElementById('injuryGroup');
+
+    if (statusSelect && injuryGroup) {
+        function toggleInjuryInput() {
+            if (statusSelect.value === 'Injured') {
+                injuryGroup.style.display = 'block';
+            } else {
+                injuryGroup.style.display = 'none';
+            }
+        }
+
+        // Initial check
+        toggleInjuryInput();
+
+        // Listen for changes
+        statusSelect.addEventListener('change', toggleInjuryInput);
+    }
+});
+
+// Vaccination Form Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const needsVaccinesYes = document.getElementById('needsVaccinesYes');
+    const needsVaccinesNo = document.getElementById('needsVaccinesNo');
+    const vaccineInputSection = document.getElementById('vaccineInputSection');
+    const addVaccineBtn = document.getElementById('addVaccineBtn');
+    const vaccineNameInput = document.getElementById('vaccineNameInput');
+    const vaccineList = document.getElementById('vaccineList');
+    const hiddenVaccinesContainer = document.getElementById('hiddenVaccinesContainer');
+    const vaccineForm = document.getElementById('vaccineForm');
+
+    if (needsVaccinesYes && needsVaccinesNo && vaccineInputSection) {
+        function toggleVaccineSection() {
+            if (needsVaccinesYes.checked) {
+                vaccineInputSection.style.display = 'block';
+            } else {
+                vaccineInputSection.style.display = 'none';
+            }
+        }
+
+        needsVaccinesYes.addEventListener('change', toggleVaccineSection);
+        needsVaccinesNo.addEventListener('change', toggleVaccineSection);
+
+        // Initial check
+        toggleVaccineSection();
+    }
+
+    if (addVaccineBtn && vaccineNameInput && vaccineList && hiddenVaccinesContainer) {
+        addVaccineBtn.addEventListener('click', function () {
+            const vaccineName = vaccineNameInput.value.trim();
+            if (vaccineName) {
+                addVaccineItem(vaccineName);
+                vaccineNameInput.value = '';
+                vaccineNameInput.focus();
+            }
+        });
+
+        // Allow Enter key to add
+        vaccineNameInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addVaccineBtn.click();
+            }
+        });
+    }
+
+    function addVaccineItem(name) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+            <span>${name}</span>
+            <button type="button" class="btn btn-danger btn-sm remove-vaccine">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        // Add remove functionality
+        li.querySelector('.remove-vaccine').addEventListener('click', function () {
+            li.remove();
+            updateHiddenInputs();
+        });
+
+        vaccineList.appendChild(li);
+        updateHiddenInputs();
+    }
+
+    function updateHiddenInputs() {
+        hiddenVaccinesContainer.innerHTML = '';
+        const items = vaccineList.querySelectorAll('li span');
+        items.forEach((item, index) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = `VaccineNames[${index}]`;
+            input.value = item.textContent;
+            hiddenVaccinesContainer.appendChild(input);
+        });
     }
 });

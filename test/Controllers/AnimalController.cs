@@ -17,7 +17,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace test.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize]
+    
     public class AnimalController : Controller
     {
         private readonly IAnimal _animalRepository;
@@ -29,6 +30,7 @@ namespace test.Controllers
             _photoServices = photoServices;
             _userManager = userManager;
         }
+        [Authorize(Roles = "User")]
         public IActionResult Index(String? filter, bool mine)
         {
             var userid = _userManager.GetUserId(User);
@@ -59,8 +61,17 @@ namespace test.Controllers
                     Userid = userid
                 };
 
-                _animalRepository.AddAnimal(animal);
-                return RedirectToAction("Index");
+                // Check for duplicate
+                var existingAnimal = await _animalRepository.FindDuplicateAsync(animal.Name, animal.Type, animal.Age, userid);
+                if (existingAnimal != null)
+                {
+                    // If duplicate found, redirect to Medical Record creation for the existing animal
+                    return RedirectToAction("Create", "MedicalRecord", new { animalid = existingAnimal.AnimalId });
+                }
+
+                await _animalRepository.AddAnimal(animal);
+
+                return RedirectToAction("Create", "MedicalRecord", new {animalid=animal.AnimalId});
             }
             return View(animalVM);
         }

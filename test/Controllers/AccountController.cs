@@ -37,6 +37,7 @@ namespace test.Controllers
         }
         public async Task<IActionResult> login(string ?ReturnUrl)
         {
+            
             LoginViewModel loginViewModel = new LoginViewModel
             {
                 returnUrl = ReturnUrl,
@@ -55,6 +56,11 @@ namespace test.Controllers
                 return View(user);
             }
             var user1 = await userManager.FindByEmailAsync(user.email);
+            if(user1 == null)
+            {
+                ModelState.AddModelError(string.Empty, "invalid attempt");
+                return View(user);
+            }
             if (user1 != null && !user1.EmailConfirmed && await userManager.CheckPasswordAsync(user1, user.password))
             {
                 ModelState.AddModelError(string.Empty, "email not confirmed yet");
@@ -69,10 +75,14 @@ namespace test.Controllers
             {
                 return LocalRedirect(ReturnUrl);
             }
+            else if (result.Succeeded && User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Admin");
+
+            }
             else
             {
-                ModelState.AddModelError(string.Empty, "invalid attempt");
-
+                               ModelState.AddModelError(string.Empty, "invalid login attempt");
                 return View(user);
             }
         }
@@ -161,55 +171,112 @@ namespace test.Controllers
                 ModelState.AddModelError(string.Empty, RemoteError);
                 return View("login", model);
             }
-            var informations = signInManager.GetExternalLoginInfoAsync();
+            var info = await signInManager.GetExternalLoginInfoAsync();
 
-            if (informations == null)
+            if (info == null)
             {
-                ModelState.AddModelError(string.Empty, "error getting user infomations");
+                ModelState.AddModelError(string.Empty, "Error loading external login information.");
                 return View("login", model);
             }
-            var signInResult = await signInManager.ExternalLoginSignInAsync(informations.Result.LoginProvider, informations.Result.ProviderKey, isPersistent: false, bypassTwoFactor: true);
-            if (signInResult.Succeeded)
+
+            // Sign in the user with this external login provider if the user already has a login.
+            var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            if (result.Succeeded)
             {
                 return LocalRedirect(returnUrl);
             }
+            if (result.IsLockedOut)
+            {
+                return RedirectToAction("Lockout");
+            }
+            if (result.IsNotAllowed)
+            {
+                ModelState.AddModelError(string.Empty, "Email not confirmed.");
+                return View("login", model);
+            }
             else
             {
-                var email = informations.Result.Principal.FindFirstValue(ClaimTypes.Email);
+                // If the user does not have an account, then ask the user to create an account.
+                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["LoginProvider"] = info.LoginProvider;
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
                 if (email != null)
                 {
                     var user = await userManager.FindByEmailAsync(email);
-                    if (user == null)
+                    if (user != null)
                     {
-                        user = new IdentityUser
+                        if (!user.EmailConfirmed)
                         {
-                            UserName = email,
-                            Email = email
-                        };
-                        await userManager.CreateAsync(user);
-                        await userManager.AddToRoleAsync(user, "User");
-                    }
-                    if (!user.EmailConfirmed)
-                    {
-                        var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { Userid = user.Id, token = confirmationToken }, Request.Scheme);
-                        await emailSender.SendEmailAsync(user.Email, "email confirmation", confirmationLink);
-                        ModelState.AddModelError(string.Empty, "Please confirm your email");
-                        return View("login", model);
-                    }
-                    else
-                    {
-                        await userManager.AddLoginAsync(user, informations.Result);
-                        await signInManager.SignInAsync(user, isPersistent: false);
+                            ModelState.AddModelError(string.Empty, "Email not confirmed.");
+                            return View("login", model);
+                        }
 
-                        return LocalRedirect(returnUrl);
+                        var addLoginResult = await userManager.AddLoginAsync(user, info);
+                        if (addLoginResult.Succeeded)
+                        {
+                            await signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
                     }
-
                 }
-                ModelState.AddModelError(string.Empty, "failed getting the email");
-                return View("login", model);
 
+                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
+        {
+            returnUrl = returnUrl ?? Url.Content("~/");
+
+            if (ModelState.IsValid)
+            {
+                // Get the information about the user from the external login provider
+                var info = await signInManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Error loading external login information during confirmation.");
+                    ModelState.AddModelError(string.Empty, "Error loading external login information during confirmation.");
+                    LoginViewModel loginViewModel = new LoginViewModel
+                    {
+                        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                    };
+                    return View("login", loginViewModel);
+                }
+
+                var user = new IdentityUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
+                var result = await userManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    result = await userManager.AddLoginAsync(user, info);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, model.Role);
+                        
+                        // Send email confirmation
+                        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { Userid = user.Id, token = token }, Request.Scheme);
+                        await emailSender.SendEmailAsync(user.Email, "Email Confirmation", confirmationLink);
+
+                        ModelState.AddModelError(string.Empty, "Registration successful. Please check your email to confirm your account.");
+                        LoginViewModel loginViewModel = new LoginViewModel
+                        {
+                            ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                        };
+                        return View("login", loginViewModel);
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(model);
         }
 
         public IActionResult ForgetPassword()
@@ -238,11 +305,15 @@ namespace test.Controllers
             return View("ForgetPassword",model);
         }
         [HttpGet]
-        public IActionResult ResetPassword(string token,string email)
+        public async Task<IActionResult> ResetPassword(string token,string email)
         {
             if(token == null || email == null)
             {
-                return View("login");
+                LoginViewModel loginViewModel = new LoginViewModel
+                {
+                    ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+                };
+                return View("login", loginViewModel);
             }
 
             return View();

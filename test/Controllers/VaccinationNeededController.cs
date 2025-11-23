@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using test.Interfaces;
 using test.Models;
+using test.ModelViews;
+using System.Linq;
 
 namespace test.Controllers
 {
@@ -16,33 +18,58 @@ namespace test.Controllers
             _vaccineRepo = vaccineRepo;
         }
 
-
-
         public async Task<IActionResult> ByAnimal(int animalId)
         {
             var vaccines = await _vaccineRepo.GetByAnimalIdAsync(animalId);
             return View(vaccines);
         }
 
-        public IActionResult Create()
+        public IActionResult Create(int medicalid)
         {
-            return View();
+            var model = new CreateVaccinationViewModel
+            {
+                MedicalRecordId = medicalid
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(VaccinationNeeded vaccine)
+        public async Task<IActionResult> Create(CreateVaccinationViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(vaccine);
+                return View(model);
 
-            await _vaccineRepo.AddAsync(vaccine);
-            return RedirectToAction("ByAnimal", new { animalId = vaccine.MedicalRecord.Animalid });
+            if (model.NeedsVaccines && model.VaccineNames != null)
+            {
+                foreach (var name in model.VaccineNames)
+                {
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        var vaccine = new VaccinationNeeded
+                        {
+                            Medicalid = model.MedicalRecordId,
+                            VaccineName = name
+                        };
+                        await _vaccineRepo.AddAsync(vaccine);
+                    }
+                }
+            }
+            bool mine = true;
+            if (User.IsInRole("User"))
+            {
+                return RedirectToAction("Index", "Animal", new { mine = mine });
+            }
+            return RedirectToAction("Index", "Shelter", new { view = "animals" });
         }
 
         public IActionResult Delete(int id)
         {
             _vaccineRepo.Remove(id);
-            return RedirectToAction("Index");
+            if (User.IsInRole("User"))
+            {
+                return RedirectToAction("Index", "Animal", new { mine = true });
+            }
+            return RedirectToAction("Index", "Shelter", new { view = "animals" });
         }
     }
 }

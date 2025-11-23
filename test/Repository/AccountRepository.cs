@@ -35,7 +35,9 @@ namespace test.Repository
 
         public async Task<IdentityUser> GetUserbyid(string id)
         {
+            
             return await userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+
         }
 
         public List<IdentityUser> GetUsers()
@@ -62,5 +64,6 @@ namespace test.Repository
             return await userManager.Users.FirstOrDefaultAsync(u=>u.Email==user.email&&u.Email==user.password);
             
         }
+
     }
 }

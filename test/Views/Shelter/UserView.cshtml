@@ -3,58 +3,68 @@
     ViewData["Title"] = "Shelter List";
 }
 
-<section class="theme-section">
+<section class="theme-section" style="background: #f8f9fa;">
     <div class="container">
-        <div class="theme-header">
-            <h1 class="theme-title">
-                <i class="fas fa-users"></i> Shelter Directory
+        <div class="theme-header text-center mb-5">
+            <h1 class="theme-title display-4 fw-bold text-dark mb-3">
+                <i class="fas fa-heart text-pink me-3"></i>Shelter Directory
             </h1>
-            <p class="theme-subtitle">Connect with trusted shelters and rescue organizations</p>
+            <p class="theme-subtitle lead text-muted">Connect with trusted shelters and rescue organizations</p>
         </div>
 
-        <div class="theme-grid">
-            @if (Model == null || !Model.Any())
-            {
-                <div class="theme-empty-wrap">
-                    <div class="theme-empty">
-                        <div class="icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="title">No Shelters Found</div>
-                        <div class="msg">No shelter organizations are currently registered in our system.</div>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="theme-empty-wrap text-center py-5">
+                <div class="theme-empty bg-white p-5 rounded-4 shadow-sm d-inline-block">
+                    <div class="icon mb-4 text-pink" style="font-size: 4rem;">
+                        <i class="fas fa-home"></i>
                     </div>
+                    <div class="title h3 fw-bold mb-3">No Shelters Found</div>
+                    <div class="msg text-muted">No shelter organizations are currently registered in our system.</div>
                 </div>
-            }
-            else
-            {
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
                 @foreach (var user in Model)
                 {
-                    <div class="theme-card">
-                        <h3 class="theme-card-title">@user.UserName</h3>
-                        <div class="theme-list">
-                            <div class="theme-item">
-                                <i class="fas fa-envelope"></i>
-                                <span>@user.Email</span>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="theme-card h-100 p-4 border-0 shadow-sm hover-shadow transition-all bg-white rounded-4 d-flex flex-column">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="shelter-icon bg-pink-subtle text-pink rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-building fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 fw-bold text-dark m-0">@user.UserName</h3>
+                                    <span class="badge bg-light text-muted border mt-1">Verified Shelter</span>
+                                </div>
                             </div>
-                            <div class="theme-item">
-                                <i class="fas fa-phone"></i>
-                                <span>@(string.IsNullOrEmpty(user.PhoneNumber)? "Not provided" : user.PhoneNumber)</span>
+
+                            <div class="theme-list mb-4 flex-grow-1">
+                                <div class="d-flex align-items-center gap-3 mb-3 text-muted">
+                                    <i class="fas fa-envelope text-pink" style="width: 20px;"></i>
+                                    <span class="text-truncate">@user.Email</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 text-muted">
+                                    <i class="fas fa-phone text-pink" style="width: 20px;"></i>
+                                    <span>@(string.IsNullOrEmpty(user.PhoneNumber)? "Not provided" : user.PhoneNumber)</span>
+                                </div>
                             </div>
+
+                            <form method="get" asp-controller="Shelter" asp-action="ShelterPage" class="mt-auto">
+                                <input type="hidden" name="Id" value="@user.Id" />
+                                <input type="hidden" name="Username" value="@user" />
+                                <input type="hidden" name="Email" value="@user.Email" />
+                                <input type="hidden" name="Phonenumber" value="@user.PhoneNumber" />
+                                <button type="submit" class="btn btn-outline-pink w-100 rounded-pill py-2 fw-bold">
+                                    View Profile <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </form>
                         </div>
-                        <form method="get" asp-controller="Shelter" asp-action="ShelterPage">
-                            <input type="hidden" name="Id" value="@user.Id" />
-                            <input type="hidden" name="Username" value="@user" />
-                            <input type="hidden" name="Email" value="@user.Email" />
-                            <input type="hidden" name="Phonenumber" value="@user.PhoneNumber" />
-                            <button type="submit" class="theme-cta">
-                                <i class="fas fa-building"></i>
-                                View Shelter
-                            </button>
-                        </form>
                     </div>
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
 </section>
-

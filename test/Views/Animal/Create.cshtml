@@ -22,8 +22,18 @@
                 <input type="number" asp-for="Age" class="form-input" placeholder="Enter animal's age" required>
             </div>
             <div class="form-group">
-                <label asp-for="Type" class="form-label">Animal type</label>
-                <input type="text" asp-for="Type" class="form-input" placeholder="Enter animal's type" required>
+                <label asp-for="Type" class="form-label">Animal Type</label>
+                <select asp-for="Type" class="form-input" required>
+                    <option value="">-- Select Animal Type --</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Rabbit">Rabbit</option>
+                    <option value="Hamster">Hamster</option>
+                    <option value="Fish">Fish</option>
+                    <option value="Turtle">Turtle</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="Photo" class="form-label">Animal Picture</label>

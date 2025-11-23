@@ -54,22 +54,41 @@
                                     <div class="list-group">
                                         @foreach (var method in Model.paymentMethods)
                                         {
-                                            <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3 border rounded mb-2 cursor-pointer">
-                                                <input class="form-check-input flex-shrink-0" type="radio" asp-for="selectedPaymentMethodid" value="@method.PaymentMethodId" required style="transform: scale(1.2);">
-                                                <span class="fs-4 text-secondary">
-                                                    @if (method.MethodType == "Visa")
-                                                    {
-                                                        <i class="fa-brands fa-cc-visa" style="color: #1A1F71;"></i>
-                                                    }
-                                                    else
-                                                    {
-                                                        <i class="fa-brands fa-cc-mastercard text-warning"></i>
-                                                    }
-                                                </span>
-                                                <span class="flex-grow-1 fw-medium">
-                                                    &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; @method.last4Digits
-                                                </span>
-                                            </label>
+                                            <div class="list-group-item d-flex align-items-center justify-content-between p-3 border rounded mb-2">
+                                                <label class="d-flex align-items-center gap-3 flex-grow-1 cursor-pointer m-0">
+                                                    <input class="form-check-input flex-shrink-0" type="radio" asp-for="selectedPaymentMethodid" value="@method.PaymentMethodId" required style="transform: scale(1.2);">
+                                                    <span class="fs-4 text-secondary">
+                                                        @if (method.MethodType == "Visa")
+                                                        {
+                                                            <i class="fa-brands fa-cc-visa" style="color: #1A1F71;"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fa-brands fa-cc-mastercard text-warning"></i>
+                                                        }
+                                                    </span>
+                                                    <span class="fw-medium">
+                                                        &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; @method.last4Digits
+                                                    </span>
+                                                </label>
+                                                
+                                                <div class="d-flex align-items-center gap-2 ms-3">
+                                                    <a asp-action="Edit" asp-controller="PaymentMethod" asp-route-id="@method.PaymentMethodId" class="text-primary text-decoration-none" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    
+                                                    <span id="@("deletespan" + method.PaymentMethodId)">
+                                                        <a href="#" class="text-danger text-decoration-none" onclick="deleteconfirm('@method.PaymentMethodId', true); return false;" title="Delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </span>
+                                                    <span id="@("deleteConfirmSpan" + method.PaymentMethodId)" style="display:none">
+                                                        <span class="small text-muted me-1">Sure?</span>
+                                                        <a href="#" class="text-danger fw-bold text-decoration-none me-1" onclick="submitDeletePayment('@method.PaymentMethodId'); return false;">Yes</a>
+                                                        <a href="#" class="text-secondary text-decoration-none" onclick="deleteconfirm('@method.PaymentMethodId', false); return false;">No</a>
+                                                    </span>
+                                                </div>
+                                            </div>
                                         }
                                     </div>
                                 }
@@ -147,5 +166,10 @@
         </div>
     }
 </div>
+
+<form id="delete-payment-form" asp-action="Delete" asp-controller="PaymentMethod" method="post" style="display:none;">
+    <input type="hidden" name="id" id="delete-payment-id" />
+    @Html.AntiForgeryToken()
+</form>
 
 

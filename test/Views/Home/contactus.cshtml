@@ -1,40 +1,44 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - HappyPaws Haven</title>
-</head>
-<body>
-    <div class="page-wrapper">
+﻿@model test.Models.ContactMessage
+@{
+    ViewData["Title"] = "Contact Us";
+}
 
-        <!-- Contact Section -->
-        <main class="contact-container">
-            <div class="contact-box">
-                <h1>Contact Us</h1>
-                <p class="subtitle">We’d love to hear from you! Fill out the form below and we’ll get back to you soon.</p>
+<div class="page-wrapper">
+    <main class="contact-container">
+        <div class="contact-box">
+            <h1>Contact Us</h1>
+            <p class="subtitle">We’d love to hear from you! Fill out the form below and we’ll get back to you soon.</p>
 
-                <form id="contactForm" class="contact-form">
-                    <div class="input-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" id="name" placeholder="Enter your name" required>
-                    </div>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
 
-                    <div class="input-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" id="email" placeholder="Enter your email" required>
-                    </div>
+            <form asp-action="SendMessage" method="post" class="contact-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="input-group">
+                    <label asp-for="Name">Your Name</label>
+                    <input asp-for="Name" placeholder="Enter your name" required>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-                    <div class="input-group">
-                        <label for="message">Your Message</label>
-                        <textarea id="message" rows="5" placeholder="Type your message here..." required></textarea>
-                    </div>
+                <div class="input-group">
+                    <label asp-for="Email">Your Email</label>
+                    <input asp-for="Email" type="email" placeholder="Enter your email" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-                    <button type="submit" class="btn">Send Message</button>
-                </form>
-            </div>
-        </main>
-    </div>
+                <div class="input-group">
+                    <label asp-for="Message">Your Message</label>
+                    <textarea asp-for="Message" rows="5" placeholder="Type your message here..." required></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
 
-</body>
-</html>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </main>
+</div>

@@ -22,6 +22,7 @@ namespace test.Repository
         {
             return await _context.MedicalRecords
                 .Include(r => r.VaccinationNeededs)
+                .Include(r => r.Animal)
                 .FirstOrDefaultAsync(r => r.Animalid == animalId);
         }
 

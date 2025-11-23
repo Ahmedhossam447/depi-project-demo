@@ -251,6 +251,34 @@ namespace test.Migrations.Depi
                     b.ToTable("Animals");
                 });
 
+            modelBuilder.Entity("test.Models.ContactMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactMessages");
+                });
+
             modelBuilder.Entity("test.Models.MedicalRecord", b =>
                 {
                     b.Property<int>("Recordid")
@@ -597,6 +625,7 @@ namespace test.Migrations.Depi
                     b.HasOne("test.Models.Animal", "Animal")
                         .WithMany("MedicalRecords")
                         .HasForeignKey("Animalid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("anim_rec_fk");
 
                     b.Navigation("Animal");
@@ -701,6 +730,7 @@ namespace test.Migrations.Depi
                     b.HasOne("test.Models.MedicalRecord", "MedicalRecord")
                         .WithMany("VaccinationNeededs")
                         .HasForeignKey("Medicalid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("vac_rec_fk");
 
                     b.Navigation("MedicalRecord");

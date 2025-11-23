@@ -50,12 +50,18 @@
                     <li><a asp-controller="shelter" asp-action="Index" class="login">Product list</a></li>
                     <li><a asp-controller="account" asp-action="logout" class="login">Log Out</a></li>
                 }
+                else if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <li><a asp-controller="Admin" asp-action="Index" class="login">Dashboard</a></li>
+                    <li><a asp-controller="Admin" asp-action="Animals" class="login">Animals</a></li>
+                    <li><a asp-controller="Admin" asp-action="Users" class="login">Users</a></li>
+                    <li><a asp-controller="account" asp-action="logout" class="login">Log Out</a></li>
+                }
                 else
                 {
                     <li><a asp-controller="account" asp-action="login" class="login">Login</a></li>
                     <li><a asp-controller="account" asp-action="register" class="login">Register</a></li>
                 }
-            </ul>
             <div class="menu-toggle">&#9776;</div>
         </nav>
     </header>

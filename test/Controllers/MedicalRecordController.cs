@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using test.Interfaces;
 using test.Models;
+using test.ModelViews;
 
 namespace test.Controllers
 
@@ -45,19 +46,23 @@ namespace test.Controllers
 
         }
 
-
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Create(int animalid)
 
         {
+            var model = new CreateMedicalRecordViewModel
+            {
+                animalId = animalid
+            };
 
-            return View();
+            return View(model);
 
         }
 
 
         [HttpPost]
 
-        public async Task<IActionResult> Create(MedicalRecord record)
+        public async Task<IActionResult> Create(CreateMedicalRecordViewModel model)
 
         {
 
@@ -65,15 +70,25 @@ namespace test.Controllers
 
             {
 
-                return View(record);
+                return View(model);
 
             }
-
+            var record = await _medicalRecordRepo.GetByAnimalIdAsync(model.animalId);
+            if ( record!= null)
+            {
+                return RedirectToAction("Create", "VaccinationNeeded", new { medicalid = record.Recordid });
+            }
+             record = new MedicalRecord
+            {
+                Animalid = model.animalId,
+                Injurys = model.injurys,
+                Status = model.status
+            };
 
 
             await _medicalRecordRepo.AddAsync(record);
 
-            return RedirectToAction("Details", new { animalId = record.Animalid });
+            return RedirectToAction("Create", "VaccinationNeeded",new {medicalid=record.Recordid });
 
         }
 

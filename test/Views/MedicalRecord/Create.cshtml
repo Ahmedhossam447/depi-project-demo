@@ -1,0 +1,48 @@
+@using test.ModelViews
+@model CreateMedicalRecordViewModel
+
+@{
+    ViewData["Title"] = "Create Medical Record";
+}
+
+<section class="theme-section">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">New Medical Record</h1>
+            <p class="form-description">Enter health details for the animal</p>
+        </div>
+
+        <form asp-action="Create" method="post" class="medical-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="animalId" value="@Model.animalId" />
+
+            
+            <div class="form-group">
+                <label asp-for="status" class="form-label">Health Status</label>
+                <select asp-for="status" class="form-select" id="statusSelect">
+                    <option value="">Select Status</option>
+                    <option value="Healthy">Healthy</option>
+                    <option value="Injured">Injured</option>
+                </select>
+                <span asp-validation-for="status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" id="injuryGroup" style="display: none;">
+                <label asp-for="injurys" class="form-label">Injury Details</label>
+                <textarea asp-for="injurys" class="form-input" rows="3" placeholder="Describe the injuries..."></textarea>
+                <span asp-validation-for="injurys" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="theme-cta">
+                <i class="fas fa-notes-medical"></i> Proceed to vacinations
+            </button>
+            <a asp-action="Index" class="btn btn-link mt-3">Back to List</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+
+}

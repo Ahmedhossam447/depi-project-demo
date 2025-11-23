@@ -1,0 +1,62 @@
+@model List<test.Models.ContactMessage>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="theme-section" style="background: #f8f9fa; min-height: 80vh;">
+    <div class="container">
+        <div class="theme-header text-center mb-5">
+            <h1 class="theme-title display-4 fw-bold text-dark mb-3">
+                <i class="fas fa-user-shield text-pink me-3"></i>Admin Dashboard
+            </h1>
+            <p class="theme-subtitle lead text-muted">Manage your application and view user inquiries</p>
+        </div>
+
+        <div class="theme-card p-4 border-0 shadow-sm bg-white rounded-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 fw-bold m-0"><i class="fas fa-envelope me-2 text-pink"></i>Contact Messages</h2>
+                <span class="badge bg-pink rounded-pill px-3 py-2">@Model.Count() Messages</span>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="icon mb-3 text-muted" style="font-size: 3rem;">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <p class="text-muted">No messages found.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 py-3 ps-4 rounded-start">Date</th>
+                                <th class="border-0 py-3">Name</th>
+                                <th class="border-0 py-3">Email</th>
+                                <th class="border-0 py-3 pe-4 rounded-end">Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var message in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 text-muted">@message.SubmittedAt.ToString("g")</td>
+                                    <td class="fw-bold text-dark">@message.Name</td>
+                                    <td>
+                                        <a href="mailto:@message.Email" class="text-pink text-decoration-none">
+                                            @message.Email
+                                        </a>
+                                    </td>
+                                    <td class="pe-4 text-muted">@message.Message</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</section>

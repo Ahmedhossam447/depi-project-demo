@@ -9,6 +9,7 @@ namespace test.Interfaces
         public  Task<List<Product>> GetAllProducts(string id);
         public Task<Product> GetProductbyId(int id);
         public Task<bool> AddProduct(Product product);
+        public Task<bool> UpdateProduct(Product product);
         public Task<bool> RemoveProduct(Product product);
         public Task<List<IdentityUser>> GetAllShelters();
         public bool SaveChanges();

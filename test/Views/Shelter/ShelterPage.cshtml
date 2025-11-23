@@ -7,85 +7,104 @@
     ViewData["Title"] = "Shelter Page - " + username;
 }
 
-<section class="shelter-hero">
-    <div class="shelter-header">
-        <div class="shelter-avatar"><i class="fas fa-building"></i></div>
-        <div class="shelter-title-wrap">
-            <div class="shelter-name">@username</div>
-            <div class="shelter-sub">Your trusted pet care partner</div>
-            <div class="chip-row">
-                <span class="chip"><i class="fas fa-shield-alt"></i> Trusted</span>
-                <span class="chip"><i class="fas fa-star"></i> Quality</span>
+<section class="shelter-hero" style="background: linear-gradient(135deg, #fff0f5 0%, #fff 100%); padding: 4rem 0; border-bottom: 1px solid #eee; margin-top: 2rem;">
+    <div class="container">
+        <div class="d-flex align-items-center gap-4">
+            <div class="shelter-avatar" style="width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #db98b7; box-shadow: 0 10px 30px rgba(219, 152, 183, 0.2);">
+                <i class="fas fa-building"></i>
+            </div>
+            <div>
+                <h1 class="shelter-name" style="font-size: 2.5rem; font-weight: 800; color: #333; margin-bottom: 0.5rem;">@username</h1>
+                <div class="d-flex gap-3 align-items-center">
+                    <span class="badge bg-white text-pink border border-pink rounded-pill px-3 py-2">
+                        <i class="fas fa-shield-alt me-2"></i>Trusted Shelter
+                    </span>
+                    <span class="text-muted"><i class="fas fa-map-marker-alt me-2"></i>Verified Location</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<div class="shelter-body">
-    <aside>
-        <div class="contact-row">
-            <div class="contact-card">
-                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <div class="contact-meta">
-                    <div class="contact-label">Email</div>
-                    <div class="contact-value">@email</div>
-                </div>
-            </div>
-            <div class="contact-card">
-                <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                <div class="contact-meta">
-                    <div class="contact-label">Phone</div>
-                    <div class="contact-value">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</div>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-<section class="theme-section shelter-content">
-    <div class="container">
-        <div class="section-bar">
-            <div>
-                <div class="section-title"><i class="fas fa-shopping-bag"></i> Available Products</div>
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="theme-card p-4 sticky-top" style="top: 2rem; z-index: 1;">
+                <h3 class="h5 mb-4 fw-bold text-dark"><i class="fas fa-info-circle me-2 text-pink"></i>Contact Information</h3>
                 
-            </div>
-            <div class="count-pill"><i class="fas fa-box"></i>@Model.Count() Products</div>
-        </div>
-        <div class="theme-grid products-grid">
-            @if (Model == null || !Model.Any())
-            {
-                <div class="theme-empty-wrap">
-                    <div class="theme-empty">
-                        <div class="icon"><i class="fas fa-box-open"></i></div>
-                        <div class="title">No Products Available</div>
-                        <div class="msg">This shelter hasn't added any products yet. Check back later!</div>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="icon-box bg-pink-subtle rounded-circle p-3 text-pink">
+                        <i class="fas fa-envelope fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted text-uppercase fw-bold">Email</div>
+                        <div class="fw-medium text-dark">@email</div>
                     </div>
                 </div>
-            }
-            else
-            {
-                @foreach(var product in Model)
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-box bg-pink-subtle rounded-circle p-3 text-pink">
+                        <i class="fas fa-phone fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted text-uppercase fw-bold">Phone</div>
+                        <div class="fw-medium text-dark">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 fw-bold m-0"><i class="fas fa-shopping-bag me-2 text-pink"></i>Available Products</h2>
+                <span class="badge bg-pink rounded-pill px-3 py-2">@Model.Count() Products</span>
+            </div>
+
+            <div class="theme-grid products-grid">
+                @if (Model == null || !Model.Any())
                 {
-                    <div class="theme-card">
-                        <div class="product-hero">
-                            <div class="title">@product.Type</div>
-                        </div>
-                        <div class="product-desc truncate-2">@product.Disc</div>
-                        <div class="card-actions" style="display:flex; justify-content:space-between;">
-                            <span class="price-pill"><i class="fas fa-dollar-sign"></i>$@product.Price</span>
-                            <form method="post" asp-action="create" asp-controller="Order" id="add-product">
-                                    @Html.AntiForgeryToken()
-                                <input type="hidden" name="userid" value="@userId" />
-                                    <input type="hidden" name="productid" value="@product.Productid" />
-                                    <input type="hidden" name="productname" value="@product.Type" />
-                                    <input type="hidden" name="productPrice" value="@product.Price" />
-                                    <label class="filter-label">quantity</label>
-                                    <input type="number" name="Quantity" class="form-input" min=1 value=1 />
-                                    <button type="submit" class="theme-cta"><i class="fas fa-box"></i>Buy</button>
-                            </form>
+                    <div class="theme-empty-wrap w-100">
+                        <div class="theme-empty">
+                            <div class="icon"><i class="fas fa-box-open"></i></div>
+                            <div class="title">No Products Available</div>
+                            <div class="msg">This shelter hasn't added any products yet. Check back later!</div>
                         </div>
                     </div>
                 }
-            }
+                else
+                {
+                    @foreach(var product in Model)
+                    {
+                        <div class="theme-card h-100 d-flex flex-column">
+                            <div class="product-hero mb-3">
+                                <div class="title h5 fw-bold text-dark">@product.Type</div>
+                            </div>
+                            <div class="product-desc text-muted mb-4 flex-grow-1 truncate-2">@product.Disc</div>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="h4 fw-bold text-pink m-0">$@product.Price</span>
+                                </div>
+                                
+                                <form method="post" asp-action="create" asp-controller="Order" class="d-flex gap-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="userid" value="@userId" />
+                                    <input type="hidden" name="productid" value="@product.Productid" />
+                                    <input type="hidden" name="productname" value="@product.Type" />
+                                    <input type="hidden" name="productPrice" value="@product.Price" />
+                                    
+                                    <input type="number" name="Quantity" class="form-control rounded-pill text-center" style="width: 80px;" min="1" value="1" />
+                                    <button type="submit" class="btn btn-pink rounded-pill flex-grow-1">
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         </div>
     </div>
-</section>
+</div>

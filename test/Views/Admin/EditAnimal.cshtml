@@ -1,0 +1,47 @@
+@model test.Models.Animal
+@{
+    ViewData["Title"] = "Edit Animal";
+}
+
+<section class="theme-section">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Edit Animal</h1>
+            <p class="form-description">Update animal details</p>
+        </div>
+        <form asp-action="EditAnimal" method="post" class="animal-form">
+            <input type="hidden" asp-for="AnimalId" />
+            <input type="hidden" asp-for="Userid" />
+            
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input asp-for="Name" type="text" class="form-input" placeholder="Enter animal name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <input asp-for="Type" type="text" class="form-input" placeholder="e.g., Dog, Cat" />
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Age</label>
+                <input asp-for="Age" type="number" class="form-input" placeholder="Enter age" min="0" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Photo URL</label>
+                <input asp-for="Photo" type="text" class="form-input" placeholder="Enter photo URL" />
+                <span asp-validation-for="Photo" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="theme-cta">
+                <i class="fas fa-save"></i>
+                Save Changes
+            </button>
+            <a asp-action="Animals" class="btn btn-link mt-3">Cancel</a>
+        </form>
+    </div>
+</section>

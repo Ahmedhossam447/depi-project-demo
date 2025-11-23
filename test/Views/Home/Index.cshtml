@@ -1,68 +1,81 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HappyPaws Haven</title>
-</head>
-<body>
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <h1>Welcome back, @User.Identity.Name!</h1>
+            <p class="lead text-white mb-4">Ready to find a new friend or manage your shelter?</p>
+            <div class="d-flex gap-3 justify-content-center">
+                @if (User.IsInRole("User"))
+                {
+
+                    <a asp-controller="Animal" asp-action="Index" class="btn btn-lg btn-primary rounded-pill px-5">Browse Animals</a>
+                }
+                @if (User.IsInRole("Shelter"))
+                {
+                    <a asp-controller="Shelter" asp-action="Index" class="btn btn-lg btn-outline-light rounded-pill px-5">My Shelter</a>
+                }
+            </div>
+        }
+        else
+        {
             <h1>Find your forever companion</h1>
-            <a <a asp-controller="account" asp-action="login" class="btn" id="start-btn">Start Now</a>
-        </div>
-    </section>
-    <!-- About Adoption Section -->
-    <section class="about">
-        <div class="container">
-            <h2>Why Adopt?</h2>
-            <p>
-                Adoption is the humane alternative to buying. Every animal deserves a loving home,
-                and when you adopt, you're saving a life and gaining a loyal friend.
-            </p>
-        </div>
-    </section>
+            <a asp-controller="account" asp-action="login" class="btn" id="start-btn">Start Now</a>
+        }
+    </div>
+</section>
 
-    <!-- How Adoption Works Section -->
-    <section class="how-adoption-works">
-        <div class="adoption-container">
-            <div class="adoption-image">
-                <img src="~/images/dog1.jpg" alt="Adoption Process">
-            </div>
-            <div class="adoption-content">
-                <h2>How adoption works</h2>
-                <ul class="steps">
-                    <li>
-                        <span class="circle"></span>
-                        Find a pet you wish to take home
-                    </li>
-                    <li>
-                        <span class="circle"></span>
-                        Go through our adoption requirements and checklist
-                    </li>
-                    <li>
-                        <span class="circle"></span>
-                        Schedule a visit with the shelter
-                    </li>
-                    <li>
-                        <span class="circle"></span>
-                        Meet the pet and complete procedure
-                    </li>
-                </ul>
-                <a asp-action="FAQs" class="btn faq-btn">Pet adoption FAQs</a>
-            </div>
-        </div>
-    </section>
+<!-- About Adoption Section -->
+<section class="about">
+    <div class="container">
+        <h2>Why Adopt?</h2>
+        <p>
+            Adoption is the humane alternative to buying. Every animal deserves a loving home,
+            and when you adopt, you're saving a life and gaining a loyal friend.
+        </p>
+    </div>
+</section>
 
-    <!-- Contact Section -->
-    <section class="contact">
-        <div class="container">
-            <h2>Get In Touch</h2>
-            <p>Have questions about adoption? Reach out to us!</p>
-            <a asp-action="contactus" class="btn">Contact Us</a>
+<!-- How Adoption Works Section -->
+<section class="how-adoption-works">
+    <div class="adoption-container">
+        <div class="adoption-image">
+            <img src="~/images/dog1.jpg" alt="Adoption Process">
         </div>
-    </section>
-</body>
-</html>
+        <div class="adoption-content">
+            <h2>How adoption works</h2>
+            <ul class="steps">
+                <li>
+                    <span class="circle"></span>
+                    Find a pet you wish to take home
+                </li>
+                <li>
+                    <span class="circle"></span>
+                    Go through our adoption requirements and checklist
+                </li>
+                <li>
+                    <span class="circle"></span>
+                    Schedule a visit with the shelter
+                </li>
+                <li>
+                    <span class="circle"></span>
+                    Meet the pet and complete procedure
+                </li>
+            </ul>
+            <a asp-action="FAQs" class="btn faq-btn">Pet adoption FAQs</a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact">
+    <div class="container">
+        <h2>Get In Touch</h2>
+        <p>Have questions about adoption? Reach out to us!</p>
+        <a asp-action="contactus" class="btn">Contact Us</a>
+    </div>
+</section>

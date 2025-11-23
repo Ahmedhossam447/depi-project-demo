@@ -24,5 +24,24 @@
                 }
             }
         }
+
+        public static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var adminEmail = "admin@happypaws.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
+            {
+                adminUser = new IdentityUser
+                {
+                    UserName = "Admin",
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(adminUser, "Admin123!");
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        }
     }
 }

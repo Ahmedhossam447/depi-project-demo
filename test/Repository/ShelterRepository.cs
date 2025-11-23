@@ -42,9 +42,16 @@ namespace test.Repository
             return identityUsers;
         }
 
-        public Task<bool> RemoveProduct(Product product)
+        public async Task<bool> RemoveProduct(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Remove(product);
+            return SaveChanges();
+        }
+
+        public async Task<bool> UpdateProduct(Product product)
+        {
+            _context.Products.Update(product);
+            return SaveChanges();
         }
         public bool SaveChanges(){
             var saved = _context.SaveChanges();
