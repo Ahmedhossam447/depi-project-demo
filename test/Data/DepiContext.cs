@@ -19,6 +19,8 @@ public partial class DepiContext : IdentityDbContext<IdentityUser>
     }
 
     public virtual DbSet<Animal> Animals { get; set; }
+    public virtual DbSet<UserConnections> UserConnections { get; set; }
+    public virtual DbSet<ChatMessage> ChatMessages { get; set; }
     public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
     public virtual DbSet<Transactions> Transactions { get; set; }
     public virtual DbSet<PaymentMethods> PaymentMethods { get; set; }

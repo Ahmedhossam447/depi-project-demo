@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using test.Data;
 using test.Helpers;
+using test.Hubs;
 using test.Interfaces;
 using test.Repository;
 using test.Services;
@@ -46,6 +47,8 @@ namespace test
             builder.Services.AddScoped<IContact, ContactRepository>();
             builder.Services.AddScoped<IMedicalRecord, MedicalRecordRepository>();
             builder.Services.AddScoped<IVaccinationNeeded, VaccinationNeededRepository>();
+            builder.Services.AddSignalR();
+
 
             builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
 
@@ -96,6 +99,7 @@ namespace test
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
+            app.MapHub<ChatHub>("/chathub");
 
 
             // This is where you define your application's routes or "endpoints".

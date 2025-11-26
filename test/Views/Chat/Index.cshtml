@@ -1,0 +1,162 @@
+@model List<test.Models.ChatMessage>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Chat";
+    var currentUserId = UserManager.GetUserId(User);
+    var receiverId = ViewBag.ReceiverId as string;
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0 rounded-4 chat-card">
+                <div class="card-header bg-pink text-white rounded-top-4 py-3 chat-header">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-comments fa-lg me-2"></i>
+                        <h5 class="mb-0 fw-bold">Chat with @ViewBag.ReceiverName</h5>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="chat-messages" class="p-4 chat-messages-area">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var msg in Model)
+                            {
+                                var isMe = msg.SenderId == currentUserId;
+                                <div class="d-flex @(isMe ? "justify-content-end" : "justify-content-start") mb-3">
+                                    <div style="max-width: 75%;">
+                                        <div class="@(isMe ? "bg-pink text-white" : "bg-white text-dark border") p-3 rounded-4 shadow-sm @(isMe ? "rounded-tr-0" : "rounded-tl-0")" 
+                                             style="@(isMe ? "border-top-right-radius: 0 !important;" : "border-top-left-radius: 0 !important;")">
+                                            @msg.Message
+                                        </div>
+                                        <small class="d-block mt-1 text-muted @(isMe ? "text-end" : "text-start")" style="font-size: 0.7em;">
+                                            @msg.Time.ToString("hh:mm tt")
+                                        </small>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted small mt-5 empty-chat-state">
+                                <i class="fas fa-paper-plane fa-3x mb-3 opacity-25"></i>
+                                <p>Start the conversation!</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="p-3 bg-white border-top chat-input-area">
+                        <input type="hidden" id="receiverId" value="@receiverId">
+                        
+                        <div class="input-group">
+                            <input type="text" id="messageInput" class="form-control form-control-lg border-0 bg-light rounded-pill px-4" placeholder="Type your message..." aria-label="Type your message..." autocomplete="off">
+                            <button class="btn btn-pink rounded-circle ms-2 d-flex align-items-center justify-content-center" type="button" id="sendButton" style="width: 48px; height: 48px;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- SignalR Client Library -->
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chathub")
+            .build();
+
+        const currentUserId = "@currentUserId";
+        const receiverId = "@receiverId";
+
+        // Scroll to bottom on load
+        const chatBox = document.getElementById("chat-messages");
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Receive message as Sender (confirmation)
+        connection.on("sendermessage", function (chatMessage) {
+            appendMessage(chatMessage, true);
+        });
+
+        // Receive message as Receiver
+        connection.on("recievermessage", function (chatMessage) {
+            appendMessage(chatMessage, false);
+        });
+
+        connection.start().then(function () {
+            console.log("SignalR Connected!");
+            document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+        document.getElementById("messageInput").addEventListener("keypress", function (e) {
+            if (e.key === 'Enter') {
+                sendMessage(e);
+            }
+        });
+
+        function sendMessage(event) {
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value;
+
+            if (!receiverId || !message) return;
+
+            const chatMessage = {
+                SenderId: currentUserId,
+                ReceiverId: receiverId,
+                Message: message,
+                Time: new Date().toISOString()
+            };
+
+            connection.invoke("sendmessage", chatMessage).catch(function (err) {
+                return console.error(err.toString());
+            });
+            
+            messageInput.value = "";
+            event.preventDefault();
+        }
+
+        function appendMessage(chatMessage, isMe) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = isMe ? "d-flex justify-content-end mb-3" : "d-flex justify-content-start mb-3";
+            
+            const contentDiv = document.createElement("div");
+            contentDiv.style.maxWidth = "75%";
+
+            const bubble = document.createElement("div");
+            bubble.className = isMe ? "bg-pink text-white p-3 rounded-4 shadow-sm" : "bg-white text-dark p-3 rounded-4 shadow-sm border";
+            
+            // Add specific styling for corner radius
+            if (isMe) {
+                bubble.style.borderTopRightRadius = "0";
+            } else {
+                bubble.style.borderTopLeftRadius = "0";
+            }
+            
+            bubble.textContent = chatMessage.message; 
+
+            const time = document.createElement("small");
+            time.className = "d-block mt-1 text-muted " + (isMe ? "text-end" : "text-start");
+            time.style.fontSize = "0.7em";
+            time.textContent = new Date(chatMessage.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            contentDiv.appendChild(bubble);
+            contentDiv.appendChild(time);
+            msgDiv.appendChild(contentDiv);
+            
+            const chatBox = document.getElementById("chat-messages");
+            // Remove empty state if exists
+            if(chatBox.querySelector('.empty-chat-state')) chatBox.querySelector('.empty-chat-state').remove();
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+}

@@ -157,6 +157,9 @@
                                             <i class="fas fa-check-double me-1"></i> Complete
                                         </button>
                                     </form>
+                                    <a href="@Url.Action("Index", "Chat", new { receiverId = req.Userid })" class="btn btn-pink rounded-pill btn-sm fw-bold flex-grow-1" title="Chat with Adopter">
+                                        <i class="fas fa-comments me-1"></i> Chat
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -292,6 +295,9 @@
                                             <i class="fas fa-check-circle me-1"></i> Adoption Complete
                                         </button>
                                     </form>
+                                    <a href="@Url.Action("Index", "Chat", new { receiverId = req.Useridreq })" class="btn btn-pink w-100 rounded-pill btn-sm fw-bold mt-2" title="Chat with Owner">
+                                        <i class="fas fa-comments me-1"></i> Chat with Owner
+                                    </a>
                                 </div>
                             </div>
                         </div>

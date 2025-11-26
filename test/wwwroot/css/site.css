@@ -2551,3 +2551,101 @@ footer {
 .auth-link a:hover {
     text-decoration: underline;
 }
+
+/* ===========================================
+   CHAT SYSTEM STYLES
+   =========================================== */
+.chat-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.chat-header {
+    background: linear-gradient(45deg, #db98b7, #c39797);
+    color: white;
+    padding: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.chat-messages-area {
+    height: 500px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-input-area {
+    background: white;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Custom Scrollbar for Chat */
+.chat-messages-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages-area::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb {
+    background: #db98b7;
+    border-radius: 4px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb:hover {
+    background: #c39797;
+}
+
+/* Chat Bubbles */
+.bg-pink {
+    background-color: #db98b7 !important;
+}
+
+.text-pink {
+    color: #db98b7 !important;
+}
+
+.btn-pink {
+    background-color: #db98b7;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-pink:hover {
+    background-color: #c39797;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(219, 152, 183, 0.4);
+}
+
+.btn-outline-pink {
+    color: #db98b7;
+    border-color: #db98b7;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-pink:hover {
+    background-color: #db98b7;
+    color: white;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+.rounded-tr-0 {
+    border-top-right-radius: 0 !important;
+}
+
+.rounded-tl-0 {
+    border-top-left-radius: 0 !important;
+}
