@@ -62,8 +62,9 @@ var connectionsid2 = _context.UserConnections
                         }
                 foreach (var connection in connectionsid2)
                 {
+
                     await Clients.Client(connection).SendAsync("recievermessage", chatMessage);
-                    await Clients.Client(connection).SendAsync("updateNotifications");
+                    await Clients.Client(connection).SendAsync("updateNotifications", chatMessage.SenderId);
                 }
                     }
             

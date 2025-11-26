@@ -55,6 +55,17 @@
                 else if (signInManager.IsSignedIn(User) && User.IsInRole("Shelter"))
                 {
                     <li><a asp-controller="shelter" asp-action="Index" class="login">Product list</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="position-relative dropdown-toggle" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span id="notification-badge">
+                                @await Component.InvokeAsync("Notifications")
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" id="notification-list" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                            <li><span class="dropdown-item text-muted text-center">Loading...</span></li>
+                        </ul>
+                    </li>
                     <li><a asp-controller="account" asp-action="logout" class="login">Log Out</a></li>
                 }
                 else if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
@@ -129,7 +140,15 @@
                 .withUrl("/chathub")
                 .build();
 
-            notificationConnection.on("updateNotifications", function () {
+            notificationConnection.on("updateNotifications", function (senderId) {
+                // Check if we are currently in a chat with this sender
+                const currentChatReceiverId = $("#receiverId").val();
+                
+                if (currentChatReceiverId && currentChatReceiverId === senderId) {
+                    // We are in the chat, so don't update the badge immediately
+                    return; 
+                }
+
                 // Reload the notification badge content
                 $.get("/Chat/GetNotificationCount", function (data) {
                     $("#notification-badge").html(data);

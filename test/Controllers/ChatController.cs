@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using test.Data;
+using test.Hubs;
 
 namespace test.Controllers
 {
@@ -11,34 +13,44 @@ namespace test.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly DepiContext _context;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatController(UserManager<IdentityUser> userManager, DepiContext context)
+        public ChatController(UserManager<IdentityUser> userManager, DepiContext context, IHubContext<ChatHub> hubContext)
         {
             _userManager = userManager;
             _context = context;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Index(string? receiverId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
+
             if (currentUser == null)
             {
                 return RedirectToAction("Login", "Account");
             }
-
             if (string.IsNullOrEmpty(receiverId))
             {
-                return RedirectToAction("index","Home");
+                return RedirectToAction("index", "Home");
             }
 
-            var hasApprovedRequest = await _context.Requests.AnyAsync(r => 
-                r.Status == "approved" &&
-                ((r.Userid == currentUser.Id && r.Useridreq == receiverId) || 
-                 (r.Userid == receiverId && r.Useridreq == currentUser.Id)));
+            var receiverUser = await _userManager.FindByIdAsync(receiverId);
+            if (receiverUser == null) return NotFound();
+            var isShelterUser = await _userManager.IsInRoleAsync(currentUser, "Shelter");
+            var isShelter = await _userManager.IsInRoleAsync(receiverUser, "Shelter");
 
-            if (!hasApprovedRequest)
+            if (!isShelter&&!isShelterUser)
             {
-                return RedirectToAction("Index", "Home");
+                var hasApprovedRequest = await _context.Requests.AnyAsync(r =>
+                    r.Status == "approved" &&
+                    ((r.Userid == currentUser.Id && r.Useridreq == receiverId) ||
+                     (r.Userid == receiverId && r.Useridreq == currentUser.Id)));
+
+                if (!hasApprovedRequest)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
 
             var messages = await _context.ChatMessages
@@ -64,6 +76,9 @@ namespace test.Controllers
                     .Distinct()
                     .CountAsync();
                 HttpContext.Session.SetInt32("NotificationCount", notificationCount);
+
+                // Notify sender that messages have been read
+                await _hubContext.Clients.User(receiverId).SendAsync("messagesRead", currentUser.Id);
             }
 
             var receiver = await _userManager.FindByIdAsync(receiverId);
@@ -120,6 +135,27 @@ namespace test.Controllers
             }
 
             return Json(notifications);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkAsRead(int messageId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var message = await _context.ChatMessages.FindAsync(messageId);
+            if (message != null && message.ReceiverId == currentUser.Id && message.read == 0)
+            {
+                message.read = 1;
+                await _context.SaveChangesAsync();
+
+                // Notify the sender that this message was read
+                await _hubContext.Clients.User(message.SenderId).SendAsync("messagesRead", currentUser.Id);
+
+                return Ok();
+            }
+
+            return BadRequest();
         }
     }
 }

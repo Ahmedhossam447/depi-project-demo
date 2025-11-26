@@ -97,6 +97,13 @@ namespace test.Controllers
             }
             else if (result.Succeeded && User.IsInRole("Shelter"))
             {
+                var notificationCount = await _context.ChatMessages
+                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Select(m => m.SenderId)
+                    .Distinct()
+                    .CountAsync();
+
+                HttpContext.Session.SetInt32("NotificationCount", notificationCount);
                 return LocalRedirect(ReturnUrl);
             }
             else if (result.Succeeded && User.IsInRole("Admin"))

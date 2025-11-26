@@ -93,6 +93,7 @@ namespace test.Controllers
             var products = await _ShelterRepository.GetAllProducts(shelter.Id);
             var userid = _usermanager.GetUserId(User);
             ViewBag.userid = userid;
+            ViewBag.ShelterId = shelter.Id;
             ViewBag.email = shelter.Email;
             ViewBag.phonenumber = shelter.PhoneNumber;
             ViewBag.username = shelter.UserName;

@@ -12,9 +12,14 @@
         <div class="col-md-8">
             <div class="card shadow border-0 rounded-4 chat-card">
                 <div class="card-header bg-pink text-white rounded-top-4 py-3 chat-header">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-comments fa-lg me-2"></i>
-                        <h5 class="mb-0 fw-bold">Chat with @ViewBag.ReceiverName</h5>
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-comments fa-lg me-2"></i>
+                            <h5 class="mb-0 fw-bold">Chat with @ViewBag.ReceiverName</h5>
+                        </div>
+                        <a href="javascript:history.back()" class="btn btn-sm btn-light text-pink rounded-pill fw-bold">
+                            <i class="fas fa-arrow-left me-1"></i> Back
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -32,6 +37,19 @@
                                         </div>
                                         <small class="d-block mt-1 text-muted @(isMe ? "text-end" : "text-start")" style="font-size: 0.7em;">
                                             @msg.Time.ToString("hh:mm tt")
+                                            @if (isMe)
+                                            {
+                                                <span class="ms-1">
+                                                    @if (msg.read == 1)
+                                                    {
+                                                        <i class="fas fa-check-double text-primary msg-status"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-check text-muted msg-status"></i>
+                                                    }
+                                                </span>
+                                            }
                                         </small>
                                     </div>
                                 </div>
@@ -86,6 +104,21 @@
         // Receive message as Receiver
         connection.on("recievermessage", function (chatMessage) {
             appendMessage(chatMessage, false);
+            // If the message is from the person we are currently chatting with, mark it as read immediately
+            if (chatMessage.senderId === receiverId) {
+                 $.post("/Chat/MarkAsRead", { messageId: chatMessage.id });
+            }
+        });
+
+        // Listen for read receipt
+        connection.on("messagesRead", function (readerId) {
+            if (readerId === receiverId) {
+                const checks = document.querySelectorAll('.msg-status.fa-check');
+                checks.forEach(icon => {
+                    icon.classList.remove('fa-check', 'text-muted');
+                    icon.classList.add('fa-check-double', 'text-primary');
+                });
+            }
         });
 
         connection.start().then(function () {
@@ -145,7 +178,15 @@
             const time = document.createElement("small");
             time.className = "d-block mt-1 text-muted " + (isMe ? "text-end" : "text-start");
             time.style.fontSize = "0.7em";
-            time.textContent = new Date(chatMessage.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            let timeText = new Date(chatMessage.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            if (isMe) {
+                // Add checkmark for sent messages
+                time.innerHTML = `${timeText} <span class="ms-1"><i class="fas fa-check text-muted msg-status"></i></span>`;
+            } else {
+                time.textContent = timeText;
+            }
 
             contentDiv.appendChild(bubble);
             contentDiv.appendChild(time);

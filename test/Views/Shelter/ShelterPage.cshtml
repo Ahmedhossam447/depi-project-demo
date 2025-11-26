@@ -4,6 +4,7 @@
     var phonenumber = ViewBag.phonenumber as string;
     var email = ViewBag.email as string;
     var userId = ViewBag.userid as string;
+    var shelterId = ViewBag.ShelterId as string;
     ViewData["Title"] = "Shelter Page - " + username;
 }
 
@@ -51,6 +52,12 @@
                         <div class="small text-muted text-uppercase fw-bold">Phone</div>
                         <div class="fw-medium text-dark">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</div>
                     </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-top">
+                    <a asp-controller="Chat" asp-action="Index" asp-route-receiverId="@shelterId" class="btn btn-pink w-100 rounded-pill py-2 fw-bold">
+                        <i class="fas fa-comments me-2"></i>Chat with Shelter
+                    </a>
                 </div>
             </div>
         </div>
