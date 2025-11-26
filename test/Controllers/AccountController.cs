@@ -10,6 +10,7 @@ using NuGet.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using test.Data;
@@ -28,12 +29,15 @@ namespace test.Controllers
         private readonly IEmailSender emailSender;
 
 
-        public AccountController(IAccounts accountRepository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender)
+        private readonly DepiContext _context;
+
+        public AccountController(IAccounts accountRepository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, DepiContext context)
         {
             _accountRepository = accountRepository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
+            _context = context;
         }
         public async Task<IActionResult> login(string ?ReturnUrl)
         {
@@ -69,6 +73,26 @@ namespace test.Controllers
             var result = await signInManager.PasswordSignInAsync(user1.UserName, user.password, true, false);
             if (result.Succeeded && User.IsInRole("User"))
             {
+                // Set Session Variables
+                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user1.Id && o.OrderStatus == 0);
+                if (orderExists != null)
+                {
+                    var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
+                    HttpContext.Session.SetInt32("CartCount", cartcount);
+                }
+                else
+                {
+                    HttpContext.Session.SetInt32("CartCount", 0);
+                }
+
+                var notificationCount = await _context.ChatMessages
+                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Select(m => m.SenderId)
+                    .Distinct()
+                    .CountAsync();
+                
+                HttpContext.Session.SetInt32("NotificationCount", notificationCount);
+
                 return LocalRedirect(ReturnUrl);
             }
             else if (result.Succeeded && User.IsInRole("Shelter"))
@@ -183,6 +207,25 @@ namespace test.Controllers
             var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
+                var user1 = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId ==user1.Id  && o.OrderStatus == 0);
+                if (orderExists != null)
+                {
+                    var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
+                    HttpContext.Session.SetInt32("CartCount", cartcount);
+                }
+                else
+                {
+                    HttpContext.Session.SetInt32("CartCount", 0);
+                }
+
+                var notificationCount = await _context.ChatMessages
+                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Select(m => m.SenderId)
+                    .Distinct()
+                    .CountAsync();
+
+                HttpContext.Session.SetInt32("NotificationCount", notificationCount);
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -215,6 +258,24 @@ namespace test.Controllers
                         var addLoginResult = await userManager.AddLoginAsync(user, info);
                         if (addLoginResult.Succeeded)
                         {
+                            var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderStatus == 0);
+                            if (orderExists != null)
+                            {
+                                var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
+                                HttpContext.Session.SetInt32("CartCount", cartcount);
+                            }
+                            else
+                            {
+                                HttpContext.Session.SetInt32("CartCount", 0);
+                            }
+
+                            var notificationCount = await _context.ChatMessages
+                                .Where(m => m.ReceiverId == user.Id && m.read == 0)
+                                .Select(m => m.SenderId)
+                                .Distinct()
+                                .CountAsync();
+
+                            HttpContext.Session.SetInt32("NotificationCount", notificationCount);
                             await signInManager.SignInAsync(user, isPersistent: false);
                             return LocalRedirect(returnUrl);
                         }

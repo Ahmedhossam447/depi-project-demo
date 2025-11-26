@@ -47,12 +47,79 @@ namespace test.Controllers
                 .OrderBy(m => m.Time)
                 .ToListAsync();
 
+            // Mark unread messages from receiver as read
+            var unreadMessages = messages.Where(m => m.ReceiverId == currentUser.Id && m.read == 0).ToList();
+            if (unreadMessages.Any())
+            {
+                foreach (var msg in unreadMessages)
+                {
+                    msg.read = 1;
+                }
+                await _context.SaveChangesAsync();
+
+                // Update Notification Count in Session
+                var notificationCount = await _context.ChatMessages
+                    .Where(m => m.ReceiverId == currentUser.Id && m.read == 0)
+                    .Select(m => m.SenderId)
+                    .Distinct()
+                    .CountAsync();
+                HttpContext.Session.SetInt32("NotificationCount", notificationCount);
+            }
+
             var receiver = await _userManager.FindByIdAsync(receiverId);
             ViewBag.ReceiverName = receiver?.UserName ?? "Unknown User";
 
             ViewBag.ReceiverId = receiverId;
             ViewBag.CurrentUserId = currentUser.Id;
             return View(messages);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetNotificationCount()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Content("");
+
+            var notificationCount = await _context.ChatMessages
+                .Where(m => m.ReceiverId == currentUser.Id && m.read == 0)
+                .Select(m => m.SenderId)
+                .Distinct()
+                .CountAsync();
+
+            HttpContext.Session.SetInt32("NotificationCount", notificationCount);
+
+            return ViewComponent("Notifications");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetUserNotifications()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Json(new List<object>());
+
+            var unreadSenders = await _context.ChatMessages
+                .Where(m => m.ReceiverId == currentUser.Id && m.read == 0)
+                .GroupBy(m => m.SenderId)
+                .Select(g => new { SenderId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var notifications = new List<object>();
+
+            foreach (var item in unreadSenders)
+            {
+                var sender = await _userManager.FindByIdAsync(item.SenderId);
+                if (sender != null)
+                {
+                    notifications.Add(new
+                    {
+                        userId = item.SenderId,
+                        userName = sender.UserName,
+                        unreadCount = item.Count
+                    });
+                }
+            }
+
+            return Json(notifications);
         }
     }
 }

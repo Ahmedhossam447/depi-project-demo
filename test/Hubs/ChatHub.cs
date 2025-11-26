@@ -21,6 +21,10 @@ namespace test.Hubs
         public  override Task OnConnectedAsync()
         {
             var userId = _userManager.GetUserId(Context.User);
+            if (userId == null)
+            {
+                return base.OnConnectedAsync();
+            }
             var con = new UserConnections
             {
                 ConnectionId = Context.ConnectionId,
@@ -59,6 +63,7 @@ var connectionsid2 = _context.UserConnections
                 foreach (var connection in connectionsid2)
                 {
                     await Clients.Client(connection).SendAsync("recievermessage", chatMessage);
+                    await Clients.Client(connection).SendAsync("updateNotifications");
                 }
                     }
             

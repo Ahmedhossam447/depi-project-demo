@@ -512,3 +512,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// Notification Dropdown Functionality
+document.addEventListener("DOMContentLoaded", function () {
+    // Handle Notification Dropdown Open (Bootstrap Event)
+    // Bootstrap 5 fires 'show.bs.dropdown' on the parent element of the toggle
+    const dropdownToggle = document.getElementById('notificationDropdown');
+    if (dropdownToggle && dropdownToggle.parentElement) {
+        dropdownToggle.parentElement.addEventListener('show.bs.dropdown', function () {
+            const list = $("#notification-list");
+            list.html('<li><span class="dropdown-item text-muted text-center">Loading...</span></li>');
+
+            $.get("/Chat/GetUserNotifications", function (data) {
+                list.empty();
+                if (data.length === 0) {
+                    list.append('<li><span class="dropdown-item text-muted text-center">No new messages</span></li>');
+                } else {
+                    data.forEach(function (item) {
+                        const html = `
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between align-items-center" href="/Chat/Index?receiverId=${item.userId}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user text-secondary"></i>
+                                        </div>
+                                        <span class="fw-bold">${item.userName}</span>
+                                    </div>
+                                    <span class="badge bg-danger rounded-pill">${item.unreadCount}</span>
+                                </a>
+                            </li>
+                        `;
+                        list.append(html);
+                    });
+                }
+            }).fail(function () {
+                list.html('<li><span class="dropdown-item text-danger text-center">Error loading messages</span></li>');
+            });
+        });
+    }
+});
