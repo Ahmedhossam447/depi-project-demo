@@ -28,7 +28,7 @@ namespace test.Controllers
 
             if (string.IsNullOrEmpty(receiverId))
             {
-                return View();
+                return RedirectToAction("index","Home");
             }
 
             var hasApprovedRequest = await _context.Requests.AnyAsync(r => 
