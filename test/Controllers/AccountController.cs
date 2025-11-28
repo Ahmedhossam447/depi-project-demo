@@ -145,7 +145,8 @@ namespace test.Controllers
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(userr);
                 userr.PhoneNumber = user.phonenumber;
                 var confirmationlink = Url.Action("ConfirmEmail", "Account", new { Userid = userr.Id, token = token }, Request.Scheme);
-                await emailSender.SendEmailAsync(userr.Email, "email confirmation", confirmationlink);
+                string emailBody = $"Please click here to confirm your email: <a href='{confirmationlink}'>Confirm Email</a>";
+                await emailSender.SendEmailAsync(userr.Email, "Email Confirmation", emailBody);
                 await userManager.AddToRoleAsync(userr, user.role);
                 ModelState.AddModelError(string.Empty, "Please confirm your email");
                 return RedirectToAction("login");
@@ -327,7 +328,8 @@ namespace test.Controllers
                         // Send email confirmation
                         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                         var confirmationLink = Url.Action("ConfirmEmail", "Account", new { Userid = user.Id, token = token }, Request.Scheme);
-                        await emailSender.SendEmailAsync(user.Email, "Email Confirmation", confirmationLink);
+                        string emailBody = $"Please click here to confirm your email: <a href='{confirmationLink}'>Confirm Email</a>";
+                        await emailSender.SendEmailAsync(user.Email, "Email Confirmation", emailBody);
 
                         ModelState.AddModelError(string.Empty, "Registration successful. Please check your email to confirm your account.");
                         LoginViewModel loginViewModel = new LoginViewModel
@@ -366,7 +368,8 @@ namespace test.Controllers
                 {
                     var token =await userManager.GeneratePasswordResetTokenAsync(user);
                     var resetpasswordlink = Url.Action("ResetPassword","Account",new { token =token, email=model.email},Request.Scheme);
-                    await emailSender.SendEmailAsync(model.email,"reset password", resetpasswordlink);
+                    string emailBody = $"Please click here to reset your password: <a href='{resetpasswordlink}'>Reset Password</a>";
+                    await emailSender.SendEmailAsync(model.email,"Reset Password", emailBody);
                     return View();
                 }
             }

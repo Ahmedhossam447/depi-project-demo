@@ -50,7 +50,7 @@ namespace test
             builder.Services.AddSignalR();
 
 
-            builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
+
 
             builder.Services.AddAuthentication("MyCookieAuth")
                 .AddCookie("MyCookieAuth", options =>
