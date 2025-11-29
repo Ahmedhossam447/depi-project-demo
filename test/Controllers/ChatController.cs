@@ -22,7 +22,7 @@ namespace test.Controllers
             _hubContext = hubContext;
         }
 
-        public async Task<IActionResult> Index(string? receiverId)
+        public async Task<IActionResult> Index(string? receiverId, int? animalid)
         {
             var currentUser = await _userManager.GetUserAsync(User);
 
@@ -54,6 +54,7 @@ namespace test.Controllers
             }
 
             var messages = await _context.ChatMessages
+                .Include(m => m.Animal)
                 .Where(m => (m.SenderId == currentUser.Id && m.ReceiverId == receiverId) ||
                             (m.SenderId == receiverId && m.ReceiverId == currentUser.Id))
                 .OrderBy(m => m.Time)
@@ -86,6 +87,29 @@ namespace test.Controllers
 
             ViewBag.ReceiverId = receiverId;
             ViewBag.CurrentUserId = currentUser.Id;
+
+            // Fetch animal info if animalid is provided
+            if (animalid.HasValue)
+            {
+                var animal = await _context.Animals.FindAsync(animalid.Value);
+                if (animal != null)
+                {
+                    ViewBag.AnimalId = animal.AnimalId;
+                    ViewBag.AnimalName = animal.Name;
+                    ViewBag.AnimalType = animal.Type;
+                    ViewBag.AnimalAge = animal.Age;
+                    ViewBag.AnimalPhoto = animal.Photo;
+
+                    // Check if a quote message already exists for this sender/receiver/animal
+                    var quoteExists = await _context.ChatMessages.AnyAsync(m =>
+                        m.SenderId == currentUser.Id &&
+                        m.ReceiverId == receiverId &&
+                        m.AnimalId == animalid.Value);
+                    
+                    ViewBag.QuoteAlreadySent = quoteExists;
+                }
+            }
+
             return View(messages);
         }
 

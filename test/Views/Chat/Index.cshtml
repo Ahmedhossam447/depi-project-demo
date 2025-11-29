@@ -5,6 +5,14 @@
     ViewData["Title"] = "Chat";
     var currentUserId = UserManager.GetUserId(User);
     var receiverId = ViewBag.ReceiverId as string;
+    
+    // Animal info from ViewBag
+    var animalId = ViewBag.AnimalId as int?;
+    var animalName = ViewBag.AnimalName as string;
+    var animalType = ViewBag.AnimalType as string;
+    var animalAge = ViewBag.AnimalAge as byte?;
+    var animalPhoto = ViewBag.AnimalPhoto as string;
+    var quoteAlreadySent = ViewBag.QuoteAlreadySent as bool? ?? false;
 }
 
 <div class="container mt-5 pt-5">
@@ -30,11 +38,44 @@
                             {
                                 var isMe = msg.SenderId == currentUserId;
                                 <div class="d-flex @(isMe ? "justify-content-end" : "justify-content-start") mb-3">
-                                    <div style="max-width: 75%;">
-                                        <div class="@(isMe ? "bg-pink text-white" : "bg-white text-dark border") p-3 rounded-4 shadow-sm @(isMe ? "rounded-tr-0" : "rounded-tl-0")" 
-                                             style="@(isMe ? "border-top-right-radius: 0 !important;" : "border-top-left-radius: 0 !important;")">
-                                            @msg.Message
-                                        </div>
+                                    <div style="max-width: @(msg.Animal != null ? "85%" : "75%");">
+                                        @if (msg.Animal != null)
+                                        {
+                                            <!-- Animal Quote Card -->
+                                            <div class="@(isMe ? "bg-pink text-white" : "bg-white text-dark border") p-3 rounded-4 shadow-sm"
+                                                 style="@(isMe ? "border-top-right-radius: 0 !important;" : "border-top-left-radius: 0 !important;")">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="@msg.Animal.Photo" alt="@msg.Animal.Name" 
+                                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px; border: 2px solid @(isMe ? "rgba(255,255,255,0.3)" : "#db98b7");">
+                                                    <div>
+                                                        <div class="fw-bold" style="font-size: 1rem;">
+                                                            <i class="fas fa-paw me-1"></i> @msg.Animal.Name
+                                                        </div>
+                                                        <div style="font-size: 0.85rem; opacity: 0.9;">
+                                                            <span class="me-2"><i class="fas fa-tag me-1"></i>@msg.Animal.Type</span>
+                                                            @if (msg.Animal.Age.HasValue)
+                                                            {
+                                                                <span><i class="fas fa-birthday-cake me-1"></i>@msg.Animal.Age years</span>
+                                                            }
+                                                        </div>
+                                                        <div class="mt-1" style="font-size: 0.8rem; opacity: 0.8;">
+                                                            <i class="fas fa-heart me-1"></i> Interested in adoption
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2 pt-2" style="border-top: 1px solid @(isMe ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)");">
+                                                    @msg.Message
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <!-- Regular Message -->
+                                            <div class="@(isMe ? "bg-pink text-white" : "bg-white text-dark border") p-3 rounded-4 shadow-sm"
+                                                 style="@(isMe ? "border-top-right-radius: 0 !important;" : "border-top-left-radius: 0 !important;")">
+                                                @msg.Message
+                                            </div>
+                                        }
                                         <small class="d-block mt-1 text-muted @(isMe ? "text-end" : "text-start")" style="font-size: 0.7em;">
                                             @msg.Time.ToString("hh:mm tt")
                                             @if (isMe)
@@ -91,6 +132,14 @@
 
         const currentUserId = "@currentUserId";
         const receiverId = "@receiverId";
+        
+        // Animal info for quote message
+        const animalId = @(animalId.HasValue ? animalId.Value.ToString() : "null");
+        const animalName = "@(animalName ?? "")";
+        const animalType = "@(animalType ?? "")";
+        const animalAge = @(animalAge.HasValue ? animalAge.Value.ToString() : "null");
+        const animalPhoto = "@(animalPhoto ?? "")";
+        const quoteAlreadySent = @(quoteAlreadySent ? "true" : "false");
 
         // Scroll to bottom on load
         const chatBox = document.getElementById("chat-messages");
@@ -110,6 +159,16 @@
             }
         });
 
+        // Receive animal quote message as Sender
+        connection.on("AnimalQuoteMessage", function (chatMessage, animalData) {
+            appendQuoteMessage(chatMessage, animalData, true);
+        });
+
+        // Receive animal quote message as Receiver
+        connection.on("AnimalQuoteMessageReciever", function (chatMessage, animalData) {
+            appendQuoteMessage(chatMessage, animalData, false);
+        });
+
         // Listen for read receipt
         connection.on("messagesRead", function (readerId) {
             if (readerId === receiverId) {
@@ -124,6 +183,21 @@
         connection.start().then(function () {
             console.log("SignalR Connected!");
             document.getElementById("sendButton").disabled = false;
+            
+            // Auto-send animal quote message if animalId exists and quote hasn't been sent before
+            if (animalId !== null && animalName && !quoteAlreadySent) {
+                const autoMessage = `Hi, I'm interested in adopting ${animalName} (${animalType})!`;
+                const chatMessage = {
+                    SenderId: currentUserId,
+                    ReceiverId: receiverId,
+                    Message: autoMessage,
+                    Time: new Date().toISOString()
+                };
+                
+                connection.invoke("sendmessage", chatMessage, animalId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
         }).catch(function (err) {
             return console.error(err.toString());
         });
@@ -148,7 +222,7 @@
                 Time: new Date().toISOString()
             };
 
-            connection.invoke("sendmessage", chatMessage).catch(function (err) {
+            connection.invoke("sendmessage", chatMessage, null).catch(function (err) {
                 return console.error(err.toString());
             });
             
@@ -157,6 +231,11 @@
         }
 
         function appendMessage(chatMessage, isMe) {
+            // Check if this message has an animal - if so, let appendQuoteMessage handle it
+            if (chatMessage.animalId) {
+                return; // Will be handled by AnimalQuoteMessage event
+            }
+            
             const msgDiv = document.createElement("div");
             msgDiv.className = isMe ? "d-flex justify-content-end mb-3" : "d-flex justify-content-start mb-3";
             
@@ -194,6 +273,67 @@
             
             const chatBox = document.getElementById("chat-messages");
             // Remove empty state if exists
+            if(chatBox.querySelector('.empty-chat-state')) chatBox.querySelector('.empty-chat-state').remove();
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendQuoteMessage(chatMessage, animalData, isMe) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = isMe ? "d-flex justify-content-end mb-3" : "d-flex justify-content-start mb-3";
+            
+            const contentDiv = document.createElement("div");
+            contentDiv.style.maxWidth = "85%";
+
+            // Create animal quote card
+            const quoteCard = document.createElement("div");
+            quoteCard.className = isMe ? "bg-pink text-white p-3 rounded-4 shadow-sm" : "bg-white text-dark p-3 rounded-4 shadow-sm border";
+            if (isMe) {
+                quoteCard.style.borderTopRightRadius = "0";
+            } else {
+                quoteCard.style.borderTopLeftRadius = "0";
+            }
+
+            quoteCard.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <img src="${animalData.photo}" alt="${animalData.name}" 
+                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px; border: 2px solid ${isMe ? 'rgba(255,255,255,0.3)' : '#db98b7'};">
+                    <div>
+                        <div class="fw-bold" style="font-size: 1rem;">
+                            <i class="fas fa-paw me-1"></i> ${animalData.name}
+                        </div>
+                        <div style="font-size: 0.85rem; opacity: 0.9;">
+                            <span class="me-2"><i class="fas fa-tag me-1"></i>${animalData.type}</span>
+                            ${animalData.age ? `<span><i class="fas fa-birthday-cake me-1"></i>${animalData.age} years</span>` : ''}
+                        </div>
+                        <div class="mt-1" style="font-size: 0.8rem; opacity: 0.8;">
+                            <i class="fas fa-heart me-1"></i> Interested in adoption
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2 pt-2" style="border-top: 1px solid ${isMe ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};">
+                    ${chatMessage.message}
+                </div>
+            `;
+
+            const time = document.createElement("small");
+            time.className = "d-block mt-1 text-muted " + (isMe ? "text-end" : "text-start");
+            time.style.fontSize = "0.7em";
+            
+            let timeText = new Date(chatMessage.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            if (isMe) {
+                time.innerHTML = `${timeText} <span class="ms-1"><i class="fas fa-check text-muted msg-status"></i></span>`;
+            } else {
+                time.textContent = timeText;
+            }
+
+            contentDiv.appendChild(quoteCard);
+            contentDiv.appendChild(time);
+            msgDiv.appendChild(contentDiv);
+            
+            const chatBox = document.getElementById("chat-messages");
             if(chatBox.querySelector('.empty-chat-state')) chatBox.querySelector('.empty-chat-state').remove();
             
             chatBox.appendChild(msgDiv);

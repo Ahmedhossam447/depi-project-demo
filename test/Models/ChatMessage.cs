@@ -18,8 +18,10 @@ namespace test.Models
         public IdentityUser? Receiver { get; set; }
         public string Message { get; set; }
         public DateTime Time { get; set; }
-        public int read { get; set; } 
-
-
+        public int read { get; set; }
+        
+        public int? AnimalId { get; set; }
+        [ForeignKey("AnimalId")]
+        public Animal? Animal { get; set; }
     }
 }

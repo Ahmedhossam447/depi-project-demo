@@ -36,12 +36,13 @@ namespace test.Hubs
             return  base.OnConnectedAsync();
         }
 
-        public async Task sendmessage(ChatMessage chatMessage)
+        public async Task sendmessage(ChatMessage chatMessage,int? animalid)
         {
             if (chatMessage != null)
             {
                 chatMessage.read = 0;
-                chatMessage.Time= DateTime.Now;
+                chatMessage.Time = DateTime.Now;
+                chatMessage.AnimalId = animalid;
                 _context.ChatMessages.Add(chatMessage);
                 await _context.SaveChangesAsync();
             }
@@ -55,18 +56,46 @@ var connectionsid2 = _context.UserConnections
     .Select(p => p.ConnectionId)
     .ToList(); 
 
+            // Fetch animal data if animalid exists
+            object? animalData = null;
+            if (animalid != null)
+            {
+                var animal = await _context.Animals.FindAsync(animalid);
+                if (animal != null)
+                {
+                    animalData = new
+                    {
+                        animalId = animal.AnimalId,
+                        name = animal.Name,
+                        type = animal.Type,
+                        age = animal.Age,
+                        photo = animal.Photo
+                    };
+                }
+            }
+
             if (connectionsid != null) {
                 foreach (var connection in connectionsid) {
-
-                 await   Clients.Client(connection).SendAsync("sendermessage",chatMessage);
-                        }
+                    await Clients.Client(connection).SendAsync("sendermessage", chatMessage);
+                    
+                    // Send animal quote message to sender if animalid exists
+                    if (animalid != null && animalData != null)
+                    {
+                        await Clients.Client(connection).SendAsync("AnimalQuoteMessage", chatMessage, animalData);
+                    }
+                }
                 foreach (var connection in connectionsid2)
                 {
-
                     await Clients.Client(connection).SendAsync("recievermessage", chatMessage);
                     await Clients.Client(connection).SendAsync("updateNotifications", chatMessage.SenderId);
-                }
+                    
+                    // Send animal quote message to receiver if animalid exists
+                    if (animalid != null && animalData != null)
+                    {
+                        await Clients.Client(connection).SendAsync("AnimalQuoteMessageReciever", chatMessage, animalData);
                     }
+                }
+            }
             
         }
         public override Task OnDisconnectedAsync(Exception? exception)
