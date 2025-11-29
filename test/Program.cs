@@ -20,7 +20,7 @@ namespace test
 
             // --- 1. Add services to the container ---
 
-            builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SalmaConnection")));
+            builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("KarramConnection")));
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
             option.SignIn.RequireConfirmedEmail = true)
                 .AddDefaultTokenProviders()

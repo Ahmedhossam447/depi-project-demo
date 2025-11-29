@@ -87,15 +87,47 @@
                                 
                                 @if (!Model.IsMine)
                                 {
-                                    <form asp-controller="Request" asp-action="create" method="post">
-                                        <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
-                                        <input type="hidden" name="Useridreq" value="@animal.Userid" />
-                                        <input type="hidden" name="Userid" value="@userId" />
-                                        <button asp-controller="Request" asp-action="Create" class="btn adopt-btn">
-                                            <i class="fas fa-heart"></i>
-                                            Adopt Me
-                                        </button>
-                                    </form>
+                                   var isShelter = await usermanager.IsInRoleAsync(animal.User, "Shelter");
+                                   if (isShelter)
+                                   {
+                                       <div class="shelter-info-card">
+                                           <div class="shelter-title">
+                                               <i class="fas fa-home"></i> Shelter Contact
+                                           </div>
+                                           <div class="shelter-detail">
+                                               <i class="fas fa-user"></i> 
+                                               <a asp-controller="Shelter" asp-action="Shelterpage" 
+                                                  asp-route-Id="@animal.User.Id"
+                                                  asp-route-UserName="@animal.User.UserName"
+                                                  asp-route-Email="@animal.User.Email"
+                                                  asp-route-PhoneNumber="@animal.User.PhoneNumber"
+                                                  class="text-decoration-none text-pink fw-bold">
+                                                   @animal.User.UserName
+                                               </a>
+                                           </div>
+                                           <div class="shelter-detail">
+                                               <i class="fas fa-phone"></i> <span>@(animal.User.PhoneNumber ?? "N/A")</span>
+                                           </div>
+                                           <div class="shelter-detail">
+                                               <i class="fas fa-envelope"></i> <span>@animal.User.Email</span>
+                                           </div>
+                                            <a asp-controller="Chat" asp-action="index" asp-route-receiverId="@animal.Userid" class="shelter-chat-btn">
+                                               <i class="fas fa-comments"></i> Chat with Shelter
+                                           </a>
+                                       </div>
+                                   }
+                                   else
+                                   {
+                                        <form asp-controller="Request" asp-action="create" method="post">
+                                            <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
+                                            <input type="hidden" name="Useridreq" value="@animal.Userid" />
+                                            <input type="hidden" name="Userid" value="@userId" />
+                                            <button asp-controller="Request" asp-action="Create" class="btn adopt-btn">
+                                                <i class="fas fa-heart"></i>
+                                                Adopt Me
+                                            </button>
+                                        </form>
+                                   }
                                     
                                     <div class="mt-2">
                                         @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())

@@ -36,7 +36,7 @@ namespace test.Repository
                 
                 animviewmodel = new Animalviewmodel
                 {
-                    animals = animals,
+                    animals = animals.ToList(),
                     filter = filter ?? "any",
                     IsMine = true
                 };
@@ -50,17 +50,19 @@ namespace test.Repository
                     
                     animals = _context.Animals
                         .Include(a => a.MedicalRecords)
+                        .Include(a => a.User)
                         .Where(a => a.Userid != userid && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == a.AnimalId));
                 }
                 else
                 {
                     animals = _context.Animals
                         .Include(a => a.MedicalRecords)
+                        .Include(a => a.User)
                         .Where(anm => anm.Userid != userid && anm.Type == filter && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == anm.AnimalId));
                 }
                 animviewmodel = new Animalviewmodel
                 {
-                    animals = animals,
+                    animals = animals.ToList(),
                     filter = filter ?? "any",
                     IsMine = false
                 };

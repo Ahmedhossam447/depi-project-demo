@@ -2649,3 +2649,72 @@ footer {
 .rounded-tl-0 {
     border-top-left-radius: 0 !important;
 }
+
+/* Shelter Info Card */
+.shelter-info-card {
+    background: #fff;
+    border: 1px solid rgba(219, 152, 183, 0.3);
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(219, 152, 183, 0.1);
+    transition: all 0.3s ease;
+}
+
+.shelter-info-card:hover {
+    box-shadow: 0 6px 20px rgba(219, 152, 183, 0.2);
+    border-color: rgba(219, 152, 183, 0.6);
+}
+
+.shelter-title {
+    color: #c39797;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid rgba(219, 152, 183, 0.2);
+    padding-bottom: 8px;
+}
+
+.shelter-detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.shelter-detail i {
+    color: #db98b7;
+    width: 16px;
+    text-align: center;
+}
+
+.shelter-chat-btn {
+    margin-top: 12px;
+    width: 100%;
+    background: white;
+    color: #db98b7;
+    border: 2px solid #db98b7;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.shelter-chat-btn:hover {
+    background: linear-gradient(45deg, #db98b7, #c39797);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(219, 152, 183, 0.3);
+}

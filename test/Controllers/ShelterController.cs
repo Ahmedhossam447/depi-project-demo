@@ -91,13 +91,21 @@ namespace test.Controllers
         public async Task<IActionResult> Shelterpage(IdentityUser shelter)
         {
             var products = await _ShelterRepository.GetAllProducts(shelter.Id);
+            var animals = await _animalRepository.GetAllUserAnimalsAsync(shelter.Id);
             var userid = _usermanager.GetUserId(User);
             ViewBag.userid = userid;
             ViewBag.ShelterId = shelter.Id;
             ViewBag.email = shelter.Email;
             ViewBag.phonenumber = shelter.PhoneNumber;
             ViewBag.username = shelter.UserName;
-            return View(products);
+
+            var viewModel = new ShelterIndexViewModel
+            {
+                Products = products,
+                Animals = animals
+            };
+
+            return View(viewModel);
         }
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
