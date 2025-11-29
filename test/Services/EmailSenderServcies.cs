@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
@@ -21,10 +22,10 @@ namespace test.Services
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var emailSettings = _configuration.GetSection("EmailSettings");
-            var host = emailSettings["Host"];
-            var port = int.Parse(emailSettings["Port"]);
-            var fromEmail = emailSettings["Email"];
-            var password = emailSettings["Password"];
+            var host = "smtp.gmail.com";
+            var port = 587;
+            var fromEmail = "ahmedhossamahmed22@gmail.com";
+            var password = "hecj hcmy kzud yptk";
 
             var client = new SmtpClient(host, port)
             {

@@ -47,17 +47,6 @@ namespace test.Repository
 
                 if (filter == null || filter == "any")
                 {
-                    // For complex queries with FromSql, Include might not work directly if the shape changes, 
-                    // but here we are selecting specific columns in the raw SQL which returns Animal entities.
-                    // However, FromSql doesn't support Include easily if the SQL doesn't return all columns or if it's a complex projection.
-                    // The current SQL selects specific columns. 
-                    // Let's try to rewrite this using LINQ if possible, or just use LINQ for the other parts.
-                    // The SQL uses "NOT EXISTS" for requests.
-                    
-                    // Let's try to keep the SQL but we can't easily Include on it if it's partial.
-                    // Actually, the SQL selects columns into the Animal entity.
-                    // If we want to check for MedicalRecords, we need them loaded.
-                    // Let's rewrite to LINQ to support Include safely and cleaner.
                     
                     animals = _context.Animals
                         .Include(a => a.MedicalRecords)
