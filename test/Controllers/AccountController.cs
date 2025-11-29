@@ -27,9 +27,8 @@ namespace test.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IEmailSender emailSender;
-
-
         private readonly DepiContext _context;
+
 
         public AccountController(IAccounts accountRepository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, DepiContext context)
         {
@@ -422,5 +421,5 @@ namespace test.Controllers
         {
             return View();
         }
-        }
+    }
 }

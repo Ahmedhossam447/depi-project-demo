@@ -15,7 +15,7 @@
                     <div class="d-flex align-items-center justify-content-between w-100">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-comments fa-lg me-2"></i>
-                            <h5 class="mb-0 fw-bold">Chat with @ViewBag.ReceiverName</h5>
+                            <h5 class="mb-0 fw-bold">Chat with <a asp-controller="Profile" asp-action="Index" asp-route-userId="@receiverId" class="text-white text-decoration-none">@ViewBag.ReceiverName</a></h5>
                         </div>
                         <a href="javascript:history.back()" class="btn btn-sm btn-light text-pink rounded-pill fw-bold">
                             <i class="fas fa-arrow-left me-1"></i> Back

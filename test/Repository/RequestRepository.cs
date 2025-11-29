@@ -92,6 +92,13 @@ namespace test.Repository
             _context.Requests.Remove(request);
             return savechanges();
         }
+
+        public async Task<bool> HasAcceptedRequest(string userId1, string userId2)
+        {
+            return await _context.Requests.AnyAsync(r => 
+                ((r.Userid == userId1 && r.Useridreq == userId2) || (r.Userid == userId2 && r.Useridreq == userId1)) 
+                && r.Status == "approved");
+        }
         public bool savechanges()
         {
             var saved = _context.SaveChanges();

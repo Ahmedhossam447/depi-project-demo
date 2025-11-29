@@ -15,11 +15,13 @@ namespace test.Controllers
     {
         private readonly DepiContext _context;
         private readonly test.Interfaces.IContact _contactRepository;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<Microsoft.AspNetCore.Identity.IdentityUser> _userManager;
 
-        public HomeController(test.Interfaces.IContact contactRepository)
+        public HomeController(test.Interfaces.IContact contactRepository, Microsoft.AspNetCore.Identity.UserManager<Microsoft.AspNetCore.Identity.IdentityUser> userManager)
         {
             _context = new DepiContext();
             _contactRepository = contactRepository;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -32,9 +34,19 @@ namespace test.Controllers
         {
             return View();
         }
-        public IActionResult contactus()
+        public async Task<IActionResult> contactus()
         {
-            return View();
+            var model = new ContactMessage();
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    model.Name = user.UserName;
+                    model.Email = user.Email;
+                }
+            }
+            return View(model);
         }
 
         [HttpPost]

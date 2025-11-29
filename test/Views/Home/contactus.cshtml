@@ -19,17 +19,28 @@
             <form asp-action="SendMessage" method="post" class="contact-form">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 
-                <div class="input-group">
-                    <label asp-for="Name">Your Name</label>
-                    <input asp-for="Name" placeholder="Enter your name" required>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <div class="input-group">
+                        <label asp-for="Name">Your Name</label>
+                        <input asp-for="Name" placeholder="Enter your name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-                <div class="input-group">
-                    <label asp-for="Email">Your Email</label>
-                    <input asp-for="Email" type="email" placeholder="Enter your email" required>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+                    <div class="input-group">
+                        <label asp-for="Email">Your Email</label>
+                        <input asp-for="Email" type="email" placeholder="Enter your email" required>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="Name" />
+                    <input type="hidden" asp-for="Email" />
+                    <div class="mb-3 text-muted small">
+                        <i class="fas fa-user-circle me-1"></i> Sending as <strong>@Model.Name</strong>
+                    </div>
+                }
 
                 <div class="input-group">
                     <label asp-for="Message">Your Message</label>

@@ -1,0 +1,125 @@
+@model test.ModelViews.UserProfileViewModel
+@{
+    ViewData["Title"] = Model.IsOwner ? "My Profile" : $"{Model.User.UserName}'s Profile";
+}
+
+<div class="container py-5 mt-5 pt-5">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark">@(Model.IsOwner ? "My Profile" : $"{Model.User.UserName}'s Profile")</h2>
+        <p class="text-muted">@(Model.IsOwner ? "Manage your account information and animals" : "View user details and animals")</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Account Information -->
+        <div class="col-lg-4">
+            <div class="theme-card p-4 bg-white rounded-4 shadow-sm h-100">
+                <div class="text-center mb-4">
+                    <div class="profile-avatar bg-pink text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px; font-size: 3rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">@Model.User.UserName</h4>
+                    <p class="text-muted mb-3">@Model.Role</p>
+                    @if (Model.IsOwner)
+                    {
+                        <button class="btn btn-pink-subtle rounded-pill px-4" disabled>Edit Profile</button>
+                    }
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mb-3 text-dark">Account Information</h5>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small text-uppercase fw-bold"><i class="fas fa-user me-2"></i>Username</label>
+                    <input type="text" class="form-control bg-light border-0 rounded-3" value="@Model.User.UserName" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small text-uppercase fw-bold"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                    <input type="text" class="form-control bg-light border-0 rounded-3" value="@(Model.CanViewContactInfo ? Model.User.Email : "Hidden")" readonly>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-muted small text-uppercase fw-bold"><i class="fas fa-phone me-2"></i>Phone Number</label>
+                    <input type="text" class="form-control bg-light border-0 rounded-3" value="@(Model.CanViewContactInfo ? (string.IsNullOrEmpty(Model.User.PhoneNumber) ? "Not provided" : Model.User.PhoneNumber) : "Hidden")" readonly>
+                </div>
+
+                @if (Model.IsOwner)
+                {
+                    <div class="mb-4">
+                         <label class="form-label text-muted small text-uppercase fw-bold"><i class="fas fa-lock me-2"></i>Password</label>
+                         <div class="input-group">
+                             <input type="password" class="form-control bg-light border-0 rounded-start-3" value="********" readonly>
+                             <a asp-action="ForgetPassword" asp-controller="Account" class="btn btn-light border-0 text-pink fw-bold rounded-end-3">Reset</a>
+                         </div>
+                    </div>
+
+                    <div class="bg-pink-subtle p-3 rounded-3 mt-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fas fa-shield-alt text-pink fa-lg"></i>
+                            <div>
+                                <div class="fw-bold text-dark">Account Security</div>
+                                <div class="small text-muted">Your account is protected and verified</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: My Animals -->
+        <div class="col-lg-8">
+            <div class="theme-card p-4 bg-white rounded-4 shadow-sm mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">@(Model.IsOwner ? "My Animals" : $"{Model.User.UserName}'s Animals")</h4>
+                        <p class="text-muted m-0">@(Model.IsOwner ? "You are managing" : "Viewing") <span class="text-pink fw-bold">@(Model.Animals?.Count() ?? 0) animals</span></p>
+                    </div>
+                    @if (Model.IsOwner)
+                    {
+                        <a asp-controller="Animal" asp-action="Create" class="btn btn-pink rounded-pill px-4">
+                            <i class="fas fa-plus me-2"></i>Add New Animal
+                        </a>
+                    }
+                </div>
+
+                <div class="mt-4 d-flex gap-3">
+                    <div class="position-relative flex-grow-1">
+                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        <input type="text" class="form-control rounded-pill ps-5" placeholder="Search animals by name...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" id="animalsContainer">
+                <partial name="_AnimalListPartial" model="Model.Animals" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var searchInput = $('input[placeholder="Search animals by name..."]');
+            var animalsContainer = $('#animalsContainer');
+            var targetUserId = '@Model.User.Id';
+
+            searchInput.on('keyup', function () {
+                var query = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("FilterAnimals", "Profile")',
+                    type: 'GET',
+                    data: { query: query, userId: targetUserId },
+                    success: function (result) {
+                        animalsContainer.html(result);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error filtering animals: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+}
