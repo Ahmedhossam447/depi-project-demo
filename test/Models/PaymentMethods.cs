@@ -12,7 +12,7 @@ namespace test.Models
         public int PaymentMethodId { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual IdentityUser? User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
         public string MethodType { get; set; }
         public string last4Digits { get; set; }
         public string expiryMonth { get; set; }

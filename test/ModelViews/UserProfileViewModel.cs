@@ -5,7 +5,7 @@ namespace test.ModelViews
 {
     public class UserProfileViewModel
     {
-        public IdentityUser User { get; set; }
+        public ApplicationUser User { get; set; }
         public List<Animal> Animals { get; set; }
         public string Role { get; set; }
         public bool IsOwner { get; set; }

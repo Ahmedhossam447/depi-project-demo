@@ -1,6 +1,7 @@
 @model test.Models.MedicalRecord
 @using Microsoft.AspNetCore.Identity
-@inject UserManager<IdentityUser> UserManager
+@using test.Models
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Medical Record Details";

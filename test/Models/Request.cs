@@ -13,11 +13,11 @@ public partial class Request
     public string Userid { get; set; }
     [ForeignKey("Userid")]
 
-    public virtual IdentityUser? User { get; set; }
+    public virtual ApplicationUser? User { get; set; }
 
     public string Useridreq { get; set; }
     [ForeignKey("Useridreq")]
-    public virtual IdentityUser? User2 { get; set; }
+    public virtual ApplicationUser? User2 { get; set; }
 
     public int AnimalId { get; set; }
     [ForeignKey("AnimalId")]

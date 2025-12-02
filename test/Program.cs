@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using test.Data;
 using test.Helpers;
 using test.Hubs;
 using test.Interfaces;
+using test.Models;
 using test.Repository;
 using test.Services;
 
@@ -21,8 +24,11 @@ namespace test
             // --- 1. Add services to the container ---
 
             builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("depiContextConnection")));
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
-            option.SignIn.RequireConfirmedEmail = true)
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+            {
+                option.SignIn.RequireConfirmedEmail = true;
+                option.User.RequireUniqueEmail = true;
+            })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DepiContext>();
             builder.Services.AddSession(options =>
@@ -66,6 +72,8 @@ namespace test
                 Services.ClientId = googleAuthNSection["ClientId"];
                 Services.ClientSecret = googleAuthNSection["ClientSecret"];
                 Services.CallbackPath = "/signin-google";
+                Services.Scope.Add("profile");
+                Services.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
             });
 
             // Use AddControllersWithViews for MVC applications that use Views.

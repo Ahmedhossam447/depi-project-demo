@@ -8,10 +8,10 @@
     <div class="form-container">
         <div class="form-header">
             <h1 class="form-title">Create Account</h1>
-            <p class="form-description">Join HappyPaws Haven today 🐾</p>
+            <p class="form-description">Join HappyPaws Haven today ðŸ¾</p>
         </div>
 
-        <form asp-action="register" method="post">
+        <form asp-action="register" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="form-group">
@@ -36,6 +36,12 @@
                 <label asp-for="password" class="form-label">Password</label>
                 <input type="password" asp-for="password" class="form-input" placeholder="Create a password" required>
                 <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Photo" class="form-label">Profile Photo</label>
+                <input type="file" asp-for="Photo" class="form-input" accept="image/*">
+                <span asp-validation-for="Photo" class="text-danger"></span>
             </div>
 
             <div class="form-group">

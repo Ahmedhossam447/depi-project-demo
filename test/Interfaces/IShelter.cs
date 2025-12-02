@@ -11,7 +11,7 @@ namespace test.Interfaces
         public Task<bool> AddProduct(Product product);
         public Task<bool> UpdateProduct(Product product);
         public Task<bool> RemoveProduct(Product product);
-        public Task<List<IdentityUser>> GetAllShelters();
+        public Task<List<ApplicationUser>> GetAllShelters();
         public bool SaveChanges();
 
     }

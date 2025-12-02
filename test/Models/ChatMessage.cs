@@ -10,12 +10,12 @@ namespace test.Models
         
         public String SenderId { get; set; }
         [ForeignKey("SenderId")]
-        public IdentityUser? User { get; set; }
+        public ApplicationUser? User { get; set; }
 
 
         public string ReceiverId { get; set; }
         [ForeignKey("ReceiverId")]
-        public IdentityUser? Receiver { get; set; }
+        public ApplicationUser? Receiver { get; set; }
         public string Message { get; set; }
         public DateTime Time { get; set; }
         public int read { get; set; }
