@@ -12,8 +12,8 @@ namespace test.Hubs
     public class ChatHub : Hub
     {
         private readonly DepiContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        public ChatHub(DepiContext context,UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ChatHub(DepiContext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;

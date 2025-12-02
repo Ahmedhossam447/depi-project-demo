@@ -18,25 +18,28 @@ using test.Interfaces;
 using test.Models;
 using test.ModelViews;
 using test.Repository;
+using test.Services;
 
 namespace test.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAccounts _accountRepository;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IEmailSender emailSender;
         private readonly DepiContext _context;
+        private readonly PhotoServices _photoServices;
 
 
-        public AccountController(IAccounts accountRepository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, DepiContext context)
+        public AccountController(IAccounts accountRepository, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, DepiContext context, PhotoServices photoServices)
         {
             _accountRepository = accountRepository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
             _context = context;
+            _photoServices = photoServices;
         }
         public async Task<IActionResult> login(string ?ReturnUrl)
         {
@@ -136,7 +139,18 @@ namespace test.Controllers
             {
                 return View(user);
             }
-            var userr = new IdentityUser { UserName = user.username, Email = user.email };
+            
+            string? photoUrl = null;
+            if (user.Photo != null && user.Photo.Length > 0)
+            {
+                var uploadResult = await _photoServices.AddPhotoAsync(user.Photo);
+                if (uploadResult.Error == null)
+                {
+                    photoUrl = uploadResult.SecureUrl.ToString();
+                }
+            }
+            
+            var userr = new ApplicationUser { UserName = user.username, Email = user.email, PhotoUrl = photoUrl };
             var result = await userManager.CreateAsync(userr, user.password);
 
             if (result.Succeeded)
@@ -315,7 +329,8 @@ namespace test.Controllers
                     return View("login", loginViewModel);
                 }
 
-                var user = new IdentityUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber };
+                var pictureUrl = info.Principal.FindFirstValue("urn:google:picture");
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber, PhotoUrl = pictureUrl };
                 var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -323,7 +338,7 @@ namespace test.Controllers
                     if (result.Succeeded)
                     {
                         await userManager.AddToRoleAsync(user, model.Role);
-                        
+
                         // Send email confirmation
                         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                         var confirmationLink = Url.Action("ConfirmEmail", "Account", new { Userid = user.Id, token = token }, Request.Scheme);

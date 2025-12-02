@@ -23,8 +23,8 @@ namespace test.Controllers
     {
         private readonly IAnimal _animalRepository;
         private readonly PhotoServices _photoServices;
-        private readonly UserManager<IdentityUser> _userManager;
-        public AnimalController(IAnimal animalRepository, PhotoServices photoServices, UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public AnimalController(IAnimal animalRepository, PhotoServices photoServices, UserManager<ApplicationUser> userManager)
         {
             _animalRepository = animalRepository;
             _photoServices = photoServices;

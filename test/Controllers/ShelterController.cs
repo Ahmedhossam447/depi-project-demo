@@ -19,11 +19,11 @@ namespace test.Controllers
     public class ShelterController : Controller
     {
         private readonly DepiContext _context;
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
         private readonly IShelter _ShelterRepository;
         private readonly IAnimal _animalRepository;
 
-        public ShelterController(DepiContext context, UserManager<IdentityUser> userManager, IShelter shelter, IAnimal animalRepository)
+        public ShelterController(DepiContext context, UserManager<ApplicationUser> userManager, IShelter shelter, IAnimal animalRepository)
         {
             _usermanager = userManager;
             _context = context;
@@ -88,7 +88,7 @@ namespace test.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Shelterpage(IdentityUser shelter)
+        public async Task<IActionResult> Shelterpage(ApplicationUser shelter)
         {
             var products = await _ShelterRepository.GetAllProducts(shelter.Id);
             var animals = await _animalRepository.GetAllUserAnimalsAsync(shelter.Id);

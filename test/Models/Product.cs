@@ -15,7 +15,7 @@ public partial class Product
 
     public string? Userid { get; set; }
     [ForeignKey("Userid")]
-    public IdentityUser? User { get; set; }
+    public ApplicationUser? User { get; set; }
 
     [Column("type")]
     [StringLength(50)]

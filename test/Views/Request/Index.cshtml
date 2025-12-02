@@ -2,15 +2,17 @@
 
 
 @model List<test.Models.Request>
-@inject UserManager<IdentityUser> userManager
+@using Microsoft.AspNetCore.Identity
+@using test.Models
+@inject UserManager<ApplicationUser> userManager
 @{
     var pending = from Request in Model.ToList() where Request.Status == "Pending"&&Request.Useridreq!=ViewBag.userid&&Request.Userid==ViewBag.userid select Request;
     var approved = from Request in Model.ToList() where Request.Status == "approved" && Request.Useridreq != ViewBag.userid && Request.Userid == ViewBag.userid select Request;
     var reqgot = from Request in Model.ToList() where Request.Useridreq==ViewBag.userid&&Request.Status=="Pending" select Request;
     var approvedIncoming = from Request in Model.ToList() where Request.Status == "approved" && Request.Useridreq == ViewBag.userid select Request;
-    var users = ViewBag.users as List<IdentityUser>;
+    var users = ViewBag.users as List<ApplicationUser>;
     var animals = ViewBag.animals as List<test.Models.Animal>;
-    var usersrequested = ViewBag.usersrequested as List<IdentityUser>;
+    var usersrequested = ViewBag.usersrequested as List<ApplicationUser>;
     ViewData["Title"] = "requests";
 
 }

@@ -6,8 +6,8 @@ namespace test.Interfaces
 {
     public interface IRequests
     {
-        public  List<IdentityUser> RequestSent(string userid, List<Request> requests);
-        public List<IdentityUser> RequestGot(string userid, List<Request> requests);
+        public  List<ApplicationUser> RequestSent(string userid, List<Request> requests);
+        public List<ApplicationUser> RequestGot(string userid, List<Request> requests);
         public List<Animal> AnimalsNeeded(string  userid,List<Request> requests);
         public Task<List<Models.Request>> LoadRequests();
         public Task<bool> addRequest(Request request);

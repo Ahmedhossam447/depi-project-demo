@@ -5,17 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using test.Data;
 using test.Hubs;
+using test.Models;
 
 namespace test.Controllers
 {
     [Authorize]
     public class ChatController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly DepiContext _context;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatController(UserManager<IdentityUser> userManager, DepiContext context, IHubContext<ChatHub> hubContext)
+        public ChatController(UserManager<ApplicationUser> userManager, DepiContext context, IHubContext<ChatHub> hubContext)
         {
             _userManager = userManager;
             _context = context;

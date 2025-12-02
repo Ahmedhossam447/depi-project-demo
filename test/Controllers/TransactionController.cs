@@ -13,9 +13,9 @@ namespace test.Controllers
     { private readonly ITransaction _transactionRepository;
         private readonly IOrder _orderRepository;
         private readonly DepiContext _context;
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
 
-        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext,UserManager<IdentityUser> userManager)
+        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext,UserManager<ApplicationUser> userManager)
         {
             _transactionRepository = transaction;
             _orderRepository = orderRepository;

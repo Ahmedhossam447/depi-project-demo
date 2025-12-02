@@ -15,10 +15,10 @@ namespace test.Controllers
     {
         private readonly IContact _contactRepository;
         private readonly IAnimal _animalRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly DepiContext _context;
 
-        public AdminController(IContact contactRepository, IAnimal animalRepository, UserManager<IdentityUser> userManager,DepiContext depi)
+        public AdminController(IContact contactRepository, IAnimal animalRepository, UserManager<ApplicationUser> userManager,DepiContext depi)
         {
             _contactRepository = contactRepository;
             _animalRepository = animalRepository;

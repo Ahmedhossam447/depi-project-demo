@@ -19,7 +19,7 @@ public partial class Animal
 
     public string? Userid { get; set; }
     [ForeignKey("Userid")]
-    public virtual IdentityUser? User { get; set; }
+    public virtual ApplicationUser? User { get; set; }
 
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 

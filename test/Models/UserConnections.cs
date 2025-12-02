@@ -8,7 +8,7 @@ namespace test.Models
         public int Id { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual IdentityUser? User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
         public string ConnectionId { get; set; }
 
     }

@@ -15,7 +15,7 @@ namespace test.Models
         public int TotalPrice { get; set; }
         public string? UserId { get; set; }
         [ForeignKey("UserId")]
-        public IdentityUser? User { get; set; }
+        public ApplicationUser? User { get; set; }
         [Timestamp]
         public byte[] RowVersion { get; set; }
 

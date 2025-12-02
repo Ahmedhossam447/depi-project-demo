@@ -18,10 +18,10 @@ namespace test.Controllers
     [Authorize]
     public class RequestController : Controller
     {
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
         private readonly IRequests _RequestRepository;
         private readonly IAnimal _animalRepository;
-        public RequestController(IRequests RequestsRepository,UserManager<IdentityUser> userManager, IAnimal animalRepository)
+        public RequestController(IRequests RequestsRepository,UserManager<ApplicationUser> userManager, IAnimal animalRepository)
         {
             _usermanager = userManager;
             _RequestRepository = RequestsRepository;

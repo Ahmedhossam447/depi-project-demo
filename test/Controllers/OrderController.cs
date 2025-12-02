@@ -17,9 +17,9 @@ namespace test.Controllers
     {
         private readonly IShelter _shelterRepository;
         private readonly IOrder _orderRepository;
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
         private readonly DepiContext _context;
-        public OrderController(IShelter shelterRepository, IOrder orderRepository, UserManager<IdentityUser> userManager,DepiContext depiContext)
+        public OrderController(IShelter shelterRepository, IOrder orderRepository, UserManager<ApplicationUser> userManager,DepiContext depiContext)
         {
             _shelterRepository = shelterRepository;
             _orderRepository = orderRepository;

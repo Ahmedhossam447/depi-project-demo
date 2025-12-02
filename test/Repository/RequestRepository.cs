@@ -12,10 +12,10 @@ namespace test.Repository
 {
     public class RequestRepository : IRequests
     {
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
         private readonly DepiContext _context;
 
-        public RequestRepository(DepiContext context,UserManager<IdentityUser> _usermanager)
+        public RequestRepository(DepiContext context,UserManager<ApplicationUser> _usermanager)
         {
             this._usermanager = _usermanager;
             _context = context;
@@ -31,7 +31,7 @@ namespace test.Repository
             return animalsrequested;
         }
 
-        public List<IdentityUser> RequestGot(string userid, List<Models.Request> requests)
+        public List<ApplicationUser> RequestGot(string userid, List<Models.Request> requests)
         {
             var userrequestedids = requests.Select(r => r.Userid).Distinct().ToList();
             var usersrequested =_usermanager.Users
@@ -40,7 +40,7 @@ namespace test.Repository
             return usersrequested;
         }
 
-        public List<IdentityUser> RequestSent(string userid, List<Models.Request> requests)
+        public List<ApplicationUser> RequestSent(string userid, List<Models.Request> requests)
         {
             var useridsrequestedto = requests.Select(r => r.Useridreq).Distinct().ToList();
             var usersrequestedto = _usermanager.Users

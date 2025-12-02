@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace test.Data;
 
-public partial class DepiContext : IdentityDbContext<IdentityUser>
+public partial class DepiContext : IdentityDbContext<ApplicationUser>
 {
     public DepiContext()
     {

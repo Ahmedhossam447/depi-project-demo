@@ -9,10 +9,10 @@ namespace test.Repository
 {
     public class AnimalRepository:IAnimal
     {
-        private readonly UserManager<IdentityUser> _usermanager;
+        private readonly UserManager<ApplicationUser> _usermanager;
         private readonly DepiContext _context;
 
-        public AnimalRepository(DepiContext context,UserManager<IdentityUser> usermanager) { 
+        public AnimalRepository(DepiContext context,UserManager<ApplicationUser> usermanager) { 
             _usermanager = usermanager;
         
         _context= context;
