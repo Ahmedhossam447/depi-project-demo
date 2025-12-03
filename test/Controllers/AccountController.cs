@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using test.Data;
 using test.Interfaces;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 using test.Repository;
 using test.Services;
 

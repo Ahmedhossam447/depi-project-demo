@@ -1,6 +1,6 @@
 using test.Models;
 
-namespace test.ModelViews
+namespace test.ViewModels
 {
     public class MyOrderViewModel
     {

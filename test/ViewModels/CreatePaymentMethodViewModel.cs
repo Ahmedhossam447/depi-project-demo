@@ -1,4 +1,4 @@
-namespace test.ModelViews
+namespace test.ViewModels
 {
     public class CreatePaymentMethodViewModel
     {

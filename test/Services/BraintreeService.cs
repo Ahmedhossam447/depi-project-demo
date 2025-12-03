@@ -1,4 +1,4 @@
-﻿using Braintree;
+using Braintree;
 using Microsoft.Extensions.Options;
 using test.Helpers;
 

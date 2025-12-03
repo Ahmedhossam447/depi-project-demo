@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 
-namespace test.ModelViews
+namespace test.ViewModels
 {
     public class LoginViewModel
     {

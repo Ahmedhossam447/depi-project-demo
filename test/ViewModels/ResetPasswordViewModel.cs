@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace test.ModelViews
+namespace test.ViewModels
 {
     public class ResetPasswordViewModel
     {

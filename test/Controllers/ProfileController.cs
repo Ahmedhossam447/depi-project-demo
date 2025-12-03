@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using test.Interfaces;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 using test.Services;
 
 namespace test.Controllers

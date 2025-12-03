@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using test.Data;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 using test.Services;
 using System.Threading.Tasks;
 using System;

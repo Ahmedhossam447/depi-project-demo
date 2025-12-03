@@ -1,4 +1,4 @@
-﻿@using test.ModelViews
+@using test.ViewModels
 @model ProccessPaymentViewModel
 @{
     ViewData["Title"] = "Complete Your Purchase";
@@ -7,7 +7,7 @@
 <div class="container py-5 payment-process-page">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-primary">Checkout</h1>
-        <p class="lead text-muted">Secure your payment safely 🐾</p>
+        <p class="lead text-muted">Secure your payment safely ??</p>
     </div>
 
     @if (Model.orderDetails == null || !Model.orderDetails.Any())

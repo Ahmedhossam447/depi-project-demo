@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -8,7 +8,7 @@ using ServiceStack;
 using test.Data;
 using test.Interfaces;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 
 namespace test.Controllers
 {

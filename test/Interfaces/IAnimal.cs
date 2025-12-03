@@ -1,5 +1,5 @@
-﻿using test.Models;
-using test.ModelViews;
+using test.Models;
+using test.ViewModels;
 
 namespace test.Interfaces
 {

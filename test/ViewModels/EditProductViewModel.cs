@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace test.ModelViews
+namespace test.ViewModels
 {
-    public class CreateProductViewModel
+    public class EditProductViewModel
     {
+        [Required]
+        public int ProductId { get; set; }
         [Required]
         public string Type { get; set; }
         [Required]

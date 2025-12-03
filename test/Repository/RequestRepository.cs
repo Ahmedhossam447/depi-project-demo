@@ -1,4 +1,4 @@
-﻿using Azure.Core;
+using Azure.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ServiceStack.Web;

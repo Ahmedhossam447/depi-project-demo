@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 
-namespace test.ModelViews
+namespace test.ViewModels
 {
     public class registerviewmodel
     {

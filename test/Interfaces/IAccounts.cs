@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 
 namespace test.Interfaces
 {

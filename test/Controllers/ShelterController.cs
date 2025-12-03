@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using test.Data;
 using test.Interfaces;
 using test.Models;
-using test.ModelViews;
+using test.ViewModels;
 
 namespace test.Controllers
 {

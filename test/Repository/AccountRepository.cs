@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ using test.Data;
 using System.Security.Claims;
 using test.Models;
 using Microsoft.AspNetCore.Authentication;
-using test.ModelViews;
+using test.ViewModels;
 using test.Repository;
 using test.Interfaces;
 using Microsoft.AspNetCore.Identity;
