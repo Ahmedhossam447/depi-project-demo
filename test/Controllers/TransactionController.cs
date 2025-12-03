@@ -6,6 +6,7 @@ using test.Interfaces;
 using test.Models;
 using test.ModelViews;
 using test.Repository;
+using test.Services;
 
 namespace test.Controllers
 {
@@ -14,13 +15,15 @@ namespace test.Controllers
         private readonly IOrder _orderRepository;
         private readonly DepiContext _context;
         private readonly UserManager<ApplicationUser> _usermanager;
+        private readonly BraintreeService _braintreeService;
 
-        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext,UserManager<ApplicationUser> userManager)
+        public TransactionController(ITransaction transaction, IOrder orderRepository,DepiContext depiContext,UserManager<ApplicationUser> userManager,BraintreeService braintreeService)
         {
             _transactionRepository = transaction;
             _orderRepository = orderRepository;
             _context = depiContext;
             _usermanager = userManager;
+            _braintreeService = braintreeService;
         }
 
         [HttpGet]
@@ -88,18 +91,25 @@ public IActionResult ProccessPayment()
                         return Json(new { status = "failed", message = Message });
                     }
                 }
-                // Simulate payment processing logic here
-                var paymentresult = _transactionRepository.AddTransaction(new Transactions
+                // Process payment with Braintree
+                var paymentResult = _braintreeService.Sale(payment.GatewatyToken, order.TotalPrice);
+
+                if (!paymentResult.Success)
+                {
+                    _transactionRepository.rollbackTransaction();
+                    return Json(new { status = "failed", message = paymentResult.ErrorMessage ?? "Payment failed." });
+                }
+
+                var transactionResult = _transactionRepository.AddTransaction(new Transactions
                 {
                     OrderId = order.OrderId,
                     TransactionDate = DateTime.Now,
                     Amount = order.TotalPrice,
                     PaymentMethod = payment,
                     Status = "Paid"
-
                 });
 
-                if (paymentresult)
+                if (transactionResult)
                 {
                     order.OrderStatus = 1;
                     foreach(var item in orderdetails)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using test.Data;
 using test.Models;
 using test.ModelViews;
+using test.Services;
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,20 @@ namespace test.Controllers
     {
         private readonly DepiContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly BraintreeService _braintreeService;
 
-        public PaymentMethodController(DepiContext context, UserManager<ApplicationUser> userManager)
+        public PaymentMethodController(DepiContext context, UserManager<ApplicationUser> userManager,BraintreeService braintreeService)
         {
             _context = context;
             _userManager = userManager;
+            _braintreeService = braintreeService;
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            var token = _braintreeService.GetClientToken();
+            ViewBag.ClientToken = token;
             return View();
         }
 
@@ -37,41 +42,38 @@ namespace test.Controllers
                 {
                     return RedirectToAction("Login", "Account");
                 }
+                var result = _braintreeService.CreatePaymentMethod(model.Nonce, user.Id);
 
-                // Basic Card Type Detection
-                string cardType = "Unknown";
-                string cleanNumber = model.CardNumber.Replace(" ", "");
-                
-                if (cleanNumber.StartsWith("4"))
+                if (!result.Success)
                 {
-                    cardType = "Visa";
-                }
-                else if (cleanNumber.StartsWith("5"))
-                {
-                    cardType = "MasterCard";
+                    ModelState.AddModelError(string.Empty, "Error creating payment method: " + result.Error);
+                    return View(model);
                 }
 
-                var paymentMethod = new PaymentMethods
-                {
-                    UserId = user.Id,
-                    MethodType = cardType,
-                    last4Digits = cleanNumber.Length >= 4 ? cleanNumber.Substring(cleanNumber.Length - 4) : cleanNumber,
-                    expiryMonth = model.ExpiryMonth.ToString("00"),
-                    expiryYear = model.ExpiryYear.ToString(),
-                    GatewatyToken = "tok_test_placeholder_" + Guid.NewGuid().ToString().Substring(0, 8)
-                };
 
-                _context.PaymentMethods.Add(paymentMethod);
-                await _context.SaveChangesAsync();
+                    // Save to YOUR database
+                    var paymentMethod = new PaymentMethods
+                    {
+                        UserId = user.Id,
+                        GatewatyToken = result.Token,      // From Braintree
+                        last4Digits = result.Last4,        // From Braintree
+                        MethodType = result.CardType,      // From Braintree
+                        expiryMonth = result.ExpiryMonth,  // From Braintree
+                        expiryYear = result.ExpiryYear     // From Braintree
+                    };
 
-                // Redirect back to the payment process page
-                return RedirectToAction("ProccessPayment", "Transaction");
-            }
+                    _context.PaymentMethods.Add(paymentMethod);
+                    await _context.SaveChangesAsync();
 
-            return View(model);
+                    // Redirect back to the payment process page
+                    return RedirectToAction("ProccessPayment", "Transaction");
+                }
+
+                return View(model);
+            
         }
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+            public async Task<IActionResult> Edit(int id)
         {
             var paymentMethod = await _context.PaymentMethods.FindAsync(id);
             if (paymentMethod == null)

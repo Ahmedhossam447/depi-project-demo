@@ -39,8 +39,8 @@ namespace test
                 options.Cookie.IsEssential = true;
             });
             builder.Services.AddHttpContextAccessor();
-
-
+            builder.Services.Configure<BraintreeSettings>(builder.Configuration.GetSection("Braintree"));
+            builder.Services.AddScoped<BraintreeService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddScoped<test.Services.PhotoServices>();
             builder.Services.AddScoped<IAnimal, AnimalRepository>();

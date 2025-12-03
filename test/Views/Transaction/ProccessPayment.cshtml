@@ -58,13 +58,31 @@
                                                 <label class="d-flex align-items-center gap-3 flex-grow-1 cursor-pointer m-0">
                                                     <input class="form-check-input flex-shrink-0" type="radio" asp-for="selectedPaymentMethodid" value="@method.PaymentMethodId" required style="transform: scale(1.2);">
                                                     <span class="fs-4 text-secondary">
-                                                        @if (method.MethodType == "Visa")
+                                                        @switch (method.MethodType?.ToLower())
                                                         {
-                                                            <i class="fa-brands fa-cc-visa" style="color: #1A1F71;"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <i class="fa-brands fa-cc-mastercard text-warning"></i>
+                                                            case "visa":
+                                                                <i class="fa-brands fa-cc-visa" style="color: #1A1F71;"></i>
+                                                                break;
+                                                            case "mastercard":
+                                                                <i class="fa-brands fa-cc-mastercard" style="color: #EB001B;"></i>
+                                                                break;
+                                                            case "americanexpress":
+                                                            case "amex":
+                                                                <i class="fa-brands fa-cc-amex" style="color: #006FCF;"></i>
+                                                                break;
+                                                            case "discover":
+                                                                <i class="fa-brands fa-cc-discover" style="color: #FF6000;"></i>
+                                                                break;
+                                                            case "jcb":
+                                                                <i class="fa-brands fa-cc-jcb" style="color: #0B4EA2;"></i>
+                                                                break;
+                                                            case "dinersclub":
+                                                            case "diners":
+                                                                <i class="fa-brands fa-cc-diners-club" style="color: #004A97;"></i>
+                                                                break;
+                                                            default:
+                                                                <i class="fa-solid fa-credit-card text-muted"></i>
+                                                                break;
                                                         }
                                                     </span>
                                                     <span class="fw-medium">

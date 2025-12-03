@@ -106,7 +106,8 @@ namespace test.Controllers
             {
                 UserName = currentUser.UserName,
                 PhoneNumber = currentUser.PhoneNumber,
-                CurrentPhotoUrl = currentUser.PhotoUrl
+                CurrentPhotoUrl = currentUser.PhotoUrl,
+                FullName = currentUser.FullName
             };
 
             return View(viewModel);
@@ -128,6 +129,7 @@ namespace test.Controllers
             // Update username
             currentUser.UserName = model.UserName;
             currentUser.PhoneNumber = model.PhoneNumber;
+            currentUser.FullName = model.FullName;
 
             // Handle photo upload
             if (model.Photo != null && model.Photo.Length > 0)

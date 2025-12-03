@@ -5,6 +5,9 @@ namespace test.ModelViews
 {
     public class EditProfileViewModel
     {
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
+
         [Required]
         [Display(Name = "Username")]
         public string UserName { get; set; }
