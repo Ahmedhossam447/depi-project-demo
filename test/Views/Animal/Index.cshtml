@@ -92,28 +92,16 @@
                                    var isShelter = await usermanager.IsInRoleAsync(animal.User, "Shelter");
                                    if (isShelter)
                                    {
-                                       <div class="shelter-info-card">
-                                           <div class="shelter-title">
-                                               <i class="fas fa-home"></i> Shelter Contact
-                                           </div>
-                                           <div class="shelter-detail">
-                                               <i class="fas fa-user"></i> 
-                                               <a asp-controller="Shelter" asp-action="Shelterpage" 
-                                                  asp-route-Id="@animal.User.Id"
-                                                  asp-route-UserName="@animal.User.UserName"
-                                                  asp-route-Email="@animal.User.Email"
-                                                  asp-route-PhoneNumber="@animal.User.PhoneNumber"
-                                                  class="text-decoration-none text-pink fw-bold">
-                                                   @animal.User.UserName
-                                               </a>
-                                           </div>
-                                           <div class="shelter-detail">
-                                               <i class="fas fa-phone"></i> <span>@(animal.User.PhoneNumber ?? "N/A")</span>
-                                           </div>
-                                           <div class="shelter-detail">
-                                               <i class="fas fa-envelope"></i> <span>@animal.User.Email</span>
-                                           </div>
-                                            <a asp-controller="Chat" asp-action="index" asp-route-receiverId="@animal.Userid" class="shelter-chat-btn">
+                                       <div class="shelter-quick-info">
+                                           <a asp-controller="Shelter" asp-action="Shelterpage" 
+                                              asp-route-Id="@animal.User.Id"
+                                              asp-route-UserName="@animal.User.UserName"
+                                              asp-route-Email="@animal.User.Email"
+                                              asp-route-PhoneNumber="@animal.User.PhoneNumber"
+                                              class="shelter-name-link">
+                                               <i class="fas fa-store"></i> @animal.User.UserName
+                                           </a>
+                                           <a asp-controller="Chat" asp-action="index" asp-route-receiverId="@animal.Userid" class="shelter-chat-btn">
                                                <i class="fas fa-comments"></i> Chat with Shelter
                                            </a>
                                        </div>

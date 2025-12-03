@@ -107,5 +107,68 @@ namespace test.Controllers
             HttpContext.Session.SetInt32("CartCount", cartcount);
             return Json(new { Message = "success", CartCount = cartcount });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MyOrders()
+        {
+            var userid = _usermanager.GetUserId(User);
+            if (string.IsNullOrEmpty(userid))
+            {
+                return Unauthorized();
+            }
+
+            // Get all orders for the user ordered by date descending
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userid)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            var viewModel = new MyOrdersPageViewModel();
+
+            foreach (var order in orders)
+            {
+                // Get order details with products
+                var orderDetails = await _context.OrderDetails
+                    .Where(od => od.OrderId == order.OrderId)
+                    .Include(od => od.Product)
+                        .ThenInclude(p => p.User)
+                    .ToListAsync();
+
+                // Get payment method from transaction if exists
+                var transaction = await _context.Transactions
+                    .Where(t => t.OrderId == order.OrderId)
+                    .Include(t => t.PaymentMethod)
+                    .FirstOrDefaultAsync();
+
+                var orderViewModel = new MyOrderViewModel
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    OrderStatus = order.OrderStatus,
+                    TotalPrice = order.TotalPrice,
+                    PaymentMethodType = transaction?.PaymentMethod?.MethodType,
+                    PaymentLast4Digits = transaction?.PaymentMethod?.last4Digits,
+                    OrderDetails = orderDetails.Select(od => new OrderDetailViewModel
+                    {
+                        Id = od.Id,
+                        ProductId = od.productId,
+                        ProductType = od.Product?.Type,
+                        ProductDescription = od.Product?.Disc,
+                        ProductPhoto = od.Product?.Photo,
+                        Quantity = od.Quantity,
+                        UnitPrice = od.Product?.Price ?? 0,
+                        TotalPrice = od.TotalPrice,
+                        ShelterName = od.Product?.User?.UserName,
+                        ShelterUserId = od.Product?.User?.Id,
+                        ShelterEmail = od.Product?.User?.Email,
+                        ShelterPhone = od.Product?.User?.PhoneNumber
+                    }).ToList()
+                };
+
+                viewModel.Orders.Add(orderViewModel);
+            }
+
+            return View(viewModel);
+        }
     }
 }

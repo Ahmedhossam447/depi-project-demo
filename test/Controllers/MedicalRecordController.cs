@@ -179,6 +179,22 @@ namespace test.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(int animalId)
+        {
+            var record = await _medicalRecordRepo.GetByAnimalIdAsync(animalId);
+            if (record == null)
+            {
+                return NotFound();
+            }
+
+            // Toggle status between Healthy and Unhealthy
+            record.Status = record.Status == "Healthy" ? "Unhealthy" : "Healthy";
+            await _medicalRecordRepo.UpdateAsync(record);
+
+            return RedirectToAction("Details", new { animalId = animalId });
+        }
+
     }
 
 }
