@@ -90,6 +90,9 @@ namespace test.Controllers
         [HttpGet]
         public async Task<IActionResult> Shelterpage(ApplicationUser shelter)
         {
+            // Fetch the full shelter user to get all properties including location
+            var shelterUser = await _usermanager.FindByIdAsync(shelter.Id);
+            
             var products = await _ShelterRepository.GetAllProducts(shelter.Id);
             var animals = await _animalRepository.GetAllUserAnimalsAsync(shelter.Id);
             var userid = _usermanager.GetUserId(User);
@@ -97,7 +100,8 @@ namespace test.Controllers
             ViewBag.ShelterId = shelter.Id;
             ViewBag.email = shelter.Email;
             ViewBag.phonenumber = shelter.PhoneNumber;
-            ViewBag.username = shelter.UserName;
+            ViewBag.username = shelterUser?.FullName ?? shelter.UserName;
+            ViewBag.location = shelterUser?.location;
 
             var viewModel = new ShelterIndexViewModel
             {

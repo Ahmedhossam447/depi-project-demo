@@ -10,5 +10,7 @@ namespace test.ModelViews
         public string phonenumber { get; set; }
         public string role { get; set; } = "User";
         public IFormFile? Photo { get; set; }
+        public string? FullName { get; set; }
+        public string? Location { get; set; }
     }
 }

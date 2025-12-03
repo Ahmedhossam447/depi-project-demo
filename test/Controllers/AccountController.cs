@@ -150,7 +150,13 @@ namespace test.Controllers
                 }
             }
             
-            var userr = new ApplicationUser { UserName = user.username, Email = user.email, PhotoUrl = photoUrl };
+            var userr = new ApplicationUser { 
+                UserName = user.username, 
+                Email = user.email, 
+                PhotoUrl = photoUrl,
+                FullName = user.FullName,
+                location = user.role == "Shelter" ? user.Location : null
+            };
             var result = await userManager.CreateAsync(userr, user.password);
 
             if (result.Succeeded)
@@ -330,7 +336,8 @@ namespace test.Controllers
                 }
 
                 var pictureUrl = info.Principal.FindFirstValue("urn:google:picture");
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber, PhotoUrl = pictureUrl };
+                var fullName = info.Principal.FindFirstValue(ClaimTypes.Name);
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, PhoneNumber = model.PhoneNumber, PhotoUrl = pictureUrl,FullName=fullName };
                 var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

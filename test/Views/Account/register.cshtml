@@ -8,15 +8,21 @@
     <div class="form-container">
         <div class="form-header">
             <h1 class="form-title">Create Account</h1>
-            <p class="form-description">Join HappyPaws Haven today ðŸ¾</p>
+            <p class="form-description">Join HappyPaws Haven today</p>
         </div>
 
         <form asp-action="register" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="form-group">
-                <label asp-for="username" class="form-label">Full Name</label>
-                <input type="text" asp-for="username" class="form-input" placeholder="Enter your full name" required>
+                <label asp-for="FullName" class="form-label">Full Name</label>
+                <input type="text" asp-for="FullName" class="form-input" placeholder="Enter your full name" required>
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="username" class="form-label">Username</label>
+                <input type="text" asp-for="username" class="form-input" placeholder="Enter your username" required>
                 <span asp-validation-for="username" class="text-danger"></span>
             </div>
 
@@ -48,14 +54,14 @@
                 <label class="form-label">I am a...</label>
                 <div class="role-selector">
                     <div class="role-card">
-                        <input type="radio" asp-for="role" value="User" required checked />
+                        <input type="radio" asp-for="role" value="User" required checked id="roleUser" />
                         <div class="role-card-content">
                             <i class="fas fa-user role-icon"></i>
                             <div>Pet Adopter</div>
                         </div>
                     </div>
                     <div class="role-card">
-                        <input type="radio" asp-for="role" value="Shelter" required />
+                        <input type="radio" asp-for="role" value="Shelter" required id="roleShelter" />
                         <div class="role-card-content">
                             <i class="fas fa-home role-icon"></i>
                             <div>Shelter</div>
@@ -65,10 +71,38 @@
                 <span asp-validation-for="role" class="text-danger"></span>
             </div>
 
+            <div class="form-group" id="locationGroup" style="display: none;">
+                <label asp-for="Location" class="form-label">Shelter Location</label>
+                <input type="text" asp-for="Location" class="form-input" placeholder="Enter your shelter address/location" required>
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+
             <button type="submit" class="submit-btn">
                 <i class="fas fa-user-plus"></i> Sign Up
             </button>
         </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const roleUser = document.getElementById('roleUser');
+                const roleShelter = document.getElementById('roleShelter');
+                const locationGroup = document.getElementById('locationGroup');
+
+                function toggleLocationField() {
+                    if (roleShelter.checked) {
+                        locationGroup.style.display = 'block';
+                    } else {
+                        locationGroup.style.display = 'none';
+                    }
+                }
+
+                roleUser.addEventListener('change', toggleLocationField);
+                roleShelter.addEventListener('change', toggleLocationField);
+                
+                // Initial check
+                toggleLocationField();
+            });
+        </script>
 
         <div class="auth-link">
             <p>Already have an account? <a asp-action="login">Log In</a></p>

@@ -5,6 +5,7 @@
     var email = ViewBag.email as string;
     var userId = ViewBag.userid as string;
     var shelterId = ViewBag.ShelterId as string;
+    var location = ViewBag.location as string;
     ViewData["Title"] = "Shelter Page - " + username;
 }
 
@@ -16,11 +17,14 @@
             </div>
             <div>
                 <h1 class="shelter-name" style="font-size: 2.5rem; font-weight: 800; color: #333; margin-bottom: 0.5rem;">@username</h1>
-                <div class="d-flex gap-3 align-items-center">
+                <div class="d-flex gap-3 align-items-center flex-wrap">
                     <span class="badge bg-white text-pink border border-pink rounded-pill px-3 py-2">
                         <i class="fas fa-shield-alt me-2"></i>Trusted Shelter
                     </span>
-                    <span class="text-muted"><i class="fas fa-map-marker-alt me-2"></i>Verified Location</span>
+                    @if (!string.IsNullOrEmpty(location))
+                    {
+                        <a href="@location" class="text-muted"><i class="fas fa-map-marker-alt me-2"></i>Location</a>
+                    }
                 </div>
             </div>
         </div>
@@ -44,7 +48,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="icon-box bg-pink-subtle rounded-circle p-3 text-pink">
                         <i class="fas fa-phone fa-lg"></i>
                     </div>
@@ -53,6 +57,19 @@
                         <div class="fw-medium text-dark">@(string.IsNullOrEmpty(phonenumber) ? "Not provided" : phonenumber)</div>
                     </div>
                 </div>
+
+                @if (!string.IsNullOrEmpty(location))
+                {
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-box bg-pink-subtle rounded-circle p-3 text-pink">
+                            <i class="fas fa-map-marker-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <a href="@location" class="small text-muted text-uppercase fw-bold">Location</a>
+                            
+                        </div>
+                    </div>
+                }
 
                 <div class="mt-4 pt-4 border-top">
                     <a asp-controller="Chat" asp-action="Index" asp-route-receiverId="@shelterId" class="btn btn-pink w-100 rounded-pill py-2 fw-bold">
