@@ -135,38 +135,18 @@
                     <div class="card-body p-4">
                         <h4 class="d-flex justify-content-between align-items-center mb-4 fw-bold">
                             <span class="text-primary">Order Summary</span>
-                            <span class="badge bg-primary rounded-pill">@Model.orderDetails.Sum(x => x.Quantity)</span>
+                            <span class="badge bg-primary rounded-pill">@Model.TotalQuantity</span>
                         </h4>
                         
                         <ul class="list-group list-group-flush mb-3 bg-transparent">
-                            @{
-                                var itemlist = new List<(string Name, int Quantity)>();
-                                // Logic preserved exactly as in original
-                                foreach (var item in Model.orderDetails) 
-                                {
-                                    var currentitem = itemlist.FirstOrDefault(i => i.Name == item.Product.Type);
-                                    if (currentitem == default) 
-                                    {
-                                        itemlist.Add((item.Product.Type, item.Quantity));
-                                    }
-                                    else
-                                    {
-                                        var currentitem2 = (currentitem.Name, currentitem.Quantity + item.Quantity);
-                                        itemlist.Remove(currentitem);
-                                        itemlist.Add(currentitem2);
-                                    } 
-                                }
-                                
-                                foreach(var entry in itemlist)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between lh-sm bg-transparent px-0 py-3 border-bottom">
-                                        <div>
-                                            <h6 class="my-0">@entry.Name</h6>
-                                            <small class="text-muted">Quantity: @entry.Quantity</small>
-                                        </div>
-                                        @* Note: Original code didn't show individual prices, so we don't show them here either to strictly preserve logic/data shown *@
-                                    </li>
-                                }
+                            @foreach (var item in Model.GroupedItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between lh-sm bg-transparent px-0 py-3 border-bottom">
+                                    <div>
+                                        <h6 class="my-0">@item.ProductType</h6>
+                                        <small class="text-muted">Quantity: @item.Quantity</small>
+                                    </div>
+                                </li>
                             }
                         </ul>
 

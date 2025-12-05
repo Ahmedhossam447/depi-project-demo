@@ -27,22 +27,45 @@ namespace test.Controllers
         }
 
         [HttpGet]
-public IActionResult ProccessPayment()
+        public IActionResult ProccessPayment()
         {
-            var userid =_usermanager.GetUserId(User);
+            var userid = _usermanager.GetUserId(User);
             var paymentmethods = _context.PaymentMethods.Where(p => p.UserId == userid).ToList();
-            var order = _context.Orders.FirstOrDefault(o=>o.UserId==userid && o.OrderStatus==0);
-            var orderdetails = new List<OrderDetails>();
-            orderdetails = _context.OrderDetails
+            var order = _context.Orders.FirstOrDefault(o => o.UserId == userid && o.OrderStatus == 0);
+            
+            if (order == null)
+            {
+                return View(new ProccessPaymentViewModel
+                {
+                    paymentMethods = paymentmethods,
+                    orderDetails = new List<OrderDetails>()
+                });
+            }
+
+            var orderdetails = _context.OrderDetails
                 .Where(od => od.OrderId == order.OrderId)
                 .Include(od => od.Product)
                 .ToList();
+
+            // Group items by product and sum quantities
+            var groupedItems = orderdetails
+                .GroupBy(od => od.Product?.Type ?? "Unknown")
+                .Select(g => new GroupedItemViewModel
+                {
+                    ProductType = g.Key,
+                    Quantity = g.Sum(x => x.Quantity),
+                    TotalPrice = g.Sum(x => x.TotalPrice)
+                })
+                .ToList();
+
             var model = new ProccessPaymentViewModel
             {
                 paymentMethods = paymentmethods,
-                orderid= order.OrderId,
-                totalprice= order.TotalPrice,
-                orderDetails = orderdetails
+                orderid = order.OrderId,
+                totalprice = order.TotalPrice,
+                orderDetails = orderdetails,
+                GroupedItems = groupedItems,
+                TotalQuantity = orderdetails.Sum(x => x.Quantity)
             };
             return View(model);
         }

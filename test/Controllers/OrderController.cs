@@ -140,6 +140,17 @@ namespace test.Controllers
                     .Include(t => t.PaymentMethod)
                     .FirstOrDefaultAsync();
 
+                // Group items by ProductType and combine quantities
+                var groupedOrderDetails = orderDetails
+                    .GroupBy(od => od.Product?.Type ?? "Unknown")
+                    .Select(g => new GroupedItemViewModel
+                    {
+                        ProductType = g.Key,
+                        Quantity = g.Sum(x => x.Quantity),
+                        TotalPrice = g.Sum(x => x.TotalPrice)
+                    })
+                    .ToList();
+
                 var orderViewModel = new MyOrderViewModel
                 {
                     OrderId = order.OrderId,
@@ -162,7 +173,8 @@ namespace test.Controllers
                         ShelterUserId = od.Product?.User?.Id,
                         ShelterEmail = od.Product?.User?.Email,
                         ShelterPhone = od.Product?.User?.PhoneNumber
-                    }).ToList()
+                    }).ToList(),
+                    GroupedOrderDetails = groupedOrderDetails
                 };
 
                 viewModel.Orders.Add(orderViewModel);

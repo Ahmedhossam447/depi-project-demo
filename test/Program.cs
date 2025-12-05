@@ -23,7 +23,9 @@ namespace test
 
             // --- 1. Add services to the container ---
 
-            builder.Services.AddDbContext<DepiContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("depiContextConnection")));
+            builder.Services.AddDbContext<DepiContext>
+                (options => options
+                .UseSqlServer(builder.Configuration.GetConnectionString("depiContextConnection")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.SignIn.RequireConfirmedEmail = true;

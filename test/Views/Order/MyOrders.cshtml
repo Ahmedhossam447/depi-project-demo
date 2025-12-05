@@ -135,50 +135,25 @@
                         <!-- Expandable Details -->
                         <div class="order-details-panel" id="details-@order.OrderId">
                             <div class="details-grid">
-                                <!-- Order Items (grouped by ProductId) -->
+                                <!-- Order Items (grouped by ProductType) -->
                                 <div class="details-section">
                                     <h4 class="section-title"><i class="fas fa-list"></i> Order Items</h4>
                                     <div class="items-list">
-                                        @{
-                                            // Group items by ProductId and combine quantities
-                                            var groupedItems = order.OrderDetails
-                                                .GroupBy(od => od.ProductId)
-                                                .Select(g => new {
-                                                    ProductId = g.Key,
-                                                    ProductType = g.First().ProductType,
-                                                    ProductDescription = g.First().ProductDescription,
-                                                    ProductPhoto = g.First().ProductPhoto,
-                                                    Quantity = g.Sum(x => x.Quantity),
-                                                    UnitPrice = g.First().UnitPrice,
-                                                    TotalPrice = g.Sum(x => x.TotalPrice),
-                                                    ShelterName = g.First().ShelterName,
-                                                    ShelterUserId = g.First().ShelterUserId,
-                                                    ShelterEmail = g.First().ShelterEmail,
-                                                    ShelterPhone = g.First().ShelterPhone
-                                                }).ToList();
-                                        }
-                                        @foreach (var item in groupedItems)
+                                        @foreach (var item in order.GroupedOrderDetails)
                                         {
+                                            var shelterInfo = order.OrderDetails.FirstOrDefault(od => od.ProductType == item.ProductType);
                                             <div class="order-item">
                                                 <div class="item-image">
-                                                    @if (!string.IsNullOrEmpty(item.ProductPhoto))
-                                                    {
-                                                        <img src="@item.ProductPhoto" alt="@item.ProductType" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <i class="fas fa-box"></i>
-                                                    }
+                                                    <i class="fas fa-box"></i>
                                                 </div>
                                                 <div class="item-info">
                                                     <span class="item-name">@item.ProductType</span>
-                                                    <span class="item-desc">@item.ProductDescription</span>
                                                     <a asp-controller="Shelter" asp-action="Shelterpage" 
-                                                       asp-route-Id="@item.ShelterUserId"
-                                                       asp-route-Email="@item.ShelterEmail"
-                                                       asp-route-PhoneNumber="@item.ShelterPhone"
-                                                       asp-route-UserName="@item.ShelterName"
-                                                       class="item-seller shelter-link">Seller: @item.ShelterName</a>
+                                                       asp-route-Id="@shelterInfo?.ShelterUserId"
+                                                       asp-route-Email="@shelterInfo?.ShelterEmail"
+                                                       asp-route-PhoneNumber="@shelterInfo?.ShelterPhone"
+                                                       asp-route-UserName="@shelterInfo?.ShelterName"
+                                                       class="item-seller shelter-link">Seller: @shelterInfo?.ShelterName</a>
                                                 </div>
                                                 <div class="item-quantity">
                                                     <span>@item.Quantity</span>

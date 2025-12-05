@@ -12,55 +12,84 @@ using System.Threading.Tasks;
 using test.Data;
 using test.Interfaces;
 using test.Models;
+using test.ViewModels;
+
 namespace test.Controllers
 {
-
     [Authorize]
     public class RequestController : Controller
     {
         private readonly UserManager<ApplicationUser> _usermanager;
         private readonly IRequests _RequestRepository;
         private readonly IAnimal _animalRepository;
-        public RequestController(IRequests RequestsRepository,UserManager<ApplicationUser> userManager, IAnimal animalRepository)
+
+        public RequestController(IRequests RequestsRepository, UserManager<ApplicationUser> userManager, IAnimal animalRepository)
         {
             _usermanager = userManager;
             _RequestRepository = RequestsRepository;
             _animalRepository = animalRepository;
         }
+
         public async Task<IActionResult> Index()
         {
-            var requests =await _RequestRepository.LoadRequests();
-            var useridclaim = User.FindFirst("ID");
-            var userid = _usermanager.GetUserId(User);
-            var usersrequested = _RequestRepository.RequestGot(userid, requests);
-            var animals = _RequestRepository.AnimalsNeeded(userid, requests);
-            var users= _RequestRepository.RequestSent(userid, requests);
+            var currentUserId = _usermanager.GetUserId(User);
+            var requests = await _RequestRepository.LoadRequests();
+            var animals = _RequestRepository.AnimalsNeeded(currentUserId, requests);
+            var usersrequested = _RequestRepository.RequestGot(currentUserId, requests);
+            var users = _RequestRepository.RequestSent(currentUserId, requests);
+
+            // ViewBag items for the view
             ViewBag.usersrequested = usersrequested;
             ViewBag.animals = animals;
             ViewBag.users = users;
-            ViewBag.userid = userid;
+            ViewBag.userid = currentUserId;
 
-            return View(requests);
+            var viewModel = new RequestIndexViewModel
+            {
+                // Incoming Pending: Others want to adopt MY animals (I am the owner - Useridreq)
+                IncomingPending = requests
+                    .Where(r => r.Useridreq == currentUserId && r.Status == "Pending")
+                    .ToList(),
+
+                // Incoming Approved: Others want to adopt MY animals - Approved
+                IncomingApproved = requests
+                    .Where(r => r.Useridreq == currentUserId && r.Status == "approved")
+                    .ToList(),
+
+                // Outgoing Pending: I want to adopt others' animals - Pending
+                OutgoingPending = requests
+                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending")
+                    .ToList(),
+
+                // Outgoing Approved: I want to adopt others' animals - Approved
+                OutgoingApproved = requests
+                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "approved")
+                    .ToList()
+            };
+
+            return View(viewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(Request request)
         {
             if (ModelState.IsValid)
             {
                 await _RequestRepository.addRequest(request);
-                return RedirectToAction("Index","Animal");
+                return RedirectToAction("Index", "Animal");
             }
             return RedirectToAction("Index", "Animal");
         }
+
         [HttpPost]
         public async Task<IActionResult> approve(int id)
         {
-            if(await _RequestRepository.approverequest(id))
-            return RedirectToAction("Index");
+            if (await _RequestRepository.approverequest(id))
+                return RedirectToAction("Index");
             else
                 return NotFound();
-
         }
+
         [HttpPost]
         public async Task<IActionResult> reject(int id)
         {
@@ -69,6 +98,7 @@ namespace test.Controllers
             else
                 return NotFound();
         }
+
         [HttpPost]
         public async Task<IActionResult> Remove(int id)
         {

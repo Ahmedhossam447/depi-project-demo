@@ -11,6 +11,9 @@ namespace test.ViewModels
         public string? PaymentMethodType { get; set; }
         public string? PaymentLast4Digits { get; set; }
         public List<OrderDetailViewModel> OrderDetails { get; set; } = new List<OrderDetailViewModel>();
+        
+        // Grouped items (combined by ProductId) - reuses GroupedItemViewModel
+        public List<GroupedItemViewModel> GroupedOrderDetails { get; set; } = new List<GroupedItemViewModel>();
     }
 
     public class OrderDetailViewModel
