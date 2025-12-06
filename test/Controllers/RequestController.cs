@@ -50,7 +50,8 @@ namespace test.Controllers
                 IncomingPending = requests
                     .Where(r => r.Useridreq == currentUserId && r.Status == "Pending").Select(o=>new Request
                     {
-                        Userid=o.Userid,
+                        Reqid = o.Reqid,
+                        Userid =o.Userid,
                         AnimalId=o.AnimalId
                     })
                     .ToList(),
@@ -59,7 +60,8 @@ namespace test.Controllers
                 IncomingApproved = requests
                     .Where(r => r.Useridreq == currentUserId && r.Status == "approved").Select(o=>new Request
                     {
-                        AnimalId=o.AnimalId,
+                        Reqid = o.Reqid,
+                        AnimalId =o.AnimalId,
                         Userid=o.Userid
                     })
                     .ToList(),
@@ -68,6 +70,7 @@ namespace test.Controllers
                 OutgoingPending = requests
                     .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending").Select(o => new Request
                     {
+                        Reqid = o.Reqid,
                         AnimalId = o.AnimalId,
                         Useridreq=o.Useridreq
                     })
@@ -75,10 +78,11 @@ namespace test.Controllers
 
                 // Outgoing Approved: I want to adopt others' animals - Approved
                 OutgoingApproved = requests
-                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "approved").Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending").Select(o => new Request
+                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "approved").Select(o => new Request
                     {
                         AnimalId = o.AnimalId,
-                        Useridreq = o.Useridreq
+                        Useridreq = o.Useridreq,
+                        Reqid = o.Reqid
                     })
                     .ToList()
             };
