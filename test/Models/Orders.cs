@@ -11,7 +11,7 @@ namespace test.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public int OrderStatus { get; set; }
+        public bool OrderPaid { get; set; }
         public int TotalPrice { get; set; }
         public string? UserId { get; set; }
         [ForeignKey("UserId")]

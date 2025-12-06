@@ -35,7 +35,13 @@ namespace test.Repository
         {
             var userrequestedids = requests.Select(r => r.Userid).Distinct().ToList();
             var usersrequested =_usermanager.Users
-                .Where(u => userrequestedids.Contains(u.Id))
+                .Where(u => userrequestedids.Contains(u.Id)).Select(u=>new ApplicationUser
+                {
+                    UserName=u.UserName,
+                    Email=u.Email,
+                    PhoneNumber=u.PhoneNumber,
+                    Id=u.Id
+                })
                 .ToList();
             return usersrequested;
         }
@@ -44,13 +50,19 @@ namespace test.Repository
         {
             var useridsrequestedto = requests.Select(r => r.Useridreq).Distinct().ToList();
             var usersrequestedto = _usermanager.Users
-                .Where(u => useridsrequestedto.Contains(u.Id))
+                .Where(u => useridsrequestedto.Contains(u.Id)).Select(u => new ApplicationUser
+                {
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    Id = u.Id
+                })
                 .ToList();
             return usersrequestedto;
         }
-        public async Task<List<Models.Request>> LoadRequests()
+        public async Task<List<Models.Request>> LoadRequests(string userid)
         {
-            return  await _context.Requests.ToListAsync();
+            return await _context.Requests.Where(o => o.Userid == userid || o.Useridreq == userid).ToListAsync();
 
         }
         public async Task<bool> addRequest(Models.Request request)

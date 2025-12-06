@@ -10,10 +10,15 @@
             <h1 class="form-title">Add New Product</h1>
             <p class="form-description">Help pet owners find the perfect products</p>
         </div>
-        <form asp-action="Create" method="post" class="animal-form">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="animal-form">
             <div class="form-group">
                 <label class="form-label">Product Type</label>
                 <input asp-for="Type" type="text" class="form-input" placeholder="e.g., Food, Toys, Accessories" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Product Photo</label>
+                <input asp-for="Photo" type="file" class="form-input" accept="image/*" />
+                <small class="text-muted">Upload a photo of your product (optional)</small>
             </div>
             <div class="form-group">
                 <label class="form-label">Price</label>

@@ -33,7 +33,7 @@ namespace test.Controllers
         public async Task<IActionResult> Index()
         {
             var currentUserId = _usermanager.GetUserId(User);
-            var requests = await _RequestRepository.LoadRequests();
+            var requests = await _RequestRepository.LoadRequests(currentUserId);
             var animals = _RequestRepository.AnimalsNeeded(currentUserId, requests);
             var usersrequested = _RequestRepository.RequestGot(currentUserId, requests);
             var users = _RequestRepository.RequestSent(currentUserId, requests);
@@ -48,22 +48,38 @@ namespace test.Controllers
             {
                 // Incoming Pending: Others want to adopt MY animals (I am the owner - Useridreq)
                 IncomingPending = requests
-                    .Where(r => r.Useridreq == currentUserId && r.Status == "Pending")
+                    .Where(r => r.Useridreq == currentUserId && r.Status == "Pending").Select(o=>new Request
+                    {
+                        Userid=o.Userid,
+                        AnimalId=o.AnimalId
+                    })
                     .ToList(),
 
                 // Incoming Approved: Others want to adopt MY animals - Approved
                 IncomingApproved = requests
-                    .Where(r => r.Useridreq == currentUserId && r.Status == "approved")
+                    .Where(r => r.Useridreq == currentUserId && r.Status == "approved").Select(o=>new Request
+                    {
+                        AnimalId=o.AnimalId,
+                        Userid=o.Userid
+                    })
                     .ToList(),
 
                 // Outgoing Pending: I want to adopt others' animals - Pending
                 OutgoingPending = requests
-                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending")
+                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending").Select(o => new Request
+                    {
+                        AnimalId = o.AnimalId,
+                        Useridreq=o.Useridreq
+                    })
                     .ToList(),
 
                 // Outgoing Approved: I want to adopt others' animals - Approved
                 OutgoingApproved = requests
-                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "approved")
+                    .Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "approved").Where(r => r.Userid == currentUserId && r.Useridreq != currentUserId && r.Status == "Pending").Select(o => new Request
+                    {
+                        AnimalId = o.AnimalId,
+                        Useridreq = o.Useridreq
+                    })
                     .ToList()
             };
 

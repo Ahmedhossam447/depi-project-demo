@@ -12,6 +12,7 @@ using test.Data;
 using test.Interfaces;
 using test.Models;
 using test.ViewModels;
+using test.Services;
 
 namespace test.Controllers
 {
@@ -22,13 +23,15 @@ namespace test.Controllers
         private readonly UserManager<ApplicationUser> _usermanager;
         private readonly IShelter _ShelterRepository;
         private readonly IAnimal _animalRepository;
+        private readonly PhotoServices _photoServices;
 
-        public ShelterController(DepiContext context, UserManager<ApplicationUser> userManager, IShelter shelter, IAnimal animalRepository)
+        public ShelterController(DepiContext context, UserManager<ApplicationUser> userManager, IShelter shelter, IAnimal animalRepository, PhotoServices photoServices)
         {
             _usermanager = userManager;
             _context = context;
             _ShelterRepository = shelter;
             _animalRepository = animalRepository;
+            _photoServices = photoServices;
         }
 
         [Authorize(Roles = "Shelter")]
@@ -67,13 +70,25 @@ namespace test.Controllers
             if (ModelState.IsValid)
             {
                 var userid = _usermanager.GetUserId(User);
+                string? photoUrl = null;
+                
+                if (model.Photo != null)
+                {
+                    var uploadResult = await _photoServices.AddPhotoAsync(model.Photo);
+                    if (uploadResult.Error == null)
+                    {
+                        photoUrl = uploadResult.SecureUrl.ToString();
+                    }
+                }
+                
                 var product = new Product
                 {
-                    Type= model.Type,
+                    Type = model.Type,
                     Disc = model.Disc,
                     Price = model.Price,
                     Userid = userid,
-                    Quantity= model.Quantity
+                    Quantity = model.Quantity,
+                    Photo = photoUrl
                 };
                 await _ShelterRepository.AddProduct(product);
                 return RedirectToAction("Index");
@@ -126,7 +141,8 @@ namespace test.Controllers
                 Type = product.Type,
                 Price = product.Price,
                 Quantity = product.Quantity,
-                Disc = product.Disc
+                Disc = product.Disc,
+                CurrentPhotoUrl = product.Photo
             };
             return View(editModel);
         }
@@ -134,7 +150,6 @@ namespace test.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditProductViewModel model)
         {
-           
             if (ModelState.IsValid)
             {
                 var existingProduct = await _ShelterRepository.GetProductbyId(model.ProductId);
@@ -143,14 +158,28 @@ namespace test.Controllers
                     return NotFound();
                 }
 
-                existingProduct.Type = model.Type;
+                // Only update allowed fields (not Type)
                 existingProduct.Price = model.Price;
                 existingProduct.Quantity = model.Quantity;
                 existingProduct.Disc = model.Disc;
+                
+                // Handle photo upload
+                if (model.Photo != null)
+                {
+                    var uploadResult = await _photoServices.AddPhotoAsync(model.Photo);
+                    if (uploadResult.Error == null)
+                    {
+                        existingProduct.Photo = uploadResult.SecureUrl.ToString();
+                    }
+                }
 
                 await _ShelterRepository.UpdateProduct(existingProduct);
                 return RedirectToAction("Index");
             }
+            
+            // Re-populate CurrentPhotoUrl if validation fails
+            var product = await _ShelterRepository.GetProductbyId(model.ProductId);
+            model.CurrentPhotoUrl = product?.Photo;
             return View(model);
         }
 

@@ -80,7 +80,7 @@
             {
                 @foreach (var order in Model.Orders)
                 {
-                    <div class="order-card" data-status="@(order.OrderStatus == 1 ? "completed" : "pending")" data-order-id="ORD-2024-@order.OrderId.ToString("D3")">
+                    <div class="order-card" data-status="@(order.OrderPaid == true ? "completed" : "pending")" data-order-id="ORD-2024-@order.OrderId.ToString("D3")">
                         <div class="order-main">
                             <div class="order-icon">
                                 <i class="fas fa-box-open"></i>
@@ -88,7 +88,7 @@
                             <div class="order-info">
                                 <div class="order-header-row">
                                     <span class="order-number">ORD-2024-@order.OrderId.ToString("D3")</span>
-                                    @if (order.OrderStatus == 1)
+                                    @if (order.OrderPaid == true)
                                     {
                                         <span class="status-badge status-success">
                                             <i class="fas fa-check-square"></i> Success
@@ -144,7 +144,14 @@
                                             var shelterInfo = order.OrderDetails.FirstOrDefault(od => od.ProductType == item.ProductType);
                                             <div class="order-item">
                                                 <div class="item-image">
-                                                    <i class="fas fa-box"></i>
+                                                    @if (!string.IsNullOrEmpty(shelterInfo?.ProductPhoto))
+                                                    {
+                                                        <img src="@shelterInfo.ProductPhoto" alt="@item.ProductType" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-box"></i>
+                                                    }
                                                 </div>
                                                 <div class="item-info">
                                                     <span class="item-name">@item.ProductType</span>

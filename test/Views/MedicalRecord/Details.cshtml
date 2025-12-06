@@ -1,12 +1,10 @@
 @model test.Models.MedicalRecord
 @using Microsoft.AspNetCore.Identity
 @using test.Models
-@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Medical Record Details";
-    var currentUserId = UserManager.GetUserId(User);
-    var isOwner = Model.Animal != null && Model.Animal.Userid == currentUserId;
+    var isOwner = ViewBag.IsOwner as bool? ?? false;
 }
 
 <section class="theme-section">

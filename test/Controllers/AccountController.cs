@@ -76,7 +76,7 @@ namespace test.Controllers
             if (result.Succeeded && User.IsInRole("User"))
             {
                 // Set Session Variables
-                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user1.Id && o.OrderStatus == 0);
+                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user1.Id && o.OrderPaid == false);
                 if (orderExists != null)
                 {
                     var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
@@ -88,7 +88,7 @@ namespace test.Controllers
                 }
 
                 var notificationCount = await _context.ChatMessages
-                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Where(m => m.ReceiverId == user1.Id && m.read == false)
                     .Select(m => m.SenderId)
                     .Distinct()
                     .CountAsync();
@@ -100,7 +100,7 @@ namespace test.Controllers
             else if (result.Succeeded && User.IsInRole("Shelter"))
             {
                 var notificationCount = await _context.ChatMessages
-                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Where(m => m.ReceiverId == user1.Id && m.read == false)
                     .Select(m => m.SenderId)
                     .Distinct()
                     .CountAsync();
@@ -235,7 +235,7 @@ namespace test.Controllers
             if (result.Succeeded)
             {
                 var user1 = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId ==user1.Id  && o.OrderStatus == 0);
+                var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId ==user1.Id  && o.OrderPaid == false);
                 if (orderExists != null)
                 {
                     var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
@@ -247,7 +247,7 @@ namespace test.Controllers
                 }
 
                 var notificationCount = await _context.ChatMessages
-                    .Where(m => m.ReceiverId == user1.Id && m.read == 0)
+                    .Where(m => m.ReceiverId == user1.Id && m.read == false)
                     .Select(m => m.SenderId)
                     .Distinct()
                     .CountAsync();
@@ -285,7 +285,7 @@ namespace test.Controllers
                         var addLoginResult = await userManager.AddLoginAsync(user, info);
                         if (addLoginResult.Succeeded)
                         {
-                            var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderStatus == 0);
+                            var orderExists = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderPaid == false);
                             if (orderExists != null)
                             {
                                 var cartcount = _context.OrderDetails.Where(o => o.OrderId == orderExists.OrderId).Sum(o => o.Quantity);
@@ -297,7 +297,7 @@ namespace test.Controllers
                             }
 
                             var notificationCount = await _context.ChatMessages
-                                .Where(m => m.ReceiverId == user.Id && m.read == 0)
+                                .Where(m => m.ReceiverId == user.Id && m.read == false)
                                 .Select(m => m.SenderId)
                                 .Distinct()
                                 .CountAsync();

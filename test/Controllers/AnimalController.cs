@@ -114,7 +114,15 @@ namespace test.Controllers
                 }
                 bool mine = true;
                 _animalRepository.savechanges();
-                return RedirectToAction("Index", new { mine = mine });
+
+                if (User.IsInRole("User"))
+                {
+                    return RedirectToAction("Index", new { mine = true });
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Shelter");
+                }
             }
             return View(animalVM);
 
@@ -129,7 +137,14 @@ namespace test.Controllers
             }
             await _photoServices.DeletePhotoAsync(animal.Photo);
             await _animalRepository.DeleteAnimal(animal);
-            return RedirectToAction("Index");
+            if (User.IsInRole("User"))
+            {
+                return RedirectToAction("Index", new { mine = true });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Shelter");
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace test.ViewModels
     {
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
-        public int OrderStatus { get; set; } // 0 = Pending, 1 = Paid/Done
+        public bool OrderPaid { get; set; } // 0 = Pending, 1 = Paid/Done
         public int TotalPrice { get; set; }
         public string? PaymentMethodType { get; set; }
         public string? PaymentLast4Digits { get; set; }
@@ -36,8 +36,8 @@ namespace test.ViewModels
     {
         public List<MyOrderViewModel> Orders { get; set; } = new List<MyOrderViewModel>();
         public int TotalOrders => Orders.Count;
-        public int CompletedOrders => Orders.Count(o => o.OrderStatus == 1);
-        public int PendingOrders => Orders.Count(o => o.OrderStatus == 0);
+        public int CompletedOrders => Orders.Count(o => o.OrderPaid == true);
+        public int PendingOrders => Orders.Count(o => o.OrderPaid == false);
     }
 }
 

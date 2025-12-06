@@ -8,6 +8,7 @@ using test.ViewModels;
 using test.Repository;
 using test.Services;
 
+
 namespace test.Controllers
 {
     public class TransactionController : Controller
@@ -31,7 +32,7 @@ namespace test.Controllers
         {
             var userid = _usermanager.GetUserId(User);
             var paymentmethods = _context.PaymentMethods.Where(p => p.UserId == userid).ToList();
-            var order = _context.Orders.FirstOrDefault(o => o.UserId == userid && o.OrderStatus == 0);
+            var order = _context.Orders.FirstOrDefault(o => o.UserId == userid && o.OrderPaid == false);
             
             if (order == null)
             {
@@ -73,8 +74,12 @@ namespace test.Controllers
         public async Task<IActionResult> ProccessPayment(ProccessPaymentViewModel model)
         {
            var order=await _orderRepository.GetOrderFortransaction(model.orderid);
-            var payment= _context.PaymentMethods.FirstOrDefault(p => p.PaymentMethodId == model.selectedPaymentMethodid);
-            
+            var payment= _context.PaymentMethods.Where(p => p.PaymentMethodId == model.selectedPaymentMethodid).Select(p=>new PaymentMethods
+            {
+                PaymentMethodId=p.PaymentMethodId,
+                GatewatyToken=p.GatewatyToken
+            }).FirstOrDefault();
+
             if (payment == null)
             {
                 return Json(new { status = "failed", message = "Please select a valid payment method." });
@@ -93,7 +98,7 @@ namespace test.Controllers
                     var Message = "Order not found.";
                     return Json(new { status = "failed", message = Message });
                 }
-                if (order.OrderStatus == 1)
+                if (order.OrderPaid == true)
                 {
                     var Message = "Order is already paid.";
                     return Json(new { status = "failed", message = Message });
@@ -128,13 +133,13 @@ namespace test.Controllers
                     OrderId = order.OrderId,
                     TransactionDate = DateTime.Now,
                     Amount = order.TotalPrice,
-                    PaymentMethod = payment,
+                    PaymentMethodId = payment.PaymentMethodId,
                     Status = "Paid"
                 });
 
                 if (transactionResult)
                 {
-                    order.OrderStatus = 1;
+                    order.OrderPaid = true;
                     foreach(var item in orderdetails)
                     {
                         item.Product.Quantity -= item.Quantity;

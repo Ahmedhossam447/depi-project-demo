@@ -9,7 +9,7 @@ namespace test.Interfaces
         public  List<ApplicationUser> RequestSent(string userid, List<Request> requests);
         public List<ApplicationUser> RequestGot(string userid, List<Request> requests);
         public List<Animal> AnimalsNeeded(string  userid,List<Request> requests);
-        public Task<List<Models.Request>> LoadRequests();
+        public Task<List<Models.Request>> LoadRequests(string userid);
         public Task<bool> addRequest(Request request);
         public Task<bool> approverequest(int id);
         public Task<bool> rejectRequest(int id);

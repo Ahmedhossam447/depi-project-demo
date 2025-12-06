@@ -18,7 +18,7 @@ namespace test.Models
         public ApplicationUser? Receiver { get; set; }
         public string Message { get; set; }
         public DateTime Time { get; set; }
-        public int read { get; set; }
+        public bool read { get; set; }
         
         public int? AnimalId { get; set; }
         [ForeignKey("AnimalId")]

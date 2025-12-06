@@ -39,14 +39,14 @@ namespace test.Controllers
                     return Json(new { Message = "error" });
                 }
                 var orderExists = await _context.Orders
-                    .FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderStatus == 0);
+                    .FirstOrDefaultAsync(o => o.UserId == user.Id && o.OrderPaid == false);
                 if (orderExists == null)
                 {
                      orderExists = new Orders
                     {
                         UserId = user.Id,
                         OrderDate = DateTime.Now,
-                        OrderStatus = 0
+                        OrderPaid = false
                     };
                     await _context.Orders.AddAsync(orderExists);
                     await _context.SaveChangesAsync();
@@ -76,7 +76,7 @@ namespace test.Controllers
                 return Unauthorized();
             }
             var orders = _context.Orders
-                .Where(o => o.UserId == userid && o.OrderStatus == 0)
+                .Where(o => o.UserId == userid && o.OrderPaid == false)
                 .FirstOrDefault();
             if (orders == null)
             {
@@ -102,7 +102,7 @@ namespace test.Controllers
             await _context.SaveChangesAsync();
             var userid = _usermanager.GetUserId(User);
             var order = _context.Orders
-                .FirstOrDefault(o => o.UserId == userid && o.OrderStatus == 0);
+                .FirstOrDefault(o => o.UserId == userid && o.OrderPaid == false);
             var cartcount = _context.OrderDetails.Where(o => o.OrderId == order.OrderId).Sum(o => o.Quantity);
             HttpContext.Session.SetInt32("CartCount", cartcount);
             return Json(new { Message = "success", CartCount = cartcount });
@@ -155,7 +155,7 @@ namespace test.Controllers
                 {
                     OrderId = order.OrderId,
                     OrderDate = order.OrderDate,
-                    OrderStatus = order.OrderStatus,
+                    OrderPaid = order.OrderPaid,
                     TotalPrice = order.TotalPrice,
                     PaymentMethodType = transaction?.PaymentMethod?.MethodType,
                     PaymentLast4Digits = transaction?.PaymentMethod?.last4Digits,

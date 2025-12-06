@@ -34,7 +34,7 @@ public partial class Product
     public string? Disc { get; set; }
 
     [Column("photo")]
-    [StringLength(20)]
+    [StringLength(500)]
     [Unicode(false)]
     public string? Photo { get; set; }
     [Timestamp]

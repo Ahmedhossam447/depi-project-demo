@@ -110,5 +110,18 @@ namespace test.Repository
             return await _context.Animals
                 .FirstOrDefaultAsync(a => a.Name == name && a.Type == type && a.Age == age && a.Userid == userId);
         }
+        public string GetAnimalOwnerId(int animalId)
+        {
+                var animalOwnerId = _context.Animals
+                .Where(a => a.AnimalId == animalId)
+                .Select(a => a.Userid)
+                .FirstOrDefault();
+            if (animalOwnerId != null)
+                {
+                    return animalOwnerId;
+                }
+
+            return null; // or throw an exception if preferred
+        }
     }
 }

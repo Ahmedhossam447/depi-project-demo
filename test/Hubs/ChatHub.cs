@@ -40,7 +40,7 @@ namespace test.Hubs
         {
             if (chatMessage != null)
             {
-                chatMessage.read = 0;
+                chatMessage.read = false;
                 chatMessage.Time = DateTime.Now;
                 chatMessage.AnimalId = animalid;
                 _context.ChatMessages.Add(chatMessage);

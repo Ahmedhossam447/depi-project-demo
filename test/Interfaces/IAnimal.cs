@@ -13,6 +13,7 @@ namespace test.Interfaces
         public Task<bool> DeleteAnimal(Animal animal);
         public Task<bool> AddAnimal(Animal animal);
         public Task<Animal?> FindDuplicateAsync(string name, string type, byte? age, string userId);
+        public string GetAnimalOwnerId(int animalId);
         public bool savechanges();
     }
 }
