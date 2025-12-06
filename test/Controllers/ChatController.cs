@@ -55,7 +55,7 @@ namespace test.Controllers
             }
 
             var messages = await _context.ChatMessages
-
+                .Include(m => m.Animal)
                 .Where(m => (m.SenderId == currentUser.Id && m.ReceiverId == receiverId) ||
                             (m.SenderId == receiverId && m.ReceiverId == currentUser.Id))
                 .OrderBy(m => m.Time)
