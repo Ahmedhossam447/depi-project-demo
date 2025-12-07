@@ -12,7 +12,7 @@ namespace test.Models
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public bool OrderPaid { get; set; }
-        public int TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public string? UserId { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser? User { get; set; }

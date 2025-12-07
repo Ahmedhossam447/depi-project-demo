@@ -11,7 +11,7 @@ namespace test.ViewModels
 
         [Required]
         [Range(1, int.MaxValue)]
-        public int totalprice { get; set; }
+        public decimal totalprice { get; set; }
         public List<OrderDetails>? orderDetails { get; set; }
         public List<PaymentMethods>? paymentMethods { get; set; }
         [Required]
@@ -21,6 +21,6 @@ namespace test.ViewModels
         // Grouped items for order summary
         public List<GroupedItemViewModel> GroupedItems { get; set; } = new();
         [Range(0, int.MaxValue)]
-        public int TotalQuantity { get; set; }
+        public decimal TotalQuantity { get; set; }
     }
 }

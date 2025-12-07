@@ -56,7 +56,7 @@ namespace test.Controllers
                     OrderId = orderExists.OrderId,
                     productId = product.Productid,
                     Quantity = model.Quantity,
-                    TotalPrice = model.Quantity * (int)product.Price
+                    TotalPrice = model.Quantity * product.Price
                 };
                 _context.OrderDetails.Add(orderdetails);
                 await _context.SaveChangesAsync();

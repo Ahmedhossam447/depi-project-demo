@@ -20,6 +20,6 @@ namespace test.ViewModels
 
         [Required]
         [Range(0, int.MaxValue)]
-        public int productPrice { get; set; }
+        public decimal productPrice { get; set; }
     }
 }

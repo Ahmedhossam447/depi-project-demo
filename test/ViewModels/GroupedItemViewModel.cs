@@ -4,7 +4,7 @@ namespace test.ViewModels
     {
         public string? ProductType { get; set; }
         public int Quantity { get; set; }
-        public int TotalPrice { get; set; }
+        public Decimal TotalPrice { get; set; }
     }
 }
 

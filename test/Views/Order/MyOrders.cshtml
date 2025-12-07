@@ -166,7 +166,7 @@
                                                     <span>@item.Quantity</span>
                                                 </div>
                                                 <div class="item-price">
-                                                    <span>$@item.TotalPrice</span>
+                                                    <span>$@item.TotalPrice.ToString("F2")</span>
                                                 </div>
                                             </div>
                                         }
@@ -216,7 +216,7 @@
                                         <div class="order-summary">
                                             <div class="summary-row">
                                                 <span>Subtotal</span>
-                                                <span>$@order.TotalPrice</span>
+                                                <span>$@order.TotalPrice.ToString("F2")</span>
                                             </div>
                                             <div class="summary-row">
                                                 <span>Shipping</span>
@@ -224,7 +224,7 @@
                                             </div>
                                             <div class="summary-row total">
                                                 <span>Total</span>
-                                                <span>$@order.TotalPrice</span>
+                                                <span>$@order.TotalPrice.ToString("F2")</span>
                                             </div>
                                         </div>
                                     </div>

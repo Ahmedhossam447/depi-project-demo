@@ -62,6 +62,17 @@ public partial class DepiContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Productid).HasName("PK__Products__2D172D323F6C272B");
+            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+        });
+
+        modelBuilder.Entity<Orders>(entity =>
+        {
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18,2)");
+        });
+
+        modelBuilder.Entity<OrderDetails>(entity =>
+        {
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18,2)");
         });
 
         modelBuilder.Entity<Request>(entity =>

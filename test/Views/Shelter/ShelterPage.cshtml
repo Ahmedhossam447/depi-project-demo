@@ -179,7 +179,7 @@
                                 
                                 <div class="mt-auto">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="h4 fw-bold text-pink m-0">$@product.Price</span>
+                                        <span class="h4 fw-bold text-pink m-0">$@product.Price.ToString("F2")</span>
                                     </div>
                                     
                                     <form method="post" asp-action="create" asp-controller="Order" class="d-flex gap-2">
