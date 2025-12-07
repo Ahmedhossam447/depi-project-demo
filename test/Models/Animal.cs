@@ -15,7 +15,11 @@ public partial class Animal
 
     public string? Type { get; set; }
 
+    public string? Breed { get; set; }
+
     public string? Photo { get; set; }
+    public bool IsAdopted { get; set; } = false;
+    public string? About { get; set; }
 
     public string? Userid { get; set; }
     [ForeignKey("Userid")]
@@ -24,5 +28,6 @@ public partial class Animal
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
+
 
 }

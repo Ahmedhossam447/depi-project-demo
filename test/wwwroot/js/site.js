@@ -551,3 +551,67 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// Animal Breed Selection Logic
+document.addEventListener('DOMContentLoaded', function () {
+    // Breeds data for each animal type
+    const breedsData = {
+        'Dog': ['Golden Retriever', 'Labrador Retriever', 'German Shepherd', 'Bulldog', 'Poodle', 'Beagle', 'Husky', 'Rottweiler', 'Boxer', 'Dachshund', 'Great Dane', 'Doberman', 'Shih Tzu', 'Other'],
+        'Cat': ['Persian', 'Siamese', 'Maine Coon', 'British Shorthair', 'Bengal', 'Ragdoll', 'Sphynx', 'Abyssinian', 'Scottish Fold', 'Russian Blue', 'Other'],
+        'Bird': ['Parrot', 'Canary', 'Cockatiel', 'Budgie', 'Finch', 'Lovebird', 'Macaw', 'Cockatoo', 'African Grey', 'Parakeet', 'Other'],
+        'Rabbit': ['Holland Lop', 'Mini Rex', 'Lionhead', 'Dutch', 'Flemish Giant', 'Netherland Dwarf', 'Mini Lop', 'Rex', 'English Angora', 'Other'],
+        'Hamster': ['Syrian', 'Dwarf Campbell', 'Dwarf Winter White', 'Roborovski', 'Chinese', 'Other'],
+        'Fish': ['Goldfish', 'Betta', 'Guppy', 'Angelfish', 'Neon Tetra', 'Molly', 'Oscar', 'Discus', 'Koi', 'Other'],
+        'Turtle': ['Red-Eared Slider', 'Box Turtle', 'Painted Turtle', 'Snapping Turtle', 'Map Turtle', 'Musk Turtle', 'Softshell Turtle', 'Other']
+    };
+
+    const animalTypeSelect = document.getElementById('animalType');
+    const breedGroup = document.getElementById('breedGroup');
+    const breedSelect = document.getElementById('breedSelect');
+    const customBreedGroup = document.getElementById('customBreedGroup');
+    const customBreedInput = document.getElementById('customBreedInput');
+
+    // Only run if we're on the animal create page
+    if (animalTypeSelect && breedGroup && breedSelect) {
+        // Handle animal type change
+        animalTypeSelect.addEventListener('change', function () {
+            const selectedType = this.value;
+
+            // Clear previous selections
+            breedSelect.innerHTML = '<option value="">-- Select Breed --</option>';
+            if (customBreedInput) customBreedInput.value = '';
+            if (customBreedGroup) customBreedGroup.style.display = 'none';
+
+            if (selectedType && selectedType !== 'Other') {
+                // Show breed dropdown for known types
+                breedGroup.style.display = 'block';
+
+                const breeds = breedsData[selectedType] || [];
+                breeds.forEach(breed => {
+                    const option = document.createElement('option');
+                    option.value = breed;
+                    option.textContent = breed;
+                    breedSelect.appendChild(option);
+                });
+            } else if (selectedType === 'Other') {
+                // For "Other" type, show custom breed input directly
+                breedGroup.style.display = 'none';
+                if (customBreedGroup) customBreedGroup.style.display = 'block';
+            } else {
+                breedGroup.style.display = 'none';
+            }
+        });
+
+        // Handle breed selection change
+        breedSelect.addEventListener('change', function () {
+            const selectedBreed = this.value;
+
+            if (selectedBreed === 'Other') {
+                if (customBreedGroup) customBreedGroup.style.display = 'block';
+            } else {
+                if (customBreedGroup) customBreedGroup.style.display = 'none';
+                if (customBreedInput) customBreedInput.value = '';
+            }
+        });
+    }
+});
