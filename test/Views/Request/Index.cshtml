@@ -35,7 +35,7 @@
                     var animal = animals?.FirstOrDefault(a => a.AnimalId == req.AnimalId);
                     var userreq = usersrequested?.FirstOrDefault(u => u.Id == req.Userid);
 
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-4 request-card" data-animal-id="@req.AnimalId">
                         <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -99,7 +99,7 @@
                     var animal = animals?.FirstOrDefault(a => a.AnimalId == req.AnimalId);
                     var userreq = usersrequested?.FirstOrDefault(u => u.Id == req.Userid);
 
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-md-6 col-lg-4 request-card" data-animal-id="@req.AnimalId">
                         <div class="card h-100 border-0 shadow-sm border-start border-5 border-success">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -136,7 +136,8 @@
                                             <i class="fas fa-trash-alt me-1"></i> Remove
                                         </button>
                                     </form>
-                                    <form asp-action="CompleteAdoption" method="post" class="flex-grow-1">
+                                    <form class="complete-adoption-form flex-grow-1">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@req.Reqid" />
                                         <button type="submit" class="btn btn-outline-success w-100 rounded-pill btn-sm fw-bold" title="Finalize adoption and remove animal">
                                             <i class="fas fa-check-double me-1"></i> Complete
@@ -281,7 +282,7 @@
                                     <form asp-action="Remove" method="post">
                                         <input type="hidden" name="id" value="@req.Reqid" />
                                         <button type="submit" class="btn btn-outline-success w-100 rounded-pill btn-sm fw-bold" title="Mark adoption as complete">
-                                            <i class="fas fa-check-circle me-1"></i> Adoption Complete
+                                            <i class="fas fa-check-circle me-1"></i> Remove Request
                                         </button>
                                     </form>
                                     <a href="@Url.Action("Index", "Chat", new { receiverId = req.Useridreq, animalId = req.AnimalId })" class="btn btn-pink w-100 rounded-pill btn-sm fw-bold mt-2" title="Chat with Owner">

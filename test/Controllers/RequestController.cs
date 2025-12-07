@@ -91,14 +91,27 @@ namespace test.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Request request)
         {
             if (ModelState.IsValid)
             {
+                // Check if animal is already adopted
+                var animal = await _animalRepository.GetByIdAsync(request.AnimalId);
+                if (animal == null)
+                {
+                    return Json(new { success = false, message = "Animal not found." });
+                }
+                
+                if (animal.IsAdopted)
+                {
+                    return Json(new { success = false, message = "This animal has already been adopted." });
+                }
+
                 await _RequestRepository.addRequest(request);
-                return RedirectToAction("Index", "Animal");
+                return Json(new { success = true, message = "Adoption request sent successfully!", animalId = request.AnimalId });
             }
-            return RedirectToAction("Index", "Animal");
+            return Json(new { success = false, message = "Invalid request." });
         }
 
         [HttpPost]
@@ -131,18 +144,30 @@ namespace test.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteAdoption(int id)
         {
             var request = await _RequestRepository.GetRequestById(id);
             if (request != null)
             {
                 var animal = await _animalRepository.GetByIdAsync(request.AnimalId);
+                var animalId = request.AnimalId;
+                
                 if (animal != null)
                 {
-                    await _animalRepository.DeleteAnimal(animal);
+                    animal.IsAdopted = true;
+                    await _animalRepository.UpdateAnimal(animal);
                 }
+
+                // Delete all requests for this animal after completing adoption
+                var requests = await _RequestRepository.LoadRequestsForAnimal(animalId);
+                foreach (var req in requests)
+                {
+                    await _RequestRepository.DeleteRequest(req);
+                }
+                return Json(new { success = true, message = "Adoption completed successfully! The animal has found a new home.", animalId = animalId });
             }
-            return RedirectToAction("Index");
+            return Json(new { success = false, message = "Request not found." });
         }
     }
 }

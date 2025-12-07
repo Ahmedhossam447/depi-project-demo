@@ -121,9 +121,26 @@
                                                 <i class="fas fa-calendar-alt"></i>
                                                 <span>Age: @animal.Age</span>
                                             </div>
+                                            @if (!string.IsNullOrEmpty(animal.Gender))
+                                            {
+                                                <div class="animal-detail-item">
+                                                    @if (animal.Gender == "Male")
+                                                    {
+                                                        <i class="fas fa-mars"></i>
+                                                        <span>Male</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-venus"></i>
+                                                        <span>Female</span>
+                                                    }
+                                                </div>
+                                            }
                                         </div>
-                                        <div class="mt-3">
-                                            
+                                        <div class="mt-3 d-flex flex-column gap-2">
+                                            <a asp-controller="Animal" asp-action="Details" asp-route-id="@animal.AnimalId" class="btn btn-pink w-100">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </a>
                                             <a asp-controller="Chat" asp-action="Index" asp-route-receiverId="@animal.Userid" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-pink w-100">
                                                 <i class="fas fa-comments"></i> Chat for the animal
                                             </a>

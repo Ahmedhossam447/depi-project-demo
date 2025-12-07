@@ -16,6 +16,8 @@ namespace test.Interfaces
         public Task<Request> GetRequestById(int id);
         public Task<bool> DeleteRequest(Request request);
         public Task<bool> HasAcceptedRequest(string userId1, string userId2);
+        public Task<List<Models.Request>> LoadRequestsForAnimal(int id);
+        public Task<bool> HasPendingRequestForAnimal(string userId, int animalId);
 
 
         public bool savechanges();

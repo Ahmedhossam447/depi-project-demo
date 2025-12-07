@@ -7,6 +7,7 @@ namespace test.Interfaces
     {
         public  Animalviewmodel AnimalDisplay(string? filter, string id,bool mine);
         public Task<Animal> GetByIdAsync(int id);
+        public Task<Animal?> GetByIdWithDetailsAsync(int id);
         public Task<List<Animal>> GetAllUserAnimalsAsync(string id);
         public Task<List<Animal>> GetAllAnimalsAsync();
         public Task<bool> UpdateAnimal(Animal animal);

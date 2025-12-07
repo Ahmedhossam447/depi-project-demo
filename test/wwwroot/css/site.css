@@ -459,6 +459,58 @@ header {
     border-color: #db98b7;
 }
 
+/* Gender Selector */
+.gender-selector {
+    display: flex;
+    gap: 15px;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.gender-option:hover {
+    border-color: #db98b7;
+    background: #fdf2f7;
+}
+
+.gender-option:has(input:checked) {
+    border-color: #db98b7;
+    background: linear-gradient(135deg, #fdf2f7, #fff);
+    box-shadow: 0 2px 8px rgba(219, 152, 183, 0.3);
+}
+
+.gender-option input[type="radio"] {
+    display: none;
+}
+
+.gender-option .fa-mars {
+    font-size: 1.2rem;
+    color: #3498db;
+}
+
+.gender-option .fa-venus {
+    font-size: 1.2rem;
+    color: #e91e8b;
+}
+
+/* Gender icons in animal cards */
+.animal-detail-item .fa-mars {
+    color: #3498db;
+}
+
+.animal-detail-item .fa-venus {
+    color: #e91e8b;
+}
+
 .submit-btn {
     background: linear-gradient(45deg, #db98b7, #c39797);
     color: white;

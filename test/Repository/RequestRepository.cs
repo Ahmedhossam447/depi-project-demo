@@ -116,6 +116,16 @@ namespace test.Repository
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
+        public async Task<List<Models.Request>> LoadRequestsForAnimal(int id)
+        {
+            return await _context.Requests.Where(r => r.AnimalId == id).ToListAsync();
+        }
+
+        public async Task<bool> HasPendingRequestForAnimal(string userId, int animalId)
+        {
+            return await _context.Requests.AnyAsync(r => 
+                r.Userid == userId && r.AnimalId == animalId && r.Status == "pending");
+        }
 
     }
 }

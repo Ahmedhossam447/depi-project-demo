@@ -66,13 +66,19 @@
         {
 
                         <!-- Animal Card -->
-                        <div class="animal-card" data-animal-type="@animal.Type">
+                        <div class="animal-card" data-animal-type="@animal.Type" id="animal-card-@animal.AnimalId">
                             <div class="animal-image-container">
                                 <img src="@animal.Photo" alt="@animal.Name" class="animal-image">
                                 <div class="animal-type-badge">
                                     <i class="fas fa-paw"></i>
                                     @animal.Type
                                 </div>
+                                @if (animal.IsAdopted)
+                                {
+                                    <div class="adopted-badge" style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);">
+                                        <i class="fas fa-heart me-1"></i>Adopted
+                                    </div>
+                                }
                             </div>
                             <div class="animal-info">
                                 <h3 class="animal-name">@animal.Name</h3>
@@ -85,6 +91,37 @@
                                         <i class="fas fa-tag"></i>
                                         <span>@animal.Type</span>
                                     </div>
+                                    @if (!string.IsNullOrEmpty(animal.Gender))
+                                    {
+                                        <div class="animal-detail-item">
+                                            @if (animal.Gender == "Male")
+                                            {
+                                                <i class="fas fa-mars"></i>
+                                                <span>Male</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-venus"></i>
+                                                <span>Female</span>
+                                            }
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(animal.User?.location))
+                                    {
+                                        <div class="animal-detail-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            @if (animal.User.location.StartsWith("http"))
+                                            {
+                                                <a href="@animal.User.location" target="_blank" class="text-decoration-none">
+                                                    <span>View Location</span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span>@animal.User.location</span>
+                                            }
+                                        </div>
+                                    }
                                 </div>
                                 
                                 @if (!Model.IsMine)
@@ -108,70 +145,91 @@
                                    }
                                    else
                                    {
-                                        <form asp-controller="Request" asp-action="create" method="post">
-                                            <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
-                                            <input type="hidden" name="Useridreq" value="@animal.Userid" />
-                                            <input type="hidden" name="Userid" value="@userId" />
-                                            <button asp-controller="Request" asp-action="Create" class="btn adopt-btn">
-                                                <i class="fas fa-heart"></i>
-                                                Adopt Me
-                                            </button>
-                                        </form>
-                                   }
-                                    
-                                    <div class="mt-2">
-                                        @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())
-                                        {
-                                            <a asp-controller="MedicalRecord" asp-action="Details" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-info w-100">
-                                                <i class="fas fa-notes-medical"></i> View Medical Record
+                                        <div class="d-flex gap-2">
+                                            <a asp-action="Details" asp-route-id="@animal.AnimalId" class="btn btn-outline-pink flex-grow-1">
+                                                <i class="fas fa-eye"></i> Details
                                             </a>
-                                        }
-                                        else
-                                        {
-                                            <div class="alert alert-secondary py-1 px-2 text-center small mb-0">
-                                                <i class="fas fa-info-circle"></i> Record isn't available
-                                            </div>
-                                        }
-                                    </div>
+                                            <form class="adopt-form flex-grow-1" data-animal-id="@animal.AnimalId">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
+                                                <input type="hidden" name="Useridreq" value="@animal.Userid" />
+                                                <input type="hidden" name="Userid" value="@userId" />
+                                                <button type="submit" class="btn adopt-btn w-100">
+                                                    <i class="fas fa-heart"></i> Adopt
+                                                </button>
+                                            </form>
+                                        </div>
+                                   }
                                 }
                                 else
                                 {
-                                    <div class="d-flex gap-2 mt-2">
-                                        <a asp-action="Edit" asp-route-id="@animal.AnimalId" class="btn btn-outline-primary flex-grow-1">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())
-                                        {
-                                            <a asp-controller="MedicalRecord" asp-action="Details" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-info flex-grow-1">
-                                                <i class="fas fa-notes-medical"></i> Record
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-controller="MedicalRecord" asp-action="Create" asp-route-animalid="@animal.AnimalId" class="btn btn-outline-warning flex-grow-1">
-                                                <i class="fas fa-plus-circle"></i> Add Record
-                                            </a>
-                                        }
-                                        
-                                        <!-- Delete Button Section -->
-                                        <div class="flex-grow-1">
-                                            <span id="@("deletespan" + animal.AnimalId)">
-                                                <button onclick="deleteconfirm('@animal.AnimalId', true)" class="btn btn-outline-danger w-100">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </span>
-                                            
-                                            <span id="@("deleteConfirmSpan" + animal.AnimalId)" style="display:none;">
-                                                <div class="d-flex gap-1">
-                                                    <span class="text-danger small d-block mb-1 w-100 text-center">Are you sure?</span>
-                                                    <form asp-action="Delete" asp-route-id="@animal.AnimalId" method="post" class="w-50">
-                                                        <button type="submit" class="btn btn-danger btn-sm w-100">Yes</button>
-                                                    </form>
-                                                    <button onclick="deleteconfirm('@animal.AnimalId', false)" class="btn btn-secondary btn-sm w-50">No</button>
-                                                </div>
-                                            </span>
+                                    @if (animal.IsAdopted)
+                                    {
+                                        <!-- Adopted animals - only delete option -->
+                                        <div class="alert alert-success py-2 px-3 mb-2 text-center small">
+                                            <i class="fas fa-check-circle me-1"></i> This animal has found a new home!
                                         </div>
-                                    </div>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <!-- Delete Button Section -->
+                                            <div class="flex-grow-1">
+                                                <span id="@("deletespan" + animal.AnimalId)">
+                                                    <button onclick="deleteconfirm('@animal.AnimalId', true)" class="btn btn-outline-danger w-100">
+                                                        <i class="fas fa-trash"></i> Remove from List
+                                                    </button>
+                                                </span>
+                                                
+                                                <span id="@("deleteConfirmSpan" + animal.AnimalId)" style="display:none;">
+                                                    <div class="d-flex gap-1">
+                                                        <span class="text-danger small d-block mb-1 w-100 text-center">Are you sure?</span>
+                                                        <form asp-action="Delete" asp-route-id="@animal.AnimalId" method="post" class="w-50">
+                                                            <button type="submit" class="btn btn-danger btn-sm w-100">Yes</button>
+                                                        </form>
+                                                        <button onclick="deleteconfirm('@animal.AnimalId', false)" class="btn btn-secondary btn-sm w-50">No</button>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- Non-adopted animals - full options -->
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a asp-action="Edit" asp-route-id="@animal.AnimalId" class="btn btn-outline-primary flex-grow-1">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            @if (animal.MedicalRecords != null && animal.MedicalRecords.Any())
+                                            {
+                                                <a asp-controller="MedicalRecord" asp-action="Details" asp-route-animalId="@animal.AnimalId" class="btn btn-outline-info flex-grow-1">
+                                                    <i class="fas fa-notes-medical"></i> Record
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-controller="MedicalRecord" asp-action="Create" asp-route-animalid="@animal.AnimalId" class="btn btn-outline-warning flex-grow-1">
+                                                    <i class="fas fa-plus-circle"></i> Add Record
+                                                </a>
+                                            }
+                                            
+                                            <!-- Delete Button Section -->
+                                            <div class="flex-grow-1">
+                                                <span id="@("deletespan" + animal.AnimalId)">
+                                                    <button onclick="deleteconfirm('@animal.AnimalId', true)" class="btn btn-outline-danger w-100">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </span>
+                                                
+                                                <span id="@("deleteConfirmSpan" + animal.AnimalId)" style="display:none;">
+                                                    <div class="d-flex gap-1">
+                                                        <span class="text-danger small d-block mb-1 w-100 text-center">Are you sure?</span>
+                                                        <form asp-action="Delete" asp-route-id="@animal.AnimalId" method="post" class="w-50">
+                                                            <button type="submit" class="btn btn-danger btn-sm w-100">Yes</button>
+                                                        </form>
+                                                        <button onclick="deleteconfirm('@animal.AnimalId', false)" class="btn btn-secondary btn-sm w-50">No</button>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    }
                                 }
                             </div>
                         </div>

@@ -19,6 +19,10 @@ namespace test.ViewModels
         [Display(Name = "Phone Number")]
         public string? PhoneNumber { get; set; }
 
+        [StringLength(600)]
+        [Display(Name = "City")]
+        public string? Location { get; set; }
+
         [Display(Name = "Profile Photo")]
         public IFormFile? Photo { get; set; }
 

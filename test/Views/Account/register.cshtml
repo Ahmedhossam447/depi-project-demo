@@ -71,12 +71,11 @@
                 <span asp-validation-for="role" class="text-danger"></span>
             </div>
 
-            <div class="form-group" id="locationGroup" style="display: none;">
-                <label asp-for="Location" class="form-label">Shelter Location</label>
-
-                <select asp-for="Location" class="form-input" required>
+            <!-- User Location (City Dropdown) -->
+            <div class="form-group" id="userLocationGroup" style="display: none;">
+                <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Your City</label>
+                <select name="Location" id="userLocationSelect" class="form-input">
                     <option value="">-- Select Your City --</option>
-
                     <option value="Cairo">Cairo</option>
                     <option value="Giza">Giza</option>
                     <option value="Alexandria">Alexandria</option>
@@ -87,8 +86,35 @@
                     <option value="Tanta">Tanta</option>
                     <option value="Suez">Suez</option>
                     <option value="Hurghada">Hurghada</option>
+                    <option value="Ismailia">Ismailia</option>
+                    <option value="Faiyum">Faiyum</option>
+                    <option value="Zagazig">Zagazig</option>
+                    <option value="Damietta">Damietta</option>
+                    <option value="Asyut">Asyut</option>
+                    <option value="Minya">Minya</option>
+                    <option value="Beni Suef">Beni Suef</option>
+                    <option value="Qena">Qena</option>
+                    <option value="Sohag">Sohag</option>
+                    <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                    <option value="Marsa Alam">Marsa Alam</option>
+                    <option value="El Gouna">El Gouna</option>
+                    <option value="6th of October City">6th of October City</option>
+                    <option value="New Cairo">New Cairo</option>
+                    <option value="Sheikh Zayed City">Sheikh Zayed City</option>
                 </select>
+                <span class="text-danger" id="userLocationError"></span>
+            </div>
 
+            <!-- Shelter Location (Google Maps Link) -->
+            <div class="form-group" id="shelterLocationGroup" style="display: none;">
+                <label asp-for="Location" class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Shelter Location (Google Maps Link)</label>
+                <input type="url" asp-for="Location" id="shelterLocationInput" class="form-input" 
+                       placeholder="https://maps.google.com/..." 
+                       pattern="https://(www\.)?(google\.com/maps|maps\.google\.com|goo\.gl/maps|maps\.app\.goo\.gl).*">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Go to Google Maps, find your shelter location, click "Share" and paste the link here
+                </small>
                 <span asp-validation-for="Location" class="text-danger"></span>
             </div>
 
@@ -96,28 +122,6 @@
                 <i class="fas fa-user-plus"></i> Sign Up
             </button>
         </form>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const roleUser = document.getElementById('roleUser');
-                const roleShelter = document.getElementById('roleShelter');
-                const locationGroup = document.getElementById('locationGroup');
-
-                function toggleLocationField() {
-                    if (roleShelter.checked) {
-                        locationGroup.style.display = 'block';
-                    } else {
-                        locationGroup.style.display = 'none';
-                    }
-                }
-
-                roleUser.addEventListener('change', toggleLocationField);
-                roleShelter.addEventListener('change', toggleLocationField);
-                
-                // Initial check
-                toggleLocationField();
-            });
-        </script>
 
         <div class="auth-link">
             <p>Already have an account? <a asp-action="login">Log In</a></p>

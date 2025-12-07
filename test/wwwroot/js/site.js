@@ -513,6 +513,92 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// Adoption Request Form Handler
+document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("submit", function (event) {
+        const form = event.target;
+
+        // Handle Adopt Me form
+        if (form.classList.contains('adopt-form')) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const animalId = form.getAttribute('data-animal-id');
+            const animalCard = document.getElementById('animal-card-' + animalId);
+
+            fetch("/Request/Create", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, "success");
+                    if (animalCard) {
+                        // On Index page - remove the card
+                        animalCard.style.transition = 'opacity 0.5s, transform 0.5s';
+                        animalCard.style.opacity = '0';
+                        animalCard.style.transform = 'scale(0.8)';
+                        setTimeout(() => animalCard.remove(), 500);
+                    } else {
+                        // On Details page - replace the form with success message
+                        const actionCard = form.closest('.card-body');
+                        if (actionCard) {
+                            // Hide the form and any chat button
+                            form.style.display = 'none';
+                            const chatBtn = actionCard.querySelector('a[href*="Chat"]');
+                            if (chatBtn) chatBtn.style.display = 'none';
+                            
+                            // Add success message
+                            const successDiv = document.createElement('div');
+                            successDiv.className = 'alert alert-success text-center rounded-3';
+                            successDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>Adoption request sent! The owner will review your request.';
+                            form.parentNode.insertBefore(successDiv, form);
+                        }
+                    }
+                } else {
+                    showToast(data.message || "Failed to send adoption request.", "error");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast("An error occurred while sending the request.", "error");
+            });
+        }
+
+        // Handle Complete Adoption form
+        if (form.classList.contains('complete-adoption-form')) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            fetch("/Request/CompleteAdoption", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, "success");
+                    // Remove all request cards for this animal
+                    const animalId = data.animalId;
+                    const allCardsForAnimal = document.querySelectorAll(`.request-card[data-animal-id="${animalId}"]`);
+                    allCardsForAnimal.forEach(card => {
+                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => card.remove(), 500);
+                    });
+                } else {
+                    showToast(data.message || "Failed to complete adoption.", "error");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast("An error occurred while completing the adoption.", "error");
+            });
+        }
+    });
+});
+
 // Notification Dropdown Functionality
 document.addEventListener("DOMContentLoaded", function () {
     // Handle Notification Dropdown Open (Bootstrap Event)
@@ -549,6 +635,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 list.html('<li><span class="dropdown-item text-danger text-center">Error loading messages</span></li>');
             });
         });
+    }
+});
+
+// Registration Form - Location Field Toggle
+document.addEventListener('DOMContentLoaded', function () {
+    const roleUser = document.getElementById('roleUser');
+    const roleShelter = document.getElementById('roleShelter');
+    const userLocationGroup = document.getElementById('userLocationGroup');
+    const shelterLocationGroup = document.getElementById('shelterLocationGroup');
+    const userLocationSelect = document.getElementById('userLocationSelect');
+    const shelterLocationInput = document.getElementById('shelterLocationInput');
+
+    // Only run if we're on the registration page
+    if (roleUser && roleShelter && userLocationGroup && shelterLocationGroup) {
+        function toggleLocationField() {
+            if (roleShelter.checked) {
+                userLocationGroup.style.display = 'none';
+                shelterLocationGroup.style.display = 'block';
+                if (userLocationSelect) userLocationSelect.removeAttribute('name');
+                if (shelterLocationInput) {
+                    shelterLocationInput.setAttribute('name', 'Location');
+                    shelterLocationInput.required = true;
+                }
+                if (userLocationSelect) userLocationSelect.required = false;
+            } else {
+                userLocationGroup.style.display = 'block';
+                shelterLocationGroup.style.display = 'none';
+                if (userLocationSelect) userLocationSelect.setAttribute('name', 'Location');
+                if (shelterLocationInput) shelterLocationInput.removeAttribute('name');
+                if (userLocationSelect) userLocationSelect.required = false;
+                if (shelterLocationInput) shelterLocationInput.required = false;
+            }
+        }
+
+        roleUser.addEventListener('change', toggleLocationField);
+        roleShelter.addEventListener('change', toggleLocationField);
+
+        // Initial check
+        toggleLocationField();
     }
 });
 

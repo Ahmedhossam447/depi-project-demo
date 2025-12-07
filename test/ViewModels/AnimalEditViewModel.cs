@@ -18,6 +18,9 @@ namespace test.ViewModels
         [Range(0, 30)]
         public byte? Age { get; set; }
 
+        [StringLength(10)]
+        public string? Gender { get; set; }
+
         public IFormFile? Photo { get; set; }
     }
 }

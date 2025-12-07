@@ -107,7 +107,8 @@ namespace test.Controllers
                 UserName = currentUser.UserName,
                 PhoneNumber = currentUser.PhoneNumber,
                 CurrentPhotoUrl = currentUser.PhotoUrl,
-                FullName = currentUser.FullName
+                FullName = currentUser.FullName,
+                Location = currentUser.location
             };
 
             return View(viewModel);
@@ -126,10 +127,11 @@ namespace test.Controllers
                 return View(model);
             }
 
-            // Update username
+            // Update user fields
             currentUser.UserName = model.UserName;
             currentUser.PhoneNumber = model.PhoneNumber;
             currentUser.FullName = model.FullName;
+            currentUser.location = model.Location;
 
             // Handle photo upload
             if (model.Photo != null && model.Photo.Length > 0)

@@ -14,6 +14,7 @@ using test.ViewModels;
 using test.Repository;
 using test.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using test.Repository;
 
 namespace test.Controllers
 {
@@ -22,11 +23,13 @@ namespace test.Controllers
     public class AnimalController : Controller
     {
         private readonly IAnimal _animalRepository;
+        private readonly IRequests _requestRepository;
         private readonly PhotoServices _photoServices;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AnimalController(IAnimal animalRepository, PhotoServices photoServices, UserManager<ApplicationUser> userManager)
+        public AnimalController(IAnimal animalRepository, IRequests requestRepository, PhotoServices photoServices, UserManager<ApplicationUser> userManager)
         {
             _animalRepository = animalRepository;
+            _requestRepository = requestRepository;
             _photoServices = photoServices;
             _userManager = userManager;
         }
@@ -45,7 +48,7 @@ namespace test.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo,Breed,CustomBreed,About")] CreateAnimalViewModel animalVM)
+        public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo,Breed,CustomBreed,Gender,About")] CreateAnimalViewModel animalVM)
         {
 
             if (ModelState.IsValid)
@@ -67,6 +70,7 @@ namespace test.Controllers
                     Age = animalVM.Age,
                     Photo = photoresult.Url.ToString(),
                     Breed = finalBreed,
+                    Gender = animalVM.Gender,
                     About = animalVM.About,
                     Userid = userid
                 };
@@ -98,7 +102,8 @@ namespace test.Controllers
                 Id = animal.AnimalId,
                 Name = animal.Name,
                 Type = animal.Type,
-                Age = animal.Age
+                Age = animal.Age,
+                Gender = animal.Gender
             };
             return View(animalVM);
 
@@ -116,6 +121,7 @@ namespace test.Controllers
                 animal.Name = animalVM.Name;
                 animal.Type = animalVM.Type;
                 animal.Age = animalVM.Age;
+                animal.Gender = animalVM.Gender;
                 if (animalVM.Photo != null)
                 {
                     await _photoServices.DeletePhotoAsync(animal.Photo);
@@ -137,6 +143,25 @@ namespace test.Controllers
             return View(animalVM);
 
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var animal = await _animalRepository.GetByIdWithDetailsAsync(id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            
+            var currentUserId = _userManager.GetUserId(User);
+            ViewBag.IsOwner = animal.Userid == currentUserId;
+            ViewBag.CurrentUserId = currentUserId;
+            
+            // Check if user already sent a request for this animal
+            ViewBag.HasPendingRequest = currentUserId != null && 
+                await _requestRepository.HasPendingRequestForAnimal(currentUserId, id);
+            
+            return View(animal);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

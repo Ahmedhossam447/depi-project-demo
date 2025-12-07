@@ -18,6 +18,9 @@ public partial class Animal
     [MaxLength(50)]
     public string? Breed { get; set; }
 
+    [MaxLength(10)]
+    public string? Gender { get; set; }
+
     public string? Photo { get; set; }
     public bool IsAdopted { get; set; } = false;
     [MaxLength(600)]

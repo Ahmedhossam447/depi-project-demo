@@ -30,6 +30,7 @@ namespace test.Repository
             Animalviewmodel animviewmodel;
             if (mine)
             {
+                // Show all user's animals including adopted ones
                 animals = _context.Animals
                     .Include(a => a.MedicalRecords)
                     .Where(anm => anm.Userid == userid);
@@ -44,21 +45,21 @@ namespace test.Repository
             }
             else
             {
-
+                // Browse animals - exclude adopted animals (IsAdopted == true)
                 if (filter == null || filter == "any")
                 {
                     
                     animals = _context.Animals
                         .Include(a => a.MedicalRecords)
                         .Include(a => a.User)
-                        .Where(a => a.Userid != userid && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == a.AnimalId));
+                        .Where(a => a.Userid != userid && !a.IsAdopted && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == a.AnimalId));
                 }
                 else
                 {
                     animals = _context.Animals
                         .Include(a => a.MedicalRecords)
                         .Include(a => a.User)
-                        .Where(anm => anm.Userid != userid && anm.Type == filter && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == anm.AnimalId));
+                        .Where(anm => anm.Userid != userid && !anm.IsAdopted && anm.Type == filter && !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == anm.AnimalId));
                 }
                 animviewmodel = new Animalviewmodel
                 {
@@ -80,6 +81,15 @@ namespace test.Repository
         {
             var animal = await _context.Animals.FirstOrDefaultAsync(a => a.AnimalId == id);
             return  animal;
+        }
+
+        public async Task<Animal?> GetByIdWithDetailsAsync(int id)
+        {
+            return await _context.Animals
+                .Include(a => a.User)
+                .Include(a => a.MedicalRecords)
+                    .ThenInclude(m => m.VaccinationNeededs)
+                .FirstOrDefaultAsync(a => a.AnimalId == id);
         }
         public async Task<bool> DeleteAnimal(Animal animal)
         {

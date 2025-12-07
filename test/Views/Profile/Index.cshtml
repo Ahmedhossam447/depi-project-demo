@@ -59,6 +59,11 @@
                     <input type="text" class="form-control bg-light border-0 rounded-3" value="@(Model.CanViewContactInfo ? (string.IsNullOrEmpty(Model.User.PhoneNumber) ? "Not provided" : Model.User.PhoneNumber) : "Hidden")" readonly>
                 </div>
 
+                <div class="mb-4">
+                    <label class="form-label text-muted small text-uppercase fw-bold"><i class="fas fa-map-marker-alt me-2"></i>City</label>
+                    <input type="text" class="form-control bg-light border-0 rounded-3" value="@(string.IsNullOrEmpty(Model.User.location) ? "Not provided" : Model.User.location)" readonly>
+                </div>
+
                 @if (Model.IsOwner)
                 {
                     <div class="mb-4">

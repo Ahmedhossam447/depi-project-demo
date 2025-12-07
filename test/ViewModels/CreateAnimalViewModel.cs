@@ -21,6 +21,10 @@ namespace test.ViewModels
         [StringLength(100)]
         public string? CustomBreed { get; set; }
 
+        [Required]
+        [StringLength(10)]
+        public string Gender { get; set; }
+
         [StringLength(500)]
         public string? About { get; set; }
 

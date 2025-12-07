@@ -155,7 +155,7 @@ namespace test.Controllers
                 Email = user.email, 
                 PhotoUrl = photoUrl,
                 FullName = user.FullName,
-                location = user.role == "Shelter" ? user.Location : null
+                location = user.Location
             };
             var result = await userManager.CreateAsync(userr, user.password);
 

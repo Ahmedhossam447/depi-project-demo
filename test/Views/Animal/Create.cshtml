@@ -50,6 +50,24 @@
                 <input type="text" asp-for="CustomBreed" class="form-input" id="customBreedInput" placeholder="Enter the breed">
             </div>
 
+            <!-- Gender Selection -->
+            <div class="form-group">
+                <label asp-for="Gender" class="form-label">Gender</label>
+                <div class="gender-selector">
+                    <label class="gender-option">
+                        <input type="radio" asp-for="Gender" value="Male" required>
+                        <i class="fas fa-mars"></i>
+                        <span>Male</span>
+                    </label>
+                    <label class="gender-option">
+                        <input type="radio" asp-for="Gender" value="Female" required>
+                        <i class="fas fa-venus"></i>
+                        <span>Female</span>
+                    </label>
+                </div>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
             <!-- About Section (Optional) -->
             <div class="form-group">
                 <label asp-for="About" class="form-label">About (Optional)</label>
