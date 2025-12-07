@@ -7,7 +7,7 @@ namespace test.ViewModels
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public bool OrderPaid { get; set; } // 0 = Pending, 1 = Paid/Done
-        public int TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public string? PaymentMethodType { get; set; }
         public string? PaymentLast4Digits { get; set; }
         public List<OrderDetailViewModel> OrderDetails { get; set; } = new List<OrderDetailViewModel>();
@@ -24,8 +24,8 @@ namespace test.ViewModels
         public string? ProductDescription { get; set; }
         public string? ProductPhoto { get; set; }
         public int Quantity { get; set; }
-        public int UnitPrice { get; set; }
-        public int TotalPrice { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public string? ShelterName { get; set; }
         public string? ShelterUserId { get; set; }
         public string? ShelterEmail { get; set; }

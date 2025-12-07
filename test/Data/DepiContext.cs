@@ -78,5 +78,21 @@ public partial class DepiContext : IdentityDbContext<ApplicationUser>
                 .HasConstraintName("vac_rec_fk")
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+           
+            entity.HasOne(m => m.Sender)
+                  .WithMany()
+                  .HasForeignKey(m => m.SenderId)
+                  .OnDelete(DeleteBehavior.ClientSetNull);
+
+
+            entity.HasOne(m => m.Receiver)
+                  .WithMany()
+                  .HasForeignKey(m => m.ReceiverId)
+                  .OnDelete(DeleteBehavior.ClientSetNull);
+        });
     }
 }

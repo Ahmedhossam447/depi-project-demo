@@ -55,7 +55,7 @@ namespace test.Controllers
                     var paymentMethod = new PaymentMethods
                     {
                         UserId = user.Id,
-                        GatewatyToken = result.Token,      // From Braintree
+                        GatewayToken = result.Token,      // From Braintree
                         last4Digits = result.Last4,        // From Braintree
                         MethodType = result.CardType,      // From Braintree
                         expiryMonth = result.ExpiryMonth,  // From Braintree

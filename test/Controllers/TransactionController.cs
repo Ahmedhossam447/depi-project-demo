@@ -77,7 +77,7 @@ namespace test.Controllers
             var payment= _context.PaymentMethods.Where(p => p.PaymentMethodId == model.selectedPaymentMethodid).Select(p=>new PaymentMethods
             {
                 PaymentMethodId=p.PaymentMethodId,
-                GatewatyToken=p.GatewatyToken
+                GatewayToken=p.GatewayToken
             }).FirstOrDefault();
 
             if (payment == null)
@@ -120,7 +120,7 @@ namespace test.Controllers
                     }
                 }
                 // Process payment with Braintree
-                var paymentResult = _braintreeService.Sale(payment.GatewatyToken, order.TotalPrice);
+                var paymentResult = _braintreeService.Sale(payment.GatewayToken, order.TotalPrice);
 
                 if (!paymentResult.Success)
                 {

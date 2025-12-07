@@ -82,7 +82,7 @@ namespace test.Controllers
                 }
                 
                 var product = new Product
-                {
+                {   Name=model.Name,
                     Type = model.Type,
                     Disc = model.Disc,
                     Price = model.Price,
@@ -140,7 +140,7 @@ namespace test.Controllers
                 ProductId = product.Productid,
                 Type = product.Type,
                 Price = product.Price,
-                Quantity = product.Quantity,
+                Quantity = product.Quantity ,
                 Disc = product.Disc,
                 CurrentPhotoUrl = product.Photo
             };
