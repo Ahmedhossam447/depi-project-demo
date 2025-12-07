@@ -20,5 +20,8 @@ namespace test.ViewModels
         [Required]
         [Display(Name = "Select Role")]
         public string Role { get; set; }
+
+        [Display(Name = "Location")]
+        public string? Location { get; set; }
     }
 }
