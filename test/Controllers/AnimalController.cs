@@ -45,19 +45,29 @@ namespace test.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo")] CreateAnimalViewModel animalVM)
+        public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo,Breed,CustomBreed,About")] CreateAnimalViewModel animalVM)
         {
 
             if (ModelState.IsValid)
             {
                 var photoresult = await _photoServices.AddPhotoAsync(animalVM.Photo);
                 var userid = _userManager.GetUserId(User);
+                
+                // Determine the final breed value
+                string? finalBreed = animalVM.Breed;
+                if (animalVM.Breed == "Other" || animalVM.Type == "Other")
+                {
+                    finalBreed = !string.IsNullOrWhiteSpace(animalVM.CustomBreed) ? animalVM.CustomBreed : null;
+                }
+                
                 var animal = new Animal
                 {
                     Name = animalVM.Name,
                     Type = animalVM.Type,
                     Age = animalVM.Age,
                     Photo = photoresult.Url.ToString(),
+                    Breed = finalBreed,
+                    About = animalVM.About,
                     Userid = userid
                 };
 

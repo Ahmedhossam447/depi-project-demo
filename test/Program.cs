@@ -33,6 +33,13 @@ namespace test
             })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DepiContext>();
+            
+            // Configure Identity's cookie settings
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Home/Index";
+            });
             builder.Services.AddSession(options =>
             {
                 // You can set a timeout for the session
@@ -59,14 +66,6 @@ namespace test
 
 
 
-
-            builder.Services.AddAuthentication("MyCookieAuth")
-                .AddCookie("MyCookieAuth", options =>
-                {
-                    options.Cookie.Name = "MyCookieAuth";
-                    // 2. Set the login path
-                    options.LoginPath = "/Account/Login";
-                });
 
             var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
             builder.Services.AddAuthentication().AddGoogle(Services =>
