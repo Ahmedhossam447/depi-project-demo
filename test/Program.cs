@@ -25,7 +25,7 @@ namespace test
 
             builder.Services.AddDbContext<DepiContext>
                 (options => options
-                .UseSqlServer(builder.Configuration.GetConnectionString("depiContextConnection")));
+                .UseSqlServer(builder.Configuration.GetConnectionString("SalmaConnection")));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.SignIn.RequireConfirmedEmail = true;
