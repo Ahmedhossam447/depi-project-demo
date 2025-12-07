@@ -166,8 +166,15 @@
                                     </div>
                                 }
                                 <div class="product-hero mb-3">
-                                    <div class="title h5 fw-bold text-dark">@product.Type</div>
+                                    <div class="title h5 fw-bold text-dark" style="margin-bottom: 5px;">
+                                        @product.Name
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        <i class="fas fa-tag fa-xs me-1"></i> @product.Type
+                                    </div>
                                 </div>
+
                                 <div class="product-desc text-muted mb-4 flex-grow-1 truncate-2">@product.Disc</div>
                                 
                                 <div class="mt-auto">

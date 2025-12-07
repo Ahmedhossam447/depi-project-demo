@@ -94,7 +94,7 @@ namespace test.Controllers
              record = new MedicalRecord
             {
                 Animalid = model.animalId,
-                Injuries = model.injurys,
+                 injurys=model.injurys,
                 Status = model.status
             };
 

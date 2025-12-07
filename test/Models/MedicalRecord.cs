@@ -21,7 +21,7 @@ public partial class MedicalRecord
    
    
     [MaxLength(500)]
-    public string? Injuries { get; set; }
+    public string? injurys { get; set; }
 
     [Column("status")]
     [StringLength(20)]
