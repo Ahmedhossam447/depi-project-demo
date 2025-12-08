@@ -142,7 +142,8 @@ namespace test.Controllers
                 Price = product.Price,
                 Quantity = product.Quantity ,
                 Disc = product.Disc,
-                CurrentPhotoUrl = product.Photo
+                CurrentPhotoUrl = product.Photo,
+                Name = product.Name
             };
             return View(editModel);
         }
@@ -162,7 +163,8 @@ namespace test.Controllers
                 existingProduct.Price = model.Price;
                 existingProduct.Quantity = model.Quantity;
                 existingProduct.Disc = model.Disc;
-                
+                existingProduct.Name = model.Name;
+
                 // Handle photo upload
                 if (model.Photo != null)
                 {
