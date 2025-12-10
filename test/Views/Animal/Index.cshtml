@@ -7,13 +7,11 @@
     var title = "Animal Adoption Center";
     var userId = ViewBag.Userid as string;
     var isAuthenticated = signInManager.IsSignedIn(User);
-    var filteroptions = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "", Text = "All Types" },
-        new SelectListItem { Value = "dog", Text = "Dog" },
-        new SelectListItem { Value = "cat", Text = "Cat" },
-        new SelectListItem { Value = "Bird", Text = "Bird" },
-    };
+    var typeOptions = Model.TypeOptions?.ToList() ?? new List<string>();
+    var locationOptions = Model.LocationOptions?.ToList() ?? new List<string>();
+    var selectedType = string.IsNullOrWhiteSpace(Model.TypeFilter) ? "any" : Model.TypeFilter;
+    var selectedGender = string.IsNullOrWhiteSpace(Model.GenderFilter) ? "any" : Model.GenderFilter;
+    var selectedLocation = string.IsNullOrWhiteSpace(Model.LocationFilter) ? "any" : Model.LocationFilter;
     ViewData["Title"] = title;
 }
 
@@ -68,6 +66,99 @@
                         </a>
                     }
                 </div>
+
+                <!-- Filters -->
+                <form asp-action="Index" method="get" class="w-100 mt-3">
+                    <input type="hidden" name="mine" value="@Model.IsMine.ToString().ToLower()" />
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Type</label>
+                            <select class="form-select" name="type">
+                                @if (selectedType == "any")
+                                {
+                                    <option value="any" selected>All types</option>
+                                }
+                                else
+                                {
+                                    <option value="any">All types</option>
+                                }
+                                @foreach (var type in typeOptions)
+                                {
+                                    var value = type?.ToLower();
+                                    var isSelected = selectedType == value;
+                                    if (isSelected)
+                                    {
+                                        <option value="@value" selected>@type</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@value">@type</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Location</label>
+                            <select class="form-select" name="location">
+                                @if (selectedLocation == "any")
+                                {
+                                    <option value="any" selected>All locations</option>
+                                }
+                                else
+                                {
+                                    <option value="any">All locations</option>
+                                }
+                                @foreach (var location in locationOptions)
+                                {
+                                    var isSelected = selectedLocation == location;
+                                    if (isSelected)
+                                    {
+                                        <option value="@location" selected>@location</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@location">@location</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Gender</label>
+                            <select class="form-select" name="gender">
+                                @if (selectedGender == "any")
+                                {
+                                    <option value="any" selected>Any gender</option>
+                                }
+                                else
+                                {
+                                    <option value="any">Any gender</option>
+                                }
+                                @if (selectedGender == "male")
+                                {
+                                    <option value="male" selected>Male</option>
+                                }
+                                else
+                                {
+                                    <option value="male">Male</option>
+                                }
+                                @if (selectedGender == "female")
+                                {
+                                    <option value="female" selected>Female</option>
+                                }
+                                else
+                                {
+                                    <option value="female">Female</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1 d-grid">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2">
+                        <a asp-action="Index" asp-route-mine="@Model.IsMine" class="small text-muted">Reset filters</a>
+                    </div>
+                </form>
             </div>
             
             <div class="animals-grid">

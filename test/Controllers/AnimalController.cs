@@ -33,7 +33,7 @@ namespace test.Controllers
         }
         
         [AllowAnonymous]
-        public IActionResult Index(String? filter, bool mine)
+        public IActionResult Index(string? type, string? location, string? gender, bool mine)
         {
             // If anonymous user tries to access "My Animals", redirect to login
             if (mine && !User.Identity.IsAuthenticated)
@@ -42,7 +42,7 @@ namespace test.Controllers
             }
             
             var userid = _userManager.GetUserId(User);
-            var animalviewmodel = _animalRepository.AnimalDisplay(filter, userid, mine);
+            var animalviewmodel = _animalRepository.AnimalDisplay(type, location, gender, userid, mine);
             ViewBag.Userid = userid;
             ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
 
@@ -57,7 +57,7 @@ namespace test.Controllers
         
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo,Breed,CustomBreed,Gender,About")] CreateAnimalViewModel animalVM)
+        public async Task<IActionResult> Create(CreateAnimalViewModel animalVM)
         {
 
             if (ModelState.IsValid)
