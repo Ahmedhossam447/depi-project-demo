@@ -9,7 +9,7 @@ namespace test.Interfaces
         public Task<MedicalRecord?> GetByAnimalIdAsync(int animalId);
         public List<MedicalRecord> GetAll();
         public Task<bool> AddAsync(MedicalRecord record);
-        public Task<bool> UpdateAsync(MedicalRecord record);
+        public Task<bool> Update(MedicalRecord record);
         public bool RemoveByAnimalId(int animalId);
         public bool SaveChanges();
     }

@@ -38,7 +38,7 @@ namespace test.Repository
             return SaveChanges();
         }
 
-        public async Task<bool> UpdateAsync(MedicalRecord record)
+        public async Task<bool> Update(MedicalRecord record)
         {
             _context.MedicalRecords.Update(record);
             return SaveChanges();

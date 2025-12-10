@@ -141,7 +141,7 @@ namespace test.Controllers
 
 
 
-            await _medicalRecordRepo.UpdateAsync(record);
+            await _medicalRecordRepo.Update(record);
 
             return RedirectToAction("Details", new { animalId = record.Animalid });
 
@@ -203,7 +203,7 @@ namespace test.Controllers
 
             // Toggle status between Healthy and Unhealthy
             record.Status = record.Status == "Healthy" ? "Unhealthy" : "Healthy";
-            await _medicalRecordRepo.UpdateAsync(record);
+            await _medicalRecordRepo.Update(record);
 
             return RedirectToAction("Details", new { animalId = animalId });
         }
