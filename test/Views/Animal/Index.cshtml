@@ -2,15 +2,11 @@
 @using Microsoft.AspNetCore.Identity
 @using test.Models
 @inject UserManager<ApplicationUser> usermanager
+@inject SignInManager<ApplicationUser> signInManager
 @{
-
-
-
     var title = "Animal Adoption Center";
-
-
-
     var userId = ViewBag.Userid as string;
+    var isAuthenticated = signInManager.IsSignedIn(User);
     var filteroptions = new List<SelectListItem>
     {
         new SelectListItem { Value = "", Text = "All Types" },
@@ -18,11 +14,7 @@
         new SelectListItem { Value = "cat", Text = "Cat" },
         new SelectListItem { Value = "Bird", Text = "Bird" },
     };
-}
-@{
-
     ViewData["Title"] = title;
-
 }
 
 
@@ -45,15 +37,36 @@
                         <a asp-action="Index" asp-route-mine="false" class="animal-tab @(Model.IsMine ? "" : "animal-tab-active") rounded-pill-start px-4">
                             <i class="fas fa-search me-2"></i>Browse Animals
                         </a>
-                        <a asp-action="Index" asp-route-mine="true" class="animal-tab @(Model.IsMine ? "animal-tab-active" : "") rounded-pill-end px-4">
-                            <i class="fas fa-user-tag me-2"></i>My Animals
-                        </a>
+                        @if (isAuthenticated)
+                        {
+                            <a asp-action="Index" asp-route-mine="true" class="animal-tab @(Model.IsMine ? "animal-tab-active" : "") rounded-pill-end px-4">
+                                <i class="fas fa-user-tag me-2"></i>My Animals
+                            </a>
+                        }
+                        else
+                        {
+                            var myAnimalsUrl = Url.Action("Index", "Animal", new { mine = true });
+                            <a href="javascript:void(0)" onclick="showLoginModal('@Html.Raw(myAnimalsUrl)')" class="animal-tab rounded-pill-end px-4">
+                                <i class="fas fa-user-tag me-2"></i>My Animals
+                            </a>
+                        }
                     </div>
 
-                    <a asp-controller="Animal" asp-action="Create" class="btn btn-primary add-animal-btn mt-2">
-                        <i class="fas fa-plus"></i>
-                        Add New Animal
-                    </a>
+                    @if (isAuthenticated)
+                    {
+                        <a asp-controller="Animal" asp-action="Create" class="btn btn-primary add-animal-btn mt-2">
+                            <i class="fas fa-plus"></i>
+                            Add New Animal
+                        </a>
+                    }
+                    else
+                    {
+                        var createUrl = Url.Action("Create", "Animal");
+                        <a href="javascript:void(0)" onclick="showLoginModal('@Html.Raw(createUrl)')" class="btn btn-primary add-animal-btn mt-2">
+                            <i class="fas fa-plus"></i>
+                            Add New Animal
+                        </a>
+                    }
                 </div>
             </div>
             
@@ -126,7 +139,7 @@
                                 
                                 @if (!Model.IsMine)
                                 {
-                                   var isShelter = await usermanager.IsInRoleAsync(animal.User, "Shelter");
+                                   var isShelter = animal.User != null && await usermanager.IsInRoleAsync(animal.User, "Shelter");
                                    if (isShelter)
                                    {
                                        <div class="shelter-quick-info">
@@ -138,9 +151,19 @@
                                               class="shelter-name-link">
                                                <i class="fas fa-store"></i> @animal.User.UserName
                                            </a>
-                                           <a asp-controller="Chat" asp-action="index" asp-route-receiverId="@animal.Userid" class="shelter-chat-btn">
-                                               <i class="fas fa-comments"></i> Chat with Shelter
-                                           </a>
+                                           @if (isAuthenticated)
+                                           {
+                                               <a asp-controller="Chat" asp-action="index" asp-route-receiverId="@animal.Userid" class="shelter-chat-btn">
+                                                   <i class="fas fa-comments"></i> Chat with Shelter
+                                               </a>
+                                           }
+                                           else
+                                           {
+                                               var shelterChatUrl = Url.Action("index", "Chat", new { receiverId = animal.Userid });
+                                               <a href="javascript:void(0)" onclick="showLoginModal('@Html.Raw(shelterChatUrl)')" class="shelter-chat-btn">
+                                                   <i class="fas fa-comments"></i> Chat with Shelter
+                                               </a>
+                                           }
                                        </div>
                                    }
                                    else
@@ -149,15 +172,27 @@
                                             <a asp-action="Details" asp-route-id="@animal.AnimalId" class="btn btn-outline-pink flex-grow-1">
                                                 <i class="fas fa-eye"></i> Details
                                             </a>
-                                            <form class="adopt-form flex-grow-1" data-animal-id="@animal.AnimalId">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
-                                                <input type="hidden" name="Useridreq" value="@animal.Userid" />
-                                                <input type="hidden" name="Userid" value="@userId" />
-                                                <button type="submit" class="btn adopt-btn w-100">
-                                                    <i class="fas fa-heart"></i> Adopt
-                                                </button>
-                                            </form>
+                                            @if (isAuthenticated)
+                                            {
+                                                <form class="adopt-form flex-grow-1" data-animal-id="@animal.AnimalId">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="AnimalId" value="@animal.AnimalId" />
+                                                    <input type="hidden" name="Useridreq" value="@animal.Userid" />
+                                                    <input type="hidden" name="Userid" value="@userId" />
+                                                    <button type="submit" class="btn adopt-btn w-100">
+                                                        <i class="fas fa-heart"></i> Adopt
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                var adoptUrl = Url.Action("Details", "Animal", new { id = animal.AnimalId });
+                                                <div class="flex-grow-1">
+                                                    <button type="button" onclick="showLoginModal('@Html.Raw(adoptUrl)')" class="btn adopt-btn w-100">
+                                                        <i class="fas fa-heart"></i> Adopt
+                                                    </button>
+                                                </div>
+                                            }
                                         </div>
                                    }
                                 }
@@ -254,11 +289,21 @@
                             <p class="empty-state-message">Be the first to add an animal for adoption and help them find a loving home!</p>
                         }
                         <div class="empty-state-actions">
-
-                            <a asp-controller="Animal" asp-action="Create" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                Add an Animal
-                            </a>
+                            @if (isAuthenticated)
+                            {
+                                <a asp-controller="Animal" asp-action="Create" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add an Animal
+                                </a>
+                            }
+                            else
+                            {
+                                var addAnimalUrl = Url.Action("Create", "Animal");
+                                <a href="javascript:void(0)" onclick="showLoginModal('@Html.Raw(addAnimalUrl)')" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add an Animal
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>

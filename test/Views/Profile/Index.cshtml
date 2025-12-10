@@ -26,7 +26,6 @@
                     }
                     <h4 class="fw-bold mb-1">@(string.IsNullOrEmpty(Model.User.FullName) ? Model.User.UserName : Model.User.FullName)</h4>
                     <p class="text-muted small mb-1">@@@Model.User.UserName</p>
-                    <p class="text-muted mb-3">@Model.Role</p>
                     @if (Model.IsOwner)
                     {
                         <a asp-action="Edit" class="btn btn-pink-subtle rounded-pill px-4">

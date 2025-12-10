@@ -18,8 +18,6 @@ using test.Repository;
 
 namespace test.Controllers
 {
-    [Authorize]
-    
     public class AnimalController : Controller
     {
         private readonly IAnimal _animalRepository;
@@ -33,20 +31,31 @@ namespace test.Controllers
             _photoServices = photoServices;
             _userManager = userManager;
         }
-        [Authorize(Roles = "User")]
+        
+        [AllowAnonymous]
         public IActionResult Index(String? filter, bool mine)
         {
+            // If anonymous user tries to access "My Animals", redirect to login
+            if (mine && !User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("login", "Account", new { ReturnUrl = Url.Action("Index", "Animal", new { mine = true }) });
+            }
+            
             var userid = _userManager.GetUserId(User);
             var animalviewmodel = _animalRepository.AnimalDisplay(filter, userid, mine);
             ViewBag.Userid = userid;
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
 
             return View(animalviewmodel);
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
+        
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Name,Type,Age,Photo,Breed,CustomBreed,Gender,About")] CreateAnimalViewModel animalVM)
         {
@@ -89,6 +98,8 @@ namespace test.Controllers
             }
             return View(animalVM);
         }
+        
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -108,6 +119,8 @@ namespace test.Controllers
             return View(animalVM);
 
         }
+        
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(AnimalEditViewModel animalVM)
         {
@@ -143,6 +156,8 @@ namespace test.Controllers
             return View(animalVM);
 
         }
+        
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             var animal = await _animalRepository.GetByIdWithDetailsAsync(id);
@@ -152,8 +167,9 @@ namespace test.Controllers
             }
             
             var currentUserId = _userManager.GetUserId(User);
-            ViewBag.IsOwner = animal.Userid == currentUserId;
+            ViewBag.IsOwner = User.Identity.IsAuthenticated && animal.Userid == currentUserId;
             ViewBag.CurrentUserId = currentUserId;
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
             
             // Check if user already sent a request for this animal
             ViewBag.HasPendingRequest = currentUserId != null && 
@@ -162,6 +178,7 @@ namespace test.Controllers
             return View(animal);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

@@ -51,15 +51,14 @@ namespace test.Controllers
                 }
 
 
-                    // Save to YOUR database
                     var paymentMethod = new PaymentMethods
                     {
                         UserId = user.Id,
-                        GatewayToken = result.Token,      // From Braintree
-                        last4Digits = result.Last4,        // From Braintree
-                        MethodType = result.CardType,      // From Braintree
-                        expiryMonth = result.ExpiryMonth,  // From Braintree
-                        expiryYear = result.ExpiryYear     // From Braintree
+                        GatewayToken = result.Token,      
+                        last4Digits = result.Last4,      
+                        MethodType = result.CardType,      
+                        expiryMonth = result.ExpiryMonth,  
+                        expiryYear = result.ExpiryYear     
                     };
 
                     _context.PaymentMethods.Add(paymentMethod);

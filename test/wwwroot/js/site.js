@@ -2,6 +2,76 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+// ============================================
+// LOGIN REQUIRED MODAL - Anonymous User Actions
+// ============================================
+function showLoginModal(returnUrl) {
+    var loginModal = document.getElementById('loginRequiredModal');
+    var loginUrl = '/Account/login';
+    if (returnUrl && returnUrl !== '#' && returnUrl !== '') {
+        loginUrl += '?ReturnUrl=' + encodeURIComponent(returnUrl);
+    }
+
+    var loginBtn = document.getElementById('loginRedirectBtn');
+    if (loginBtn) {
+        loginBtn.href = loginUrl;
+    }
+
+    if (loginModal && typeof bootstrap !== 'undefined') {
+        try {
+            var modal = new bootstrap.Modal(loginModal);
+            modal.show();
+            return true;
+        } catch (e) {
+            console.error('Error showing modal:', e);
+        }
+    }
+    
+    // Fallback: redirect to login
+    window.location.href = loginUrl;
+    return false;
+}
+
+(function () {
+
+    // Handle clicks on .require-login elements
+    document.addEventListener('click', function (e) {
+        var target = e.target;
+        
+        // Walk up the DOM tree to find .require-login
+        while (target && target !== document) {
+            if (target.classList && target.classList.contains('require-login')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                var returnUrl = target.getAttribute('data-return-url') || target.getAttribute('href') || window.location.href;
+                showLoginModal(returnUrl);
+                return false;
+            }
+            target = target.parentElement;
+        }
+    }, true); // Use capture phase
+
+    // Handle form submissions on .require-login-form
+    document.addEventListener('submit', function (e) {
+        var target = e.target;
+        
+        while (target && target !== document) {
+            if (target.classList && target.classList.contains('require-login-form')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                var returnUrl = target.getAttribute('data-return-url') || window.location.href;
+                showLoginModal(returnUrl);
+                return false;
+            }
+            target = target.parentElement;
+        }
+    }, true); // Use capture phase
+})();
 function deleteconfirm(UserId, IsdDeletecClicked) {
     var spanid = "deleteConfirmSpan" + UserId;
     var deletespan = "deletespan" + UserId;

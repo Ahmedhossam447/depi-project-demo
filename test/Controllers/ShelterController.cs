@@ -16,7 +16,6 @@ using test.Services;
 
 namespace test.Controllers
 {
-    [Authorize]
     public class ShelterController : Controller
     {
         private readonly DepiContext _context;
@@ -59,11 +58,13 @@ namespace test.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Shelter")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Shelter")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductViewModel model)
         {
@@ -96,12 +97,15 @@ namespace test.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> userview()
         {
             var shlters = await _ShelterRepository.GetAllShelters();
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
             return View(shlters);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Shelterpage(ApplicationUser shelter)
         {
@@ -123,9 +127,12 @@ namespace test.Controllers
                 Products = products,
                 Animals = animals
             };
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
 
             return View(viewModel);
         }
+        
+        [Authorize(Roles = "Shelter")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -148,6 +155,7 @@ namespace test.Controllers
             return View(editModel);
         }
 
+        [Authorize(Roles = "Shelter")]
         [HttpPost]
         public async Task<IActionResult> Edit(EditProductViewModel model)
         {
@@ -185,6 +193,7 @@ namespace test.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Shelter")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _ShelterRepository.GetProductbyId(id);
