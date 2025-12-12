@@ -372,6 +372,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-**Project Version:** 2.0  
-**Last Updated:** January 2025  
+**Last Updated:** December 2025  
 **Framework:** ASP.NET Core MVC (.NET 9)
