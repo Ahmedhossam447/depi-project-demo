@@ -24,23 +24,25 @@ namespace test.Repository
             return savechanges();
         }
 
-        public Animalviewmodel AnimalDisplay(string? typeFilter, string? locationFilter, string? genderFilter, string userid,bool mine)
+        public Animalviewmodel AnimalDisplay(string? typeFilter, string? locationFilter, string? genderFilter, string userid,bool mine,int page)
         {
-            // Base query: no tracking for lighter read
-            IQueryable<Animal> animals = _context.Animals
+            const int pageSize = 6;
+            
+            // Base query for filtering (without pagination)
+            IQueryable<Animal> baseQuery = _context.Animals
                 .AsNoTracking()
                 .Include(a => a.User);
 
             if (mine)
             {
                 // For "My Animals" we need medical records to show the Record button
-                animals = animals
+                baseQuery = baseQuery
                     .Include(a => a.MedicalRecords)
                     .Where(anm => anm.Userid == userid);
             }
             else
             {
-                animals = animals.Where(a =>
+                baseQuery = baseQuery.Where(a =>
                     a.Userid != userid &&
                     !a.IsAdopted &&
                     !_context.Requests.Any(r => r.Userid == userid && r.AnimalId == a.AnimalId));
@@ -53,18 +55,28 @@ namespace test.Repository
 
             if (normalizedType != "any")
             {
-                animals = animals.Where(a => a.Type != null && a.Type.ToLower() == normalizedType);
+                baseQuery = baseQuery.Where(a => a.Type != null && a.Type.ToLower() == normalizedType);
             }
 
             if (normalizedGender != "any")
             {
-                animals = animals.Where(a => a.Gender != null && a.Gender.ToLower() == normalizedGender);
+                baseQuery = baseQuery.Where(a => a.Gender != null && a.Gender.ToLower() == normalizedGender);
             }
 
             if (normalizedLocation != "any")
             {
-                animals = animals.Where(a => a.User != null && a.User.location == normalizedLocation);
+                baseQuery = baseQuery.Where(a => a.User != null && a.User.location == normalizedLocation);
             }
+
+            // Get total count before pagination
+            var totalCount = baseQuery.Count();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            // Apply pagination
+            var animals = baseQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             // Build filter option lists
             var typeOptions = _context.Animals
@@ -77,19 +89,24 @@ namespace test.Repository
             var locationOptions = _context.Users
                 .Where(u => !string.IsNullOrWhiteSpace(u.location))
                 .Select(u => u.location!)
+                .Where(l => l != null)
                 .Distinct()
                 .OrderBy(l => l)
                 .ToList();
 
             var animviewmodel = new Animalviewmodel
             {
-                animals = animals.ToList(),
+                animals = animals,
                 TypeFilter = normalizedType,
                 GenderFilter = normalizedGender,
                 LocationFilter = normalizedLocation == "any" ? null : normalizedLocation,
                 TypeOptions = typeOptions,
                 LocationOptions = locationOptions,
-                IsMine = mine
+                IsMine = mine,
+                CurrentPage = page,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageSize = pageSize
             };
 
             return animviewmodel;

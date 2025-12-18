@@ -274,6 +274,105 @@
                         }
                     }
                 </div>
+                
+                <!-- Products Pagination Controls -->
+                @if (Model != null && Model.ProductTotalPages > 1)
+                {
+                    <div class="pagination-container mt-4 d-flex justify-content-center">
+                        <nav aria-label="Product pagination">
+                            <ul class="pagination">
+                                @{
+                                    var currentPage = Model.ProductCurrentPage;
+                                    var totalPages = Model.ProductTotalPages;
+                                    var startPage = Math.Max(1, currentPage - 2);
+                                    var endPage = Math.Min(totalPages, currentPage + 2);
+                                }
+                                
+                                <!-- Previous Button -->
+                                @if (currentPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?Id=@shelterId&productPage=@(currentPage - 1)">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fas fa-chevron-left"></i> Previous</span>
+                                    </li>
+                                }
+                                
+                                <!-- First Page -->
+                                @if (startPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?Id=@shelterId&productPage=1">1</a>
+                                    </li>
+                                    @if (startPage > 2)
+                                    {
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    }
+                                }
+                                
+                                <!-- Page Numbers -->
+                                @for (int i = startPage; i <= endPage; i++)
+                                {
+                                    if (i == currentPage)
+                                    {
+                                        <li class="page-item active">
+                                            <span class="page-link">@i</span>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?Id=@shelterId&productPage=@i">@i</a>
+                                        </li>
+                                    }
+                                }
+                                
+                                <!-- Last Page -->
+                                @if (endPage < totalPages)
+                                {
+                                    @if (endPage < totalPages - 1)
+                                    {
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    }
+                                    <li class="page-item">
+                                        <a class="page-link" href="?Id=@shelterId&productPage=@totalPages">@totalPages</a>
+                                    </li>
+                                }
+                                
+                                <!-- Next Button -->
+                                @if (currentPage < totalPages)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?Id=@shelterId&productPage=@(currentPage + 1)">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next <i class="fas fa-chevron-right"></i></span>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <!-- Page Info -->
+                    <div class="text-center text-muted small mt-2">
+                        Showing @((Model.ProductCurrentPage - 1) * Model.ProductPageSize + 1) - @(Math.Min(Model.ProductCurrentPage * Model.ProductPageSize, Model.ProductTotalCount)) of @Model.ProductTotalCount products
+                    </div>
+                }
             </div>
         </div>
     </div>

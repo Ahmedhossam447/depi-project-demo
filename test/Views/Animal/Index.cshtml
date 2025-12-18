@@ -400,11 +400,148 @@
                 </div>
             }
             </div>
+            
+            <!-- Pagination Controls -->
+            @if (Model != null && Model.TotalPages > 1)
+            {
+                <div class="pagination-container mt-4 d-flex justify-content-center">
+                    <nav aria-label="Animal pagination">
+                        <ul class="pagination">
+                            @{
+                                var currentPage = Model.CurrentPage;
+                                var totalPages = Model.TotalPages;
+                                var startPage = Math.Max(1, currentPage - 2);
+                                var endPage = Math.Min(totalPages, currentPage + 2);
+                            }
+                            
+                            <!-- Previous Button -->
+                            @if (currentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-page="@(currentPage - 1)"
+                                       asp-route-type="@Model.TypeFilter"
+                                       asp-route-location="@Model.LocationFilter"
+                                       asp-route-gender="@Model.GenderFilter"
+                                       asp-route-mine="@Model.IsMine">
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-left"></i> Previous</span>
+                                </li>
+                            }
+                            
+                            <!-- First Page -->
+                            @if (startPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-page="1"
+                                       asp-route-type="@Model.TypeFilter"
+                                       asp-route-location="@Model.LocationFilter"
+                                       asp-route-gender="@Model.GenderFilter"
+                                       asp-route-mine="@Model.IsMine">1</a>
+                                </li>
+                                @if (startPage > 2)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+                            
+                            <!-- Page Numbers -->
+                            @for (int i = startPage; i <= endPage; i++)
+                            {
+                                if (i == currentPage)
+                                {
+                                    <li class="page-item active">
+                                        <span class="page-link">@i</span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Index" 
+                                           asp-route-page="@i"
+                                           asp-route-type="@Model.TypeFilter"
+                                           asp-route-location="@Model.LocationFilter"
+                                           asp-route-gender="@Model.GenderFilter"
+                                           asp-route-mine="@Model.IsMine">@i</a>
+                                    </li>
+                                }
+                            }
+                            
+                            <!-- Last Page -->
+                            @if (endPage < totalPages)
+                            {
+                                @if (endPage < totalPages - 1)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-page="@totalPages"
+                                       asp-route-type="@Model.TypeFilter"
+                                       asp-route-location="@Model.LocationFilter"
+                                       asp-route-gender="@Model.GenderFilter"
+                                       asp-route-mine="@Model.IsMine">@totalPages</a>
+                                </li>
+                            }
+                            
+                            <!-- Next Button -->
+                            @if (currentPage < totalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-page="@(currentPage + 1)"
+                                       asp-route-type="@Model.TypeFilter"
+                                       asp-route-location="@Model.LocationFilter"
+                                       asp-route-gender="@Model.GenderFilter"
+                                       asp-route-mine="@Model.IsMine">
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next <i class="fas fa-chevron-right"></i></span>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Page Info -->
+                <div class="text-center text-muted small mt-2">
+                    Showing @((Model.CurrentPage - 1) * Model.PageSize + 1) - @(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalCount)) of @Model.TotalCount animals
+                </div>
+            }
         </div>
     </section>
 
-
-
+    <!-- Scripts Section -->
+    <script>
+        // Ensure adopt form submission works (already handled in site.js, but adding here for clarity)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter form auto-submit on change (optional enhancement)
+            const filterSelects = document.querySelectorAll('.form-select');
+            filterSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Optional: Auto-submit filter form when selection changes
+                    // Uncomment if you want this behavior:
+                    // this.closest('form').submit();
+                });
+            });
+        });
+    </script>
 
     <!-- Footer -->
 </body>

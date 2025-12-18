@@ -107,12 +107,13 @@ namespace test.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Shelterpage(ApplicationUser shelter)
+        public async Task<IActionResult> Shelterpage(ApplicationUser shelter, int productPage = 1)
         {
             // Fetch the full shelter user to get all properties including location
             var shelterUser = await _usermanager.FindByIdAsync(shelter.Id);
             
-            var products = await _ShelterRepository.GetAllProducts(shelter.Id);
+            // Get paginated products
+            var (products, productTotalCount, productTotalPages) = await _ShelterRepository.GetProductsPaginated(shelter.Id, productPage);
             var animals = await _animalRepository.GetAllUserAnimalsAsync(shelter.Id);
             var userid = _usermanager.GetUserId(User);
             ViewBag.userid = userid;
@@ -125,7 +126,11 @@ namespace test.Controllers
             var viewModel = new ShelterIndexViewModel
             {
                 Products = products,
-                Animals = animals
+                Animals = animals,
+                ProductCurrentPage = productPage,
+                ProductTotalCount = productTotalCount,
+                ProductTotalPages = productTotalPages,
+                ProductPageSize = 6
             };
             ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
 

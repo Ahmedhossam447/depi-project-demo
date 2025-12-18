@@ -5,7 +5,7 @@ namespace test.Interfaces
 {
     public interface IAnimal
     {
-        public  Animalviewmodel AnimalDisplay(string? typeFilter, string? locationFilter, string? genderFilter, string id,bool mine);
+        public  Animalviewmodel AnimalDisplay(string? typeFilter, string? locationFilter, string? genderFilter, string id,bool mine, int page);
         public Task<Animal> GetByIdAsync(int id);
         public Task<Animal?> GetByIdWithDetailsAsync(int id);
         public Task<List<Animal>> GetAllUserAnimalsAsync(string id);

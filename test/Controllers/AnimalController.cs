@@ -33,7 +33,7 @@ namespace test.Controllers
         }
         
         [AllowAnonymous]
-        public IActionResult Index(string? type, string? location, string? gender, bool mine)
+        public IActionResult Index(string? type, string? location, string? gender, bool mine ,int page=1)
         {
             // If anonymous user tries to access "My Animals", redirect to login
             if (mine && !User.Identity.IsAuthenticated)
@@ -42,7 +42,7 @@ namespace test.Controllers
             }
             
             var userid = _userManager.GetUserId(User);
-            var animalviewmodel = _animalRepository.AnimalDisplay(type, location, gender, userid, mine);
+            var animalviewmodel = _animalRepository.AnimalDisplay(type, location, gender, userid, mine,page);
             ViewBag.Userid = userid;
             ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
 

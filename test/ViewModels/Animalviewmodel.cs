@@ -14,5 +14,9 @@ namespace test.ViewModels
         public IEnumerable<string> LocationOptions { get; set; } = Enumerable.Empty<string>();
         public IEnumerable<string> GenderOptions { get; set; } = new[] { "Male", "Female" };
         public bool IsMine { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; } = 6;
     }
 }
